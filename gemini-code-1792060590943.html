@@ -1,0 +1,1914 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ab's stem manual</title>
+<style>
+:root {
+  --bg: #ffffff;
+  --bg-alt: #f5f5f5;
+  --fg: #111111;
+  --fg-muted: #555555;
+  --border: #cccccc;
+  --border-dark: #111111;
+  --accent: #111111;
+  --hl: #e8e8e8;
+  --status-c: #1b5e20;
+  --status-w: #e65100;
+  --status-x: #b71c1c;
+  --font-mono: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+[data-theme="dark"] {
+  --bg: #0d0d0d;
+  --bg-alt: #161616;
+  --fg: #e6e6e6;
+  --fg-muted: #999999;
+  --border: #333333;
+  --border-dark: #e6e6e6;
+  --accent: #ffffff;
+  --hl: #262626;
+  --status-c: #4caf50;
+  --status-w: #ff9800;
+  --status-x: #f44336;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-sans);
+  font-size: 13px;
+  line-height: 1.5;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+a, .concept-link {
+  color: var(--fg);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+  font-weight: 600;
+}
+a:hover, .concept-link:hover { background: var(--hl); }
+button, select, input, textarea {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--fg);
+  background: var(--bg);
+  border: 1px solid var(--border-dark);
+  padding: 4px 8px;
+  outline: none;
+}
+button { cursor: pointer; font-weight: 600; }
+button:hover, button.active { background: var(--fg); color: var(--bg); }
+input[type="text"], input[type="date"], input[type="number"], select, textarea {
+  border: 1px solid var(--border);
+}
+input:focus, select:focus, textarea:focus { border-color: var(--border-dark); }
+table { width: 100%; border-collapse: collapse; margin: 8px 0 14px 0; font-size: 12px; }
+th, td { border: 1px solid var(--border); padding: 6px 8px; text-align: left; vertical-align: top; }
+th { background: var(--bg-alt); font-family: var(--font-mono); font-weight: 700; }
+h1, h2, h3, h4 { font-family: var(--font-mono); font-weight: 700; margin: 12px 0 6px 0; line-height: 1.25; }
+h1 { font-size: 18px; border-bottom: 2px solid var(--border-dark); padding-bottom: 4px; }
+h2 { font-size: 15px; border-bottom: 1px solid var(--border); padding-bottom: 3px; margin-top: 16px; }
+h3 { font-size: 13px; margin-top: 12px; }
+p, ul, ol { margin-bottom: 8px; }
+ul, ol { padding-left: 18px; }
+li { margin-bottom: 3px; }
+code, pre, .math { font-family: var(--font-mono); background: var(--bg-alt); }
+code, .math { padding: 1px 4px; border: 1px solid var(--border); font-size: 11.5px; }
+pre { padding: 10px; border: 1px solid var(--border); overflow-x: auto; margin: 8px 0; font-size: 11.5px; white-space: pre-wrap; }
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 12px;
+  border-bottom: 2px solid var(--border-dark);
+  background: var(--bg);
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.brand { font-family: var(--font-mono); font-size: 15px; font-weight: 700; letter-spacing: -0.5px; }
+.nav-tabs { display: flex; gap: 4px; flex-wrap: wrap; }
+.toolbar-right { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+#globalSearch { width: 210px; }
+.workspace {
+  flex: 1;
+  display: grid;
+  gap: 0;
+  overflow: hidden;
+  height: calc(100vh - 76px);
+}
+.workspace.panes-1 { grid-template-columns: 1fr; }
+.workspace.panes-2 { grid-template-columns: 1fr 1fr; }
+.workspace.panes-3 { grid-template-columns: 1fr 1fr 1fr; }
+.workspace.panes-4 { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; }
+.pane {
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid var(--border-dark);
+  border-bottom: 1px solid var(--border-dark);
+  overflow: hidden;
+  background: var(--bg);
+}
+.pane-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 4px 10px;
+  background: var(--bg-alt);
+  border-bottom: 1px solid var(--border);
+  font-family: var(--font-mono);
+  font-size: 11px;
+}
+.pane-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px;
+}
+.dash-grid {
+  display: grid;
+  grid-template-columns: 1.15fr 1fr 1fr;
+  gap: 12px;
+  height: 100%;
+}
+@media (max-width: 1100px) {
+  .dash-grid { grid-template-columns: 1fr; height: auto; }
+}
+.box {
+  border: 1px solid var(--border-dark);
+  padding: 10px;
+  margin-bottom: 10px;
+  background: var(--bg);
+}
+.box-header {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 12px;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 4px;
+  margin-bottom: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.flow-container {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 8px 0;
+}
+.flow-node {
+  border: 1px solid var(--border-dark);
+  padding: 6px 8px;
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  background: var(--bg);
+  position: relative;
+  cursor: pointer;
+}
+.flow-node.active-gps {
+  border: 2px solid var(--border-dark);
+  background: var(--hl);
+  font-weight: 700;
+}
+.flow-arrow {
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--fg-muted);
+  line-height: 1;
+}
+.gps-badge {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  padding: 1px 5px;
+  border: 1px solid var(--border-dark);
+  background: var(--fg);
+  color: var(--bg);
+  margin-left: 4px;
+  font-weight: 700;
+}
+.tag {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  padding: 1px 4px;
+  border: 1px solid var(--border);
+  background: var(--bg-alt);
+  margin-right: 4px;
+}
+.flag-C { color: var(--status-c); border-color: var(--status-c); font-weight: 700; }
+.flag-W { color: var(--status-w); border-color: var(--status-w); font-weight: 700; }
+.flag-X { color: var(--status-x); border-color: var(--status-x); font-weight: 700; }
+.progress-bar {
+  width: 100%;
+  height: 10px;
+  border: 1px solid var(--border-dark);
+  background: var(--bg-alt);
+  margin: 4px 0;
+}
+.progress-fill {
+  height: 100%;
+  background: var(--fg);
+  transition: width 0.2s;
+}
+.cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+}
+.cal-cell {
+  border: 1px solid var(--border);
+  min-height: 62px;
+  padding: 3px;
+  background: var(--bg);
+}
+.cal-cell.today { border: 2px solid var(--border-dark); }
+.cal-date { font-weight: 700; font-size: 10px; margin-bottom: 2px; }
+.cal-ev {
+  font-size: 9.5px;
+  padding: 1px 3px;
+  border: 1px solid var(--border-dark);
+  margin-bottom: 2px;
+  background: var(--bg-alt);
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.cal-ev.done { text-decoration: line-through; opacity: 0.5; }
+.statusbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 4px 12px;
+  border-top: 1px solid var(--border-dark);
+  background: var(--bg-alt);
+  font-family: var(--font-mono);
+  font-size: 11px;
+}
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+.modal {
+  background: var(--bg);
+  border: 2px solid var(--border-dark);
+  width: 90%;
+  max-width: 680px;
+  max-height: 82vh;
+  display: flex;
+  flex-direction: column;
+}
+.modal-head {
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border-dark);
+  background: var(--bg-alt);
+  font-family: var(--font-mono);
+  font-weight: 700;
+  display: flex;
+  justify-content: space-between;
+}
+.modal-content { padding: 12px; overflow-y: auto; }
+.flex-row { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+.split-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+@media (max-width: 768px) { .split-2 { grid-template-columns: 1fr; } }
+mark { background: var(--fg); color: var(--bg); padding: 0 2px; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="flex-row">
+    <span class="brand">ab's stem manual</span>
+    <div class="nav-tabs" id="mainNav">
+      <button data-tab="dashboard" class="active">Dashboard</button>
+      <button data-tab="manual">Full Manual</button>
+      <button data-tab="flowcharts">Visual Flowcharts</button>
+      <button data-tab="reference">Quick Reference</button>
+      <button data-tab="tracker">Chapter GPS Tracker</button>
+      <button data-tab="calendar">Auto-Calendar</button>
+      <button data-tab="faq">Troubleshooting / FAQ</button>
+      <button data-tab="templates">Obsidian Generator</button>
+      <button data-tab="storage">Data & Backup.zip</button>
+    </div>
+  </div>
+  <div class="toolbar-right">
+    <input type="text" id="globalSearch" placeholder="Search manual, concepts, FAQs...">
+    <label style="font-family:var(--font-mono);font-size:11px;">Panes:</label>
+    <select id="paneCountSelect" title="Multi-Tab Split View Count">
+      <option value="1">1 Pane</option>
+      <option value="2">2 Panes (Dual)</option>
+      <option value="3">3 Panes (Triple)</option>
+      <option value="4">4 Panes (Quad)</option>
+    </select>
+    <button id="themeBtn">Invert Theme</button>
+  </div>
+</div>
+
+<div class="workspace panes-1" id="workspace"></div>
+
+<div class="statusbar">
+  <div id="storageStatus">STORAGE: SYNCED (COOKIES + LOCALSTORAGE + INDEXEDDB)</div>
+  <div id="statsStatus">ACTIVE CHAPTERS: 0 | DUE TODAY: 0 | SYLLABUS DONE: 0%</div>
+</div>
+
+<div class="modal-backdrop" id="conceptModal">
+  <div class="modal">
+    <div class="modal-head">
+      <span id="modalTitle">Concept Definition</span>
+      <button onclick="closeModal()">CLOSE [ESC]</button>
+    </div>
+    <div class="modal-content" id="modalBody"></div>
+  </div>
+</div>
+
+<script>
+const GPS_STAGES = [
+  { id: 0, code: "QUEUED", name: "0. Queued (Not Started)", desc: "Chapter locked in primary resource directory; awaiting Day 0 entry." },
+  { id: 1, code: "P1_ORIENT", name: "1. Phase 1: Orientation & 15m Scan", desc: "Watching foundational/macro lecture OR running 5-min NCERT scan + PYQ zone highlighting + 15m unsolved question vocabulary check." },
+  { id: 2, code: "P2_EXTRACT", name: "2. Phase 2: Asset Extraction (API / Blanks)", desc: "Compiling Obsidian Chapter API Lookup Table (LaTeX + units + limits + traps), NCERT Blank-Line redaction, or Organic 5-line Mechanism Fixes." },
+  { id: 3, code: "P3_EXAMPLES", name: "3. Phase 3: 30/70 Solved Examples", desc: "Tracing first 20-30% solved examples passively like source code; attempting remaining 70% covered with [C]/[W]/[X] flags." },
+  { id: 4, code: "D0_DONE", name: "4. Day 0 Complete (>=75% PYQ Drill)", desc: "Timed chapter PYQ drill hits >=70-80% accuracy; [X] errors logged to Anki/Obsidian. Auto-schedules D1, D3, D7, D21." },
+  { id: 5, code: "D1_DONE", name: "5. Day 1: Unaided Blank-Sheet Recall", desc: "Dumped all formulas, constraints, diagrams, or reactions on blank paper from memory; gaps pushed to Anki." },
+  { id: 6, code: "D3_DONE", name: "6. Day 3: Timed PYQ Stress Test", desc: "Completed 15-25 unseen chapter PYQs under strict exam timer (90s NEET / 120s JEE); errors diagnosed." },
+  { id: 7, code: "D7_DONE", name: "7. Day 7: Targeted [X]/[W] Error Redo", desc: "Re-solved only [X] and [W] questions from D0 and D3; patched recurring conceptual bugs." },
+  { id: 8, code: "D21_MAINT", name: "8. Day 21 Passed (Long-Term Maintenance)", desc: "Passed cumulative multi-chapter mixed test (<30% error rate). Maintained via daily Anki + monthly mocks." },
+  { id: 9, code: "RESET_30", name: "9. >30% Mock Error Reset Triggered", desc: "Failed >30% questions in a cumulative mock; chapter kicked back into immediate D1 -> D3 -> D7 recovery cycle." }
+];
+
+const CONCEPTS = {
+  "primary-rom": {
+    title: "Primary Database (ROM) / No Secondary Textbooks",
+    section: "sec-arch",
+    body: "Your printed NCERT or single locked coaching module is your Read-Only Memory (ROM). Passive transcription (copying paragraphs, slides, or 15-line algebraic derivations into a notebook) bypasses working memory and is strictly forbidden. Every written mark must either comprehend a rule, index a constraint, or test unaided retrieval."
+  },
+  "two-column-ram": {
+    title: "Two-Column Temporary Workspace (RAM)",
+    section: "sec-arch",
+    body: "Active working memory used during lectures or reading. Left Column (Scratchpad): messy math, tracing curved electron arrows, working examples. Right Column (Draft API): structural headings, shorthand formulas, unit constraints, and Anki candidates. Purged within 24 hours once extracted into Obsidian and Anki."
+  },
+  "chapter-api": {
+    title: "Obsidian Chapter API / Lookup Table (LUT)",
+    section: "sec-p2-logic",
+    body: "Replaces fragmented 50-150 word Zettelkasten notes. One Markdown note per chapter housing a structured LaTeX table with 5 mandatory columns: (1) Concept/Law, (2) Equation, (3) Variables & Mandatory SI/Standard Units, (4) Valid When (Assumptions & Domain), and (5) Boundary Limits (0, Max, Proportionality) & Exam Traps."
+  },
+  "candidate-deck": {
+    title: "Organic Candidate Deck Buffer",
+    section: "sec-anki",
+    body: "Prevents Anki review drowning. Organic 'What' reactions (Starting Material + Reagent/Conditions -> Product) are entered into a suspended Candidate Deck and are ONLY un-suspended into your active daily queue if they appear in NCERT, PYQs, mock tests, or repeated [X] errors."
+  },
+  "root-vs-derivative": {
+    title: "Root Prerequisite vs. Derivative Chapters",
+    section: "sec-prereq",
+    body: "Root Prerequisite Chapters (Mole Concept, Chemical Bonding, IUPAC, Isomerism, GOC, Stereoisomerism, Basic Calculus/Vectors, Kinematics/NLM) require ground-up foundational playlists if starting from a low baseline. Derivative Chapters (Class 12 Organic, Current Electricity, Modern Physics) are applications of root rules and use 2-4 hour macro overviews or direct textbook example tracing."
+  },
+  "short-detailed-loophole": {
+    title: "The Short-Detailed Runtime Rule",
+    section: "sec-prereq",
+    body: "Judge lectures strictly by total runtime and foundational clarity, never by whether the video title says 'One-Shot' or 'Detailed Playlist'. Three 50-minute foundational playlist videos (2.5 hours) equal one 150-minute One-Shot with superior pacing."
+  },
+  "derivation-3node": {
+    title: "3-Node Derivation Extraction",
+    section: "sec-p1",
+    body: "Never copy 15 lines of intermediate algebra, and never skip derivations completely. Watch or read a derivation once to record only three items: (1) The Anchor Equation (starting premise), (2) The Physical Assumption or Mathematical Trick, and (3) The Final Proportionality."
+  },
+  "finisher-15m": {
+    title: "15-Minute Unsolved Question Vocabulary Scan",
+    section: "sec-p1",
+    body: "Executed immediately after finishing an overview lecture or initial scan. Open the module/PYQ bank to unsolved questions and spend 15 minutes strictly reading question stems without solving them to verify you recognize technical terms and can map each question to a section of your chapter skeleton."
+  },
+  "blank-line-protocol": {
+    title: "In-Line Redaction / Blank-Line Protocol",
+    section: "sec-p2-data",
+    body: "Used on NCERT PYQ-highlighted lines, figure captions, table rows, and bold terms. Ask which single noun, number, or contrast word an examiner would blank out. Cover it with a finger/pencil and state it aloud. Instant recall = [C]; hesitation/miss = [X] -> convert to a Cloze Anki card the same day."
+  },
+  "mechanism-fix": {
+    title: "5-Line Mechanism Fix Note (The 'Why' Layer)",
+    section: "sec-p2-hybrid",
+    body: "Logged in Obsidian only when an Organic curved-arrow step violates intuition or causes an [X] error. Contains 5 lines: (1) Question Title ('Why does X attack at Y?'), (2) Trigger question source, (3) 1-3 line electronic/steric rule, (4) Mini transformation snippet, and (5) Common exam trap."
+  },
+  "split-30-70": {
+    title: "30/70 Solved Example Split",
+    section: "sec-p3",
+    body: "Bridges theory and unseen MCQs. First 20-30% of solved examples: read uncovered like source code, identifying given inputs, chosen API formula, and algebraic substitution. Remaining 70%: cover the solution and solve completely on your scratchpad, grading with [C]/[W]/[X]."
+  },
+  "flags-cwx": {
+    title: "[C] / [W] / [X] Universal Flagging System",
+    section: "sec-p3",
+    body: "[C] Confirmed: solved accurately within target time (<=90s NEET, <=120s JEE); ignore until mixed mocks. [W] Weak: right but slow, hesitant, or clumsy algebra; redo on D3/D7 (two [W]s on different days downgrade to [X]). [X] Blocked: wrong or blank; triggers 2-Minute Unblocking Ladder + Error Log / Anki card."
+  },
+  "unblocking-ladder": {
+    title: "2-Minute Unblocking Ladder (YouTube Debugger)",
+    section: "sec-p3",
+    body: "When stuck >2 minutes on a problem step: (1) 30s self-audit of units/signs against your Obsidian API table; (2) 90s scan of preceding 2-3 solved examples; (3) <=10-minute targeted YouTube search for the exact stuck phrase (never a full lecture). Log the 1-3 line fix in Obsidian and return to the problem."
+  },
+  "algorithm-tracing": {
+    title: "Procedural Algorithm Tracing (1-2-3 Pseudo-Code)",
+    section: "sec-algo",
+    body: "For multi-step procedural problems (Kirchhoff Nodal 'x' method, Redox balancing, Pulley constraints). Watch a 5-minute board execution or uncover a worked example one line at a time, then abstract the moves into a numbered 1-2-3 Pseudo-Code Checklist in Obsidian."
+  },
+  "solution-autopsy": {
+    title: "Solution Autopsy Protocol (Unknown Unknowns)",
+    section: "sec-algo",
+    body: "Competitive exams do not test 10 minutes of ugly manual calculus. When brute-force math gets ugly, stop and scan the printed solution strictly for Capitalized Nouns or Italicized Trick Names (e.g., 'Concept of Negative Mass', 'Lami's Theorem', 'Method of Images'), then run a 5-minute query on that exact term."
+  },
+  "spaced-d0-d21": {
+    title: "D0 / D1 / D3 / D7 / D21 Parallel Retrieval Schedule",
+    section: "sec-p4",
+    body: "Decouples linear chapter learning (Block 2) from parallel chapter maintenance (Block 1). D0: Learn + Drill (>=75% PYQ accuracy). D1: Unaided Blank-Sheet Recall. D3: Timed unseen PYQ stress test. D7: Redo only [X]/[W] questions. D21: Cumulative multi-chapter test."
+  },
+  "reset-30": {
+    title: "The 30% Mock Error Reset Rule",
+    section: "sec-p4",
+    body: "Post-D21 chapters are maintained automatically by daily Anki + monthly cumulative mocks. If you miss >30% of questions from a finished chapter in any mock, that chapter loses its finished status and immediately re-enters D1 (Blank-Sheet Recall) -> D3 -> D7."
+  },
+  "side-quest-pad": {
+    title: "Side-Quest Parking Pad (OCD/ADHD Tangent Control)",
+    section: "sec-focus",
+    body: "A physical scrap pad kept beside your workspace. When an intrusive urge hits mid-session to Google an advanced exception or switch books, write the exact query on the pad for after your study block ends. Neutralizes fear of forgetting without breaking focus."
+  }
+};
+
+const DEFAULT_CHAPTERS = [
+  { id: "c1", subj: "Physical Chemistry", name: "Mole Concept & Concentration Terms", type: "Root", cat: "Logic-Heavy", stage: 4, d0: offsetDate(-3), acc: 82, wx: "Ex1: Q7, Q14 | PYQ: Q9 (STP 22.7L vs 22.4L trap)" },
+  { id: "c2", subj: "Physical Chemistry", name: "Atomic Structure", type: "Root", cat: "Logic-Heavy", stage: 2, d0: "", acc: 0, wx: "de Broglie V scaling" },
+  { id: "c3", subj: "Physical Chemistry", name: "Thermodynamics & Thermochemistry", type: "Root", cat: "Logic-Heavy", stage: 1, d0: "", acc: 0, wx: "Sign convention w = -P dV" },
+  { id: "c4", subj: "Physical Chemistry", name: "Chemical & Ionic Equilibrium", type: "Root", cat: "Logic-Heavy", stage: 0, d0: "", acc: 0, wx: "" },
+  { id: "c5", subj: "Physical Chemistry", name: "Electrochemistry & Redox", type: "Derivative", cat: "Logic-Heavy", stage: 0, d0: "", acc: 0, wx: "" },
+  { id: "c6", subj: "Physical Chemistry", name: "Chemical Kinetics & Solutions", type: "Derivative", cat: "Logic-Heavy", stage: 0, d0: "", acc: 0, wx: "" },
+  { id: "c7", subj: "Inorganic Chemistry", name: "Periodic Table & Periodicity", type: "Root", cat: "Data-Heavy", stage: 5, d0: offsetDate(-1), acc: 85, wx: "IE1 exceptions N vs O" },
+  { id: "c8", subj: "Inorganic Chemistry", name: "Chemical Bonding & Molecular Structure", type: "Root", cat: "Logic-Heavy", stage: 3, d0: "", acc: 0, wx: "MOT bond order & hybridization" },
+  { id: "c9", subj: "Inorganic Chemistry", name: "Coordination Compounds", type: "Derivative", cat: "Logic-Heavy", stage: 0, d0: "", acc: 0, wx: "" },
+  { id: "c10", subj: "Inorganic Chemistry", name: "p-Block, d-Block & f-Block Elements", type: "Derivative", cat: "Data-Heavy", stage: 0, d0: "", acc: 0, wx: "" },
+  { id: "c11", subj: "Organic Chemistry", name: "1. IUPAC Nomenclature", type: "Root", cat: "Hybrid", stage: 7, d0: offsetDate(-7), acc: 88, wx: "Priority order functional groups" },
+  { id: "c12", subj: "Organic Chemistry", name: "2. Structural Isomerism", type: "Root", cat: "Hybrid", stage: 6, d0: offsetDate(-4), acc: 80, wx: "Tautomerism bridgehead bredt rule" },
+  { id: "c13", subj: "Organic Chemistry", name: "3. General Organic Chemistry (GOC)", type: "Root", cat: "Hybrid", stage: 2, d0: "", acc: 0, wx: "Hyperconjugation vs Inductive" },
+  { id: "c14", subj: "Organic Chemistry", name: "4. Stereoisomerism", type: "Root", cat: "Hybrid", stage: 0, d0: "", acc: 0, wx: "" },
+  { id: "c15", subj: "Organic Chemistry", name: "5. Reaction Mechanisms (ORM-1: SN1/SN2/E1/E2)", type: "Root", cat: "Hybrid", stage: 0, d0: "", acc: 0, wx: "" },
+  { id: "c16", subj: "Organic Chemistry", name: "6. Hydrocarbons & Haloalkanes", type: "Derivative", cat: "Hybrid", stage: 0, d0: "", acc: 0, wx: "" },
+  { id: "c17", subj: "Organic Chemistry", name: "7. Alcohols, Phenols, Ethers & Carbonyls", type: "Derivative", cat: "Hybrid", stage: 0, d0: "", acc: 0, wx: "" },
+  { id: "c18", subj: "Organic Chemistry", name: "8. Amines & Biomolecules", type: "Derivative", cat: "Hybrid", stage: 0, d0: "", acc: 0, wx: "" },
+  { id: "c19", subj: "Physics", name: "Basic Math, Vectors & Units/Dimensions", type: "Root", cat: "Logic-Heavy", stage: 8, d0: offsetDate(-22), acc: 90, wx: "" },
+  { id: "c20", subj: "Physics", name: "Kinematics (1D & 2D Projectile/Relative)", type: "Root", cat: "Logic-Heavy", stage: 4, d0: offsetDate(0), acc: 78, wx: "River-boat shortest path" },
+  { id: "c21", subj: "Physics", name: "Newton's Laws of Motion & Friction", type: "Root", cat: "Logic-Heavy", stage: 1, d0: "", acc: 0, wx: "Pulley constraint equations" },
+  { id: "c22", subj: "Physics", name: "Work, Energy, Power & Rotational Motion", type: "Root", cat: "Logic-Heavy", stage: 0, d0: "", acc: 0, wx: "" },
+  { id: "c23", subj: "Physics", name: "Electrostatics & Current Electricity", type: "Derivative", cat: "Logic-Heavy", stage: 0, d0: "", acc: 0, wx: "" },
+  { id: "c24", subj: "Physics", name: "Magnetism, EMI, Optics & Modern Physics", type: "Derivative", cat: "Logic-Heavy", stage: 0, d0: "", acc: 0, wx: "" },
+  { id: "c25", subj: "Biology", name: "Cell Biology & Cell Cycle (NCERT)", type: "Root", cat: "Data-Heavy", stage: 5, d0: offsetDate(-1), acc: 86, wx: "Meiosis I Prophase substages" },
+  { id: "c26", subj: "Biology", name: "Genetics & Molecular Basis of Inheritance", type: "Root", cat: "Logic-Heavy", stage: 1, d0: "", acc: 0, wx: "" },
+  { id: "c27", subj: "Biology", name: "Plant & Human Physiology", type: "Derivative", cat: "Logic-Heavy", stage: 0, d0: "", acc: 0, wx: "" },
+  { id: "c28", subj: "Biology", name: "Morphology, Anatomy & Ecology", type: "Derivative", cat: "Data-Heavy", stage: 0, d0: "", acc: 0, wx: "" },
+  { id: "c29", subj: "Mathematics", name: "Functions, Limits, Continuity & Differentiability", type: "Root", cat: "Logic-Heavy", stage: 3, d0: "", acc: 0, wx: "" },
+  { id: "c30", subj: "Mathematics", name: "Integral Calculus, Vectors & 3D Geometry", type: "Derivative", cat: "Logic-Heavy", stage: 0, d0: "", acc: 0, wx: "" }
+];
+
+const FAQS = [
+  {
+    q: "I feel severe panic/incompleteness when I don't take full notes during a lecture. What do I do with my hands?",
+    a: "That panic is withdrawal from conditioned passive transcription. Copying slides turns you into a slow data cable bypassing working memory. Fix: Use the <span class='concept-link' data-concept='two-column-ram'>Two-Column Temporary Workspace (RAM)</span> or write directly in the margins of your printed module. In the Left Column, trace curved arrows and work alongside examples; in the Right Column, write only the hierarchical skeleton and <span class='concept-link' data-concept='chapter-api'>Obsidian Chapter API</span> variables using mathematical operators (->, =>, up/down arrows). When the teacher solves 5 basic drill examples, put the stylus down and watch the flow."
+  },
+  {
+    q: "Should I binge overview lectures across the whole syllabus for 30 days before solving questions?",
+    a: "No. Bingeing 90+ chapters over 30 days without solving questions causes severe retroactive interference; by Day 30, Day 1 concepts evaporate. Execute the loop chapter-by-chapter: run Phase 1 (Orientation + <span class='concept-link' data-concept='finisher-15m'>15-Minute Vocabulary Scan</span>), immediately run Phase 2 & Phase 3 (<span class='concept-link' data-concept='split-30-70'>30/70 Solved Example Split</span> + PYQ drill) on the same chapter (D0), and push that chapter into the <span class='concept-link' data-concept='spaced-d0-d21'>D0/D1/D3/D7/D21</span> review queue while starting the next chapter."
+  },
+  {
+    q: "I scored 4 marks in Chemistry / forgot basic Molarity. Should I watch One-Shots or Detailed Lectures?",
+    a: "Match lecture depth to the <span class='concept-link' data-concept='root-vs-derivative'>Root vs. Derivative Chapter Hierarchy</span> and apply the <span class='concept-link' data-concept='short-detailed-loophole'>Short-Detailed Runtime Rule</span>. Never use compressed revision One-Shots for Root Prerequisite Chapters (Mole Concept, Chemical Bonding, IUPAC, Structural Isomerism, GOC, Stereoisomerism) when starting at zero. Use foundational playlists (e.g., 3x50-min foundational videos = 2.5 hours total, or NS Sir / Alakh Pandey whiteboard / DexterChem Adhyay). Once GOC and Bonding are solid, use 2-4 hour macro lectures or direct book examples for Class 12 derivative chapters."
+  },
+  {
+    q: "Coaching modules front-load Mole Concept with Normality, Equivalent Weight, and n-factor. I am drowning.",
+    a: "Apply the Mole Concept Priority Filter. Normality, Equivalent Weight, and complex n-factor titrations belong in Redox and Electrochemistry. On Pass 1 of Mole Concept, skip them completely and lock in only 4 pillars: (1) Basic Moles = Given Mass / Molar Mass, (2) Limiting Reagent, (3) Molarity = moles of solute / L of solution, and (4) Molality = moles of solute / kg of solvent."
+  },
+  {
+    q: "How do I avoid drowning in 500+ Anki reviews every day?",
+    a: "Never pre-load entire chapters or formula sheets into Anki. Create active cards ONLY from verified failures: (1) <span class='concept-link' data-concept='blank-line-protocol'>Blank-Line Protocol</span> misses in NCERT Bio/Inorganic, (2) <span class='concept-link' data-concept='spaced-d0-d21'>Day 1 Unaided Recall</span> blanks, and (3) PYQ/practice <span class='concept-link' data-concept='flags-cwx'>[X] errors</span>. For Organic Chemistry reactions, store 'What' cards in a suspended <span class='concept-link' data-concept='candidate-deck'>Candidate Deck</span> and only un-suspend them when they appear in PYQs, NCERT, or mock tests."
+  },
+  {
+    q: "When I try to solve a Physics or Physical Chemistry PYQ, my algebra turns into a 2-page nightmare. What went wrong?",
+    a: "Competitive exams do not test 10 minutes of manual calculus. Ugly math is a friction trigger indicating you missed a named procedural trick. Stop immediately and run the <span class='concept-link' data-concept='solution-autopsy'>Solution Autopsy Protocol</span>: scan the printed solution strictly for Capitalized Nouns or Italicized Phrases (e.g., 'Concept of Negative Mass', 'Lami's Theorem', 'Nodal Analysis'), watch a 5-minute targeted execution clip, and log a <span class='concept-link' data-concept='algorithm-tracing'>1-2-3 Pseudo-Code Checklist</span> in Obsidian."
+  },
+  {
+    q: "My OCD/FOMO screams that I need to check 3 reference books or Google an obscure exception mid-lecture.",
+    a: "Enforce the Single-Source Lockdown (<span class='concept-link' data-concept='primary-rom'>Primary Database ROM</span>) and the 3-Outlier Acceptance Rule (accept that ~3 obscure questions per paper will burn so you can win the 95% predictable syllabus). Write any intrusive mid-session query onto your physical <span class='concept-link' data-concept='side-quest-pad'>Side-Quest Parking Pad</span> to inspect only after your study block finishes."
+  },
+  {
+    q: "What happens to a chapter after Day 21? Do I forget it?",
+    a: "No. After D21, manual scheduling stops and two automated systems take over: (1) daily Anki micro-maintenance of your [X] cards and reagents, and (2) monthly cumulative mock tests governed by the <span class='concept-link' data-concept='reset-30'>30% Mock Error Reset Rule</span>. If you miss >30% of questions from a finished chapter in a mock test, reset its GPS stage to Stage 9/Stage 5 to force an immediate D1 -> D3 -> D7 loop."
+  },
+  {
+    q: "It is taking me 60-70 minutes to build my Chapter API Lookup Table in Obsidian. Is it too slow?",
+    a: "If it takes 60-70 minutes because you are uncovering hidden misconceptions in formula units, sign conventions, and validity assumptions, the friction is working—you are executing the Patch step before the exam catches you. To keep speed high, use a single chapter-wide <span class='concept-link' data-concept='chapter-api'>Obsidian Chapter API Table</span> rather than separate 50-150 word Zettelkasten files, and never copy derivations."
+  },
+  {
+    q: "I hit a heavy burnout / low-battery crash day after a hyperfocus binge. How do I avoid losing momentum?",
+    a: "Do not force heavy multi-step Physics or Math problem sets on a crash day. Run the Low-Battery Protocol: (1) complete your daily Anki review queue, (2) watch a passive 3D visual animation (e.g., DNA replication, cyclotron) or do a 20-minute NCERT diagram/table scan, and (3) enforce the non-negotiable 6.5-hour minimum sleep floor so synaptic consolidation occurs."
+  }
+];
+
+function offsetDate(days, baseStr) {
+  const d = baseStr ? new Date(baseStr + "T00:00:00") : new Date();
+  d.setDate(d.getDate() + days);
+  return d.toISOString().slice(0, 10);
+}
+
+let state = {
+  theme: "light",
+  paneCount: 1,
+  panes: ["dashboard", "manual", "tracker", "calendar"],
+  selectedChapterId: "c1",
+  calMonthOffset: 0,
+  chapters: JSON.parse(JSON.stringify(DEFAULT_CHAPTERS)),
+  completedEvents: {},
+  sideQuests: ["Verify IUPAC 1 bar (22.7 L) vs 1 atm (22.4 L) in coaching test series"]
+};
+
+function buildAutoEvents() {
+  const events = [];
+  state.chapters.forEach(ch => {
+    if (!ch.d0) return;
+    const schedule = [
+      { code: "D0", offset: 0, label: "D0: Acquisition & PYQ Drill", targetStage: 4 },
+      { code: "D1", offset: 1, label: "D1: Unaided Blank-Sheet Recall (15m)", targetStage: 5 },
+      { code: "D3", offset: 3, label: "D3: Timed Unseen PYQ Stress Test (35m)", targetStage: 6 },
+      { code: "D7", offset: 7, label: "D7: Redo [X] & [W] Errors Only (20m)", targetStage: 7 },
+      { code: "D21", offset: 21, label: "D21: Cumulative Multi-Chapter Mock (60m)", targetStage: 8 }
+    ];
+    if (ch.stage === 9) {
+      schedule.push(
+        { code: "RESET-D1", offset: 1, label: "RESET D1: Blank-Sheet Recall (>30% Mock Error)", targetStage: 5 },
+        { code: "RESET-D3", offset: 3, label: "RESET D3: Timed PYQ Re-Test", targetStage: 6 },
+        { code: "RESET-D7", offset: 7, label: "RESET D7: Error Redo", targetStage: 7 }
+      );
+    }
+    schedule.forEach(item => {
+      const dateStr = offsetDate(item.offset, ch.d0);
+      const evId = `${ch.id}_${item.code}_${dateStr}`;
+      const autoDone = ch.stage >= item.targetStage && ch.stage !== 9;
+      events.push({
+        id: evId,
+        chId: ch.id,
+        chName: ch.name,
+        subj: ch.subj,
+        code: item.code,
+        date: dateStr,
+        label: item.label,
+        targetStage: item.targetStage,
+        done: Boolean(state.completedEvents[evId] || autoDone)
+      });
+    });
+  });
+  return events.sort((a, b) => a.date.localeCompare(b.date));
+}
+
+const DB_NAME = "abs_stem_manual_db";
+const STORE_NAME = "app_state";
+
+function openIDB() {
+  return new Promise((resolve, reject) => {
+    if (!window.indexedDB) return reject("No IDB");
+    const req = indexedDB.open(DB_NAME, 1);
+    req.onupgradeneeded = e => {
+      const db = e.target.result;
+      if (!db.objectStoreNames.contains(STORE_NAME)) db.createObjectStore(STORE_NAME);
+    };
+    req.onsuccess = e => resolve(e.target.result);
+    req.onerror = e => reject(e);
+  });
+}
+
+async function saveAllStorage() {
+  const json = JSON.stringify(state);
+  try { localStorage.setItem("abs_stem_state", json); } catch (e) {}
+  try {
+    const compact = JSON.stringify({
+      t: state.theme,
+      p: state.paneCount,
+      s: state.selectedChapterId,
+      c: state.chapters.map(c => [c.id, c.stage, c.d0, c.acc])
+    });
+    document.cookie = "abs_stem_cookie=" + encodeURIComponent(compact) + "; max-age=31536000; path=/; SameSite=Lax";
+  } catch (e) {}
+  try {
+    const db = await openIDB();
+    const tx = db.transaction(STORE_NAME, "readwrite");
+    tx.objectStore(STORE_NAME).put(state, "master");
+  } catch (e) {}
+  updateStatusBar();
+}
+
+async function loadAllStorage() {
+  if (navigator.storage && navigator.storage.persist) {
+    try { await navigator.storage.persist(); } catch (e) {}
+  }
+  let loaded = null;
+  try {
+    const db = await openIDB();
+    loaded = await new Promise(res => {
+      const tx = db.transaction(STORE_NAME, "readonly");
+      const req = tx.objectStore(STORE_NAME).get("master");
+      req.onsuccess = () => res(req.result);
+      req.onerror = () => res(null);
+    });
+  } catch (e) {}
+  if (!loaded) {
+    try {
+      const ls = localStorage.getItem("abs_stem_state");
+      if (ls) loaded = JSON.parse(ls);
+    } catch (e) {}
+  }
+  if (!loaded) {
+    try {
+      const match = document.cookie.match(/(?:^|;\s*)abs_stem_cookie=([^;]*)/);
+      if (match) {
+        const cData = JSON.parse(decodeURIComponent(match[1]));
+        if (cData.t) state.theme = cData.t;
+        if (cData.p) state.paneCount = cData.p;
+        if (Array.isArray(cData.c)) {
+          cData.c.forEach(([id, stg, d0, acc]) => {
+            const target = state.chapters.find(x => x.id === id);
+            if (target) { target.stage = stg; target.d0 = d0; target.acc = acc; }
+          });
+        }
+      }
+    } catch (e) {}
+  } else {
+    state = Object.assign({}, state, loaded);
+  }
+  document.documentElement.setAttribute("data-theme", state.theme);
+  document.getElementById("paneCountSelect").value = String(state.paneCount || 1);
+}
+
+function updateStatusBar() {
+  const today = offsetDate(0);
+  const evs = buildAutoEvents();
+  const dueToday = evs.filter(e => e.date === today && !e.done).length;
+  const activeCount = state.chapters.filter(c => c.stage > 0 && c.stage < 8).length;
+  const doneCount = state.chapters.filter(c => c.stage >= 4 && c.stage !== 9).length;
+  const pct = state.chapters.length ? Math.round((doneCount / state.chapters.length) * 100) : 0;
+  document.getElementById("statsStatus").textContent =
+    `ACTIVE CHAPTERS: ${activeCount} | DUE TODAY (${today}): ${dueToday} | SYLLABUS D0+ DONE: ${doneCount}/${state.chapters.length} (${pct}%)`;
+}
+
+function getManualHTML() {
+  return `
+  <div id="manualContent">
+    <h1>Universal STEM Study & Execution Manual</h1>
+    <div class="box">
+      <div class="box-header"><span>CORE PREMISE & TWO FOUNDATIONAL DIRECTIVES</span><span>[SYSTEM ROOT]</span></div>
+      <p>Competitive multiple-choice exams (JEE, NEET, IAT) test only two capabilities under strict time constraints: (1) high-speed factual retrieval and (2) algorithmic pattern execution.</p>
+      <ol>
+        <li><strong>Never Build a Secondary Database:</strong> Your printed textbook (NCERT) or locked coaching module is your <span class="concept-link" data-concept="primary-rom">Primary Database (ROM)</span>. Passive transcription—copying textbook paragraphs, lecture slides, or multi-step algebraic derivations into a notebook—bypasses working memory and is strictly forbidden.</li>
+        <li><strong>Output Blocks Over Time Blocks:</strong> Never measure study sessions by hours sat at a desk. Every session must produce at least one concrete output: (1) solved questions with <span class="concept-link" data-concept="flags-cwx">[C]/[W]/[X] flags</span>, (2) a logged error or <span class="concept-link" data-concept="mechanism-fix">5-Line Mechanism Fix</span>, or (3) atomic <span class="concept-link" data-concept="chapter-api">Obsidian Chapter API</span> rows or Anki cards.</li>
+      </ol>
+    </div>
+
+    <h2 id="sec-arch">1. System Architecture: 4-Tier Hardware & Software Split</h2>
+    <table>
+      <thead>
+        <tr><th>Environment</th><th>Hardware Role</th><th>What Physically Goes Here</th><th>Lifespan</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>1. Printed Textbook / Module</strong></td>
+          <td><span class="concept-link" data-concept="primary-rom">Primary Database (ROM)</span></td>
+          <td>Highlighted PYQ sentence fragments, surgical margin symbols (<code>[ ]</code>, <code>*</code>, <code>-&gt;</code>), and <span class="concept-link" data-concept="flags-cwx">[C]/[W]/[X] flags</span>.</td>
+          <td>Permanent Primary Source</td>
+        </tr>
+        <tr>
+          <td><strong>2. Two-Column Temporary Note</strong></td>
+          <td><span class="concept-link" data-concept="two-column-ram">Working Memory (RAM)</span></td>
+          <td><strong>Left Column (Scratchpad):</strong> Real-time mechanism arrow-pushing, rough algebra, worked examples.<br><strong>Right Column (Draft Extraction):</strong> Chapter skeleton headings, raw formulas, unit constraints, Anki candidates.</td>
+          <td>Purged within 24 hours after extraction</td>
+        </tr>
+        <tr>
+          <td><strong>3. Obsidian Vault (Markdown + LaTeX)</strong></td>
+          <td><span class="concept-link" data-concept="chapter-api">Chapter API Lookup Table (LUT)</span> & Error Log</td>
+          <td><strong>One Single Note Per Chapter:</strong><br>1. Formula & Constraint Lookup Table (LaTeX, inputs, units, validity assumptions, traps).<br>2. <span class="concept-link" data-concept="algorithm-tracing">1-2-3 Pseudo-Code Checklists</span> & <span class="concept-link" data-concept="mechanism-fix">5-Line Mechanism Fixes</span>.</td>
+          <td>Permanent Reference (Used for D1 verification & pre-test lookup)</td>
+        </tr>
+        <tr>
+          <td><strong>4. Anki</strong></td>
+          <td>High-Speed Memory Cache</td>
+          <td>1. [X] retrieval misses from PYQs, practice sets, and D1 recall.<br>2. <span class="concept-link" data-concept="blank-line-protocol">Blank-Line Protocol</span> misses in Bio/Inorganic.<br>3. Organic reagents/products via the <span class="concept-link" data-concept="candidate-deck">Candidate Deck Buffer</span>.</td>
+          <td>Algorithmic Daily Spacing</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2 id="sec-prereq">2. Primary Resource Directory & Prerequisite Sequencing</h2>
+    <p>Jumping between multiple reference books is an OCD/FOMO procrastination trap. Lock in <strong>one primary source per subject</strong>:</p>
+    <table>
+      <thead>
+        <tr><th>Subject Class</th><th>Locked Primary Source</th><th>Strictly Ignore</th><th>Actively Extract</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Physics & Math (Logic-Heavy)</strong></td><td>HC Verma + Cengage (or Single Coaching Module)</td><td>Historical stories, biographies, multi-page proofs</td><td>Variable constraints, special/limiting cases, graphs, mandatory SI units, sign rules</td></tr>
+        <tr><td><strong>Physical Chemistry (Logic-Heavy)</strong></td><td>Coaching Module / Cengage</td><td>Discovery narratives, who derived an equation</td><td>Thermodynamic/kinetic assumptions, sign conventions, unit conversions</td></tr>
+        <tr><td><strong>Biology & Inorganic (Data-Heavy)</strong></td><td><strong>NCERT Strictly</strong></td><td>Any reference book thicker than NCERT</td><td>Diagrams, figure captions, table rows, bold/italic keywords, PYQ-linked lines</td></tr>
+        <tr><td><strong>Organic Chemistry (Hybrid)</strong></td><td><strong>NCERT + Coaching Module</strong></td><td>Prose paragraphs with no mechanism, condition, or exception</td><td>Curved-arrow electron logic (RDS, intermediates, rearrangements) + 4-field reagent lookup</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Root Prerequisite vs. Derivative Chapters (<span class="concept-link" data-concept="root-vs-derivative">Inspect Rule</span>)</h3>
+    <ul>
+      <li><strong>Root Prerequisite Chapters (Use Ground-Up Foundational Playlists if Starting from Zero):</strong>
+        <ul>
+          <li><em>Physical/Inorganic Bedrock:</em> Mole Concept (Pass 1 Priority Filter: master Basic Moles, Limiting Reagent, Molarity, and Molality first; skip Normality/Equivalent Weight until Redox) -&gt; Atomic Structure -&gt; Periodic Table -&gt; Chemical Bonding.</li>
+          <li><em>Organic 11-Step Dependency Tree:</em> 1. IUPAC Nomenclature -&gt; 2. Structural Isomerism -&gt; 3. General Organic Chemistry (GOC: Inductive, Resonance, Hyperconjugation, Intermediate Stability) -&gt; 4. Stereoisomerism -&gt; 5. POC -&gt; 6. Hydrocarbons -&gt; 7. Haloalkanes (SN1/SN2/E1/E2) -&gt; 8. Alcohols/Phenols/Ethers -&gt; 9. Carbonyls & Carboxylic Acids -&gt; 10. Amines -&gt; 11. Biomolecules.</li>
+          <li><em>Physics/Math Bedrock:</em> Basic Calculus & Vectors -&gt; Kinematics -&gt; Newton's Laws of Motion -&gt; Work, Power & Energy.</li>
+        </ul>
+      </li>
+      <li><strong>Derivative Chapters (Use 2-4 Hour Macro Lectures or Direct Textbook Entry):</strong> Once root chapters are solid, use single-session macro lectures or jump directly to the <span class="concept-link" data-concept="split-30-70">30/70 Solved Example Split</span>. Remember the <span class="concept-link" data-concept="short-detailed-loophole">Short-Detailed Runtime Rule</span>: three 50-minute foundational playlist videos equal one 2.5-hour One-Shot.</li>
+    </ul>
+
+    <h2 id="sec-p1">3. Phase 1: Chapter Orientation & Baseline Acquisition</h2>
+    <p>Execute chapter-by-chapter (never binge lectures across the syllabus for 30 days without solving problems).</p>
+    <ol>
+      <li><strong>Two-Column Lecture Execution:</strong> Open your <span class="concept-link" data-concept="two-column-ram">Two-Column Workspace</span> with artificial physical space constraints. Write strictly in mathematical/logical shorthand (<code>-&gt;</code>, <code>=&gt;</code>, <code>therefore</code>, <code>up/down</code>) with zero full English sentences.</li>
+      <li><strong><span class="concept-link" data-concept="derivation-3node">3-Node Derivation Extraction</span>:</strong> When a teacher derives an equation or solves basic board drills, put your pen down and watch the flow. Extract only: (1) <strong>Anchor Equation</strong>, (2) <strong>Physical Assumption / Trick</strong>, and (3) <strong>Final Proportionality</strong>.</li>
+      <li><strong>15-to-30 Minute Active Bailout Check:</strong> If confused after 15 minutes, drop video speed to 1x, pause, and trace arrows/algebra on your scratchpad for up to 30 minutes. If the teacher is skipping foundational steps you lack, kill the video and switch to a foundational playlist or textbook solved examples.</li>
+      <li><strong><span class="concept-link" data-concept="finisher-15m">15-Minute Unsolved Question Vocabulary Scan</span>:</strong> Immediately after finishing the overview, open unsolved module/PYQ questions and read question stems for 15 minutes without solving to verify vocabulary recognition and section mapping.</li>
+    </ol>
+
+    <h2 id="sec-p2-logic">4. Phase 2A: Logic-Heavy Extraction (Physics, Math, Physical Chem)</h2>
+    <p>Flip to the Chapter Summary/Formula Sheet first. When reading textbook/PDF sections, use the <strong>4-Symbol Margin Scalpel</strong>: <code>[ ]</code> Box the Anchor Equation, write <code>up/down/-&gt;</code> shorthand in the margin, mark <code>*</code> next to the mathematical trick, and draw wiring arrows between cause-and-effect nouns. Compile all chapter formulas into a single <span class="concept-link" data-concept="chapter-api">Obsidian Chapter API Lookup Table</span>:</p>
+    <table>
+      <thead>
+        <tr><th>Concept / Law</th><th>Equation</th><th>Variables & Mandatory Units</th><th>Valid When (Assumptions)</th><th>Boundary Limits (0 / Max / Prop) & Exam Traps</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Ideal Gas Law</strong></td>
+          <td><code>PV = nRT</code></td>
+          <td>P: Pa or atm | V: m^3 or L | n: mol | T: K</td>
+          <td>Low P, high T (non-interacting point particles)</td>
+          <td><strong>Trap 1 (R units):</strong> R = 8.314 J/mol*K (for Pa*m^3) vs 0.0821 L*atm/mol*K.<br><strong>Trap 2 (STP):</strong> Modern IUPAC STP (1 bar, 273.15 K) = 22.7 L/mol; Old STP (1 atm) = 22.4 L/mol.</td>
+        </tr>
+        <tr>
+          <td><strong>Isothermal Reversible Work</strong></td>
+          <td><code>w = -2.303 nRT log10(V2/V1)</code></td>
+          <td>w: Joules (J) | V1, V2: same volume units | T: Kelvin (K)</td>
+          <td>Ideal gas; isothermal (dT = 0 =&gt; dU = 0); reversible process</td>
+          <td><strong>Sign Trap:</strong> Chemistry (IUPAC) expansion work done by system is negative (w &lt; 0); Physics work by gas is positive (W &gt; 0). Vacuum free expansion (P_ext = 0) =&gt; w = 0.</td>
+        </tr>
+        <tr>
+          <td><strong>Spherical Mirror Formula</strong></td>
+          <td><code>1/v + 1/u = 1/f</code></td>
+          <td>u: object dist | v: image dist | f: focal length (R/2)</td>
+          <td>Paraxial rays (small aperture); measured from pole P</td>
+          <td><strong>Sign Trap:</strong> Incident light direction = positive. Concave mirror: f &lt; 0; Convex mirror: f &gt; 0. Real object: u &lt; 0.</td>
+        </tr>
+        <tr>
+          <td><strong>Magnetic Lorentz Force</strong></td>
+          <td><code>F = |q|vB sin(theta)</code></td>
+          <td>F: N | q: C | v: m/s | B: Tesla (T) | theta: angle(v, B)</td>
+          <td>Moving point charge in magnetic field B</td>
+          <td><strong>Zero Limit:</strong> F = 0 at q=0, v=0, theta=0 or 180 deg. <strong>Max Limit:</strong> theta=90 deg.<br><strong>Zero-Work Trap:</strong> F is always perpendicular to v =&gt; Magnetic force does ZERO work (W = 0) and cannot change speed/KE.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2 id="sec-p2-data">5. Phase 2B: Data-Heavy Navigation (Biology & Inorganic via NCERT)</h2>
+    <p>Never write Obsidian summary notes for descriptive Biology or Inorganic chapters. Execute this 4-Pass sequence directly inside NCERT:</p>
+    <ol>
+      <li><strong>Pass 0 (5-Min Orientation Scan):</strong> Scan headings, subheadings, diagram titles, and table headers without reading prose.</li>
+      <li><strong>Pass 1 (PYQ High-Value Zone Creation):</strong> Take 10-15 chapter PYQs, locate the exact answering sentence in NCERT, and highlight <em>only the minimum answering phrase</em>. Highlighted zones = exam; white space = low-yield filler.</li>
+      <li><strong>Pass 2 (Visual Anchor Scan):</strong> Read in strict priority order: (1) <strong>Diagrams & Figure Captions</strong> (test labeling from memory), (2) <strong>Tables</strong> (every row is a pre-built MCQ; cover one column and recite), (3) <strong>Bold/Italic Keywords</strong>, (4) Binding prose only inside PYQ-highlighted zones.</li>
+      <li><strong>Pass 3 (<span class="concept-link" data-concept="blank-line-protocol">Blank-Line Redaction Protocol</span>):</strong> On highlighted lines, captions, and tables, cover the testable noun/number/contrast word with your finger and state it aloud. Instant recall = [C]; wrong/blank = [X] -&gt; create a Cloze Anki card the same day.</li>
+    </ol>
+
+    <h2 id="sec-p2-hybrid">6. Phase 2C: Hybrid Navigation (Organic Chemistry)</h2>
+    <ul>
+      <li><strong>Track 1 — The "Why" Layer (Mechanisms & Electron Logic):</strong> Read NCERT Organic prose at half-speed filtering strictly for intermediate stability, RDS, regio/stereoselectivity, rearrangements, and exceptions. Trace curved arrows on your Left Column scratchpad (tail = electron source, head = electrophilic destination). If obvious from GOC electrostatics, discard the scratchpad and write nothing. If it breaks intuition or causes an [X] error, log a <span class="concept-link" data-concept="mechanism-fix">5-Line Mechanism Fix Note</span> in Obsidian (Title, Trigger, 1-3 line Rule, Mini Example, Exam Trap).</li>
+      <li><strong>Track 2 — The "What" Layer (Reagents & Named Reactions):</strong> Extract 5 fields per reaction (Name, Starting Material Pattern, Reagent & Exact Conditions, Major Product, High-Frequency Exception) into your Obsidian Reaction Table and suspended <span class="concept-link" data-concept="candidate-deck">Organic Candidate Deck</span>.</li>
+    </ul>
+
+    <h2 id="sec-p3">7. Phase 3: Problem Drilling, Flagging & 2-Minute Unblocking</h2>
+    <ol>
+      <li><strong><span class="concept-link" data-concept="split-30-70">30/70 Solved Example Split</span>:</strong> Read the first 20-30% of solved examples uncovered like source code (inputs -&gt; chosen API formula -&gt; key transformation). Cover the remaining 70% and solve completely on your scratchpad. (If a chapter has &lt;6 examples, trace all once, then close the book and re-solve all from scratch).</li>
+      <li><strong>Universal Flagging (<span class="concept-link" data-concept="flags-cwx">[C] / [W] / [X]</span>):</strong> Mark every active example, exercise, and PYQ.</li>
+      <li><strong><span class="concept-link" data-concept="unblocking-ladder">2-Minute Unblocking Ladder</span>:</strong> Stuck &gt;2 min? (1) 30s unit/sign check against API table -&gt; (2) 90s scan of nearby solved examples -&gt; (3) &lt;=10-min targeted YouTube debugger query for that exact step. Log a 1-3 line fix and return immediately.</li>
+      <li><strong>Hard "Done" Criteria:</strong> Exit Day 0 acquisition when you achieve <strong>&gt;=70-80% accuracy on a timed Chapter PYQ set</strong> and your error log stops producing new recurring conceptual bugs.</li>
+    </ol>
+
+    <h2 id="sec-algo">8. Procedural Algorithm Tracing & Solution Autopsy</h2>
+    <p>Acquire multi-step problem methods via <span class="concept-link" data-concept="algorithm-tracing">Algorithm Tracing</span> and <span class="concept-link" data-concept="solution-autopsy">Solution Autopsy</span> rather than reading prose paragraphs:</p>
+    <div class="split-2">
+      <div class="box">
+        <div class="box-header"><span>PSEUDO-CODE 1: KIRCHHOFF NODAL 'x' METHOD</span></div>
+        <ol>
+          <li>Label main multi-branch junction potential as <code>x</code>.</li>
+          <li>Label clean bottom wire (reference ground) as <code>0 V</code>.</li>
+          <li>Assign known node voltages via connected batteries.</li>
+          <li>Assume <code>x</code> is highest potential; write KCL (sum of outgoing currents = 0): <code>(x - V1)/R1 + (x - V2)/R2 + (x - V3)/R3 = 0</code> and solve in one line.</li>
+        </ol>
+      </div>
+      <div class="box">
+        <div class="box-header"><span>PSEUDO-CODE 2: CAVITY NEGATIVE MASS TRICK</span></div>
+        <ol>
+          <li>Treat uncut full body of radius R as positive mass <code>M1 = +M</code> at <code>(X1, Y1)</code>.</li>
+          <li>Treat removed cavity (e.g., r = R/2) as negative mass <code>M2 = -m</code> (scaled by r^3 in 3D or r^2 in 2D) at cavity center <code>(X2, Y2)</code>.</li>
+          <li>Compute <code>X_com = (M1*X1 - |M2|*X2) / (M1 - |M2|)</code> in 30 seconds.</li>
+        </ol>
+      </div>
+    </div>
+
+    <h2 id="sec-p4">9. Phase 4: Parallel Spaced Retrieval (<span class="concept-link" data-concept="spaced-d0-d21">D0 / D1 / D3 / D7 / D21</span>) & <span class="concept-link" data-concept="Candidate-deck">Anki Rules</span></h2>
+    <ul>
+      <li><strong>Daily Two-Block Structure:</strong> <strong>Block 1 (First 45-90 mins):</strong> Clear daily Anki queue + execute any D1, D3, or D7 tasks scheduled for today. <strong>Block 2 (Remainder of day):</strong> Work exclusively on your active D0 chapter.</li>
+      <li><strong>D1 (Unaided Blank-Sheet Recall - 15-20m):</strong> Close all notes. Write all formulas/constraints/units (Logic), diagram labels/table blanks (Data), or 10 reagent transformations + 2 arrow mechanisms (Organic) on blank paper. Compare with Obsidian/NCERT; any blank = [X] -&gt; Anki card.</li>
+      <li><strong>D3 (Timed PYQ Stress Test - 30-45m):</strong> 15-25 unseen chapter PYQs under exam timer (50-60s Bio, 90s Phys/Chem, 120s Math).</li>
+      <li><strong>D7 (Targeted Error Redo - 15-20m):</strong> Re-attempt ONLY [X] and [W] questions from D0 and D3.</li>
+      <li><strong>D21 (Cumulative Mixed Mock - 60m+) & <span class="concept-link" data-concept="reset-30">30% Mock Error Reset Rule</span>:</strong> Multi-chapter test. Post-D21 chapters are maintained via Anki + monthly mocks; if any finished chapter has &gt;30% errors in a mock, reset it immediately to D1 -&gt; D3 -&gt; D7.</li>
+    </ul>
+
+    <h2 id="sec-anki">10. Post-Practice Error Diagnosis & Atomic Anki Formatting</h2>
+    <table>
+      <thead>
+        <tr><th>Error Category</th><th>Diagnosis</th><th>Mandatory Corrective Action</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>1. Retrieval Failure</strong></td><td>Knew concept, blanked on reagent, term, constant, or sign rule</td><td>Create atomic Basic or Cloze Anki card immediately.</td></tr>
+        <tr><td><strong>2. Concept / Constraint Failure</strong></td><td>Applied formula outside valid assumptions or missed mechanism RDS</td><td>Add 1-3 line Fix Rule or Trap Warning in Obsidian Chapter Note.</td></tr>
+        <tr><td><strong>3. Repeated Careless / Algebra Error</strong></td><td>Dropped sign, missed cm-&gt;m or C-&gt;K conversion, misread 'NOT'</td><td>Systematic procedural bug: add mandatory pre-check rule to Obsidian LUT.</td></tr>
+        <tr><td><strong>4. Time / Execution Failure</strong></td><td>Solved in 5 minutes via ugly brute-force algebra</td><td>Run <span class="concept-link" data-concept="solution-autopsy">Solution Autopsy</span> to extract shortcut pseudo-code; re-drill on D3.</td></tr>
+      </tbody>
+    </table>
+
+    <h2 id="sec-focus">11. Focus Architecture, OCD/FOMO Control & Exam Hall Meta-Game</h2>
+    <ul>
+      <li><strong><span class="concept-link" data-concept="side-quest-pad">Side-Quest Parking Pad</span>:</strong> Write intrusive mid-session Google tangents on a physical scrap pad to check only after the block ends.</li>
+      <li><strong>Sensory Lockdown & Body Doubling:</strong> Hoodie up, Brown Noise/instrumental audio, single book on desk, silent study camera room for initiation, minimum 6.5 hours sleep floor.</li>
+      <li><strong>Exam Hall Heuristics:</strong> (1) <strong>3-Second Fact Rule</strong> in Bio/Inorganic (skip immediately if not cached in 3-5s); (2) <strong>Dimensional Analysis & Extreme Boundary Elimination</strong> (test theta=0, m1=m2, or pick monotonic extremes); (3) <strong>Zero-Negative-Mark Discipline</strong> (leave the 15-20 hardest time-trap calculations blank on Pass 1).</li>
+    </ul>
+  </div>`;
+}
+
+function getFlowchartsHTML() {
+  const ch = state.chapters.find(c => c.id === state.selectedChapterId) || state.chapters[0];
+  return `
+  <div>
+    <h1>Visual Flowcharts & Interactive Execution Maps</h1>
+    <div class="box">
+      <div class="box-header">
+        <span>1. UNIVERSAL CHAPTER EXECUTION LOOP (LIVE GPS POINTER MAP)</span>
+        <div class="flex-row">
+          <span>Inspect Chapter:</span>
+          <select onchange="selectChapterForGPS(this.value)">
+            ${state.chapters.map(c => `<option value="${c.id}" ${c.id === ch.id ? "selected" : ""}>[${c.subj}] ${c.name} (${GPS_STAGES[c.stage].code})</option>`).join("")}
+          </select>
+        </div>
+      </div>
+      <p>Click any block below to move <strong>${ch.name}</strong> directly to that execution stage (reaching Stage 4 automatically schedules D1, D3, D7, D21 on the calendar):</p>
+      <div class="flow-container">
+        ${GPS_STAGES.map((stg, idx) => `
+          <div class="flow-node ${ch.stage === stg.id ? "active-gps" : ""}" onclick="updateChapterStage('${ch.id}',${stg.id})">
+            <div class="flex-row" style="justify-content:space-between;">
+              <span><strong>${stg.name}</strong>${ch.stage === stg.id ? `<span class="gps-badge">GPS: YOU ARE HERE</span>` : ""}</span>
+              <span class="tag">${stg.code}</span>
+            </div>
+            <div style="font-size:11px;color:var(--fg-muted);margin-top:2px;">${stg.desc}</div>
+          </div>
+          ${idx < GPS_STAGES.length - 1 ? `<div class="flow-arrow">|  v</div>` : ""}
+        `).join("")}
+      </div>
+    </div>
+
+    <div class="split-2">
+      <div class="box">
+        <div class="box-header"><span>2. SUBJECT ROUTING DECISION TREE</span></div>
+        <pre>
+[NEW CHAPTER ENTRY]
+        |
+        +---> Is it Physics, Math, or Physical Chem?
+        |       YES --> [LOGIC-HEAVY PROTOCOL]
+        |               1. Summary Sheet First -> Build Obsidian API LUT
+        |               2. Interrogate Zero / Max / Proportionality limits
+        |               3. 30% Passive Trace -> 70% Active Examples
+        |               4. Timed PYQs + Solution Autopsy for ugly math
+        |
+        +---> Is it Biology or Inorganic Chem?
+        |       YES --> Conceptual (Bonding/Coord/Genetics/Physio)?
+        |               |-- YES -> Overview Lecture + NCERT Protocol
+        |               |-- NO  -> Skip Lecture -> Direct NCERT 4-Pass:
+        |                          Pass 0: 5m Heading/Diagram/Table Scan
+        |                          Pass 1: Highlight 10-15 PYQ Answer Fragments
+        |                          Pass 2: Captions -> Tables -> Bold Terms
+        |                          Pass 3: Finger Blank-Line Redaction -> [X] to Anki
+        |
+        +---> Is it Organic Chemistry?
+                YES --> [HYBRID DUAL-TRACK PROTOCOL]
+                        Track 1 (WHY): Scratchpad Curved Arrows -> 5-Line Fix in Obsidian
+                        Track 2 (WHAT): 4-Field Reagent -> Anki Candidate Deck (Suspended)
+        </pre>
+      </div>
+
+      <div class="box">
+        <div class="box-header"><span>3. 2-MINUTE UNBLOCKING & ANKI INTAKE GATES</span></div>
+        <pre>
+[STUCK ON PROBLEM STEP > 2 MINUTES]
+        |
+        v
+[Step 1: 30s Self-Audit] -> Check Obsidian API units, signs & domain limits
+        | (Still stuck)
+        v
+[Step 2: 90s Pattern Check] -> Scan preceding 2-3 solved examples in module
+        | (Still stuck)
+        v
+[Step 3: <=10m YouTube Debugger] -> Search EXACT stuck step phrase
+        |
+        +-- Resolved? -> Log 1-3 line fix in Obsidian -> Resume Problem
+        +-- Still Blocked after 10m? -> Mark [X], Park in Queue, Move On!
+
+-------------------------------------------------------------------------
+[ANKI CONTROLLED INTAKE GATE (NO PRE-LOADING)]
+        |
+        +-- Did you fail a Blank-Line redaction check in NCERT? ---> [ADD CLOZE CARD]
+        +-- Did you blank on a formula/constraint during D1 Recall? -> [ADD BASIC CARD]
+        +-- Did you miss a PYQ ([X]) or repeat [W] twice? ----------> [ADD BASIC CARD]
+        +-- Is it an Organic 'What' Reaction? -> [ADD TO SUSPENDED CANDIDATE DECK]
+                                                  (Promote ONLY on PYQ/Mock hit)
+        </pre>
+      </div>
+    </div>
+
+    <div class="box">
+      <div class="box-header"><span>4. NON-NEGOTIABLE 11-STEP ORGANIC CHEMISTRY DEPENDENCY TREE</span></div>
+      <pre>
+[0. Chemical Bonding: sp/sp2/sp3, Formal Charge, Dipole]
+   |
+   v
+[1. IUPAC Nomenclature] --> [2. Structural Isomerism] --> [3. GOC: Inductive, Resonance, Hyperconjugation, Intermediates]
+                                                                 |
+   +-------------------------------------------------------------+
+   v
+[4. Stereoisomerism (3D/Chiral)] --> [5. POC] --> [6. Hydrocarbons] --> [7. Haloalkanes (ORM-1: SN1, SN2, E1, E2)]
+                                                                               |
+   +---------------------------------------------------------------------------+
+   v
+[8. Alcohols, Phenols & Ethers] --> [9. Aldehydes, Ketones & Carboxylic Acids] --> [10. Amines] --> [11. Biomolecules]
+      </pre>
+    </div>
+  </div>`;
+}
+
+function getReferenceHTML() {
+  return `
+  <div>
+    <h1>Dual-Level Reference Manual</h1>
+    <div class="box">
+      <div class="box-header"><span>PART B: MASTER ONE-PAGE QUICK REFERENCE (ENTIRE MANUAL AT A GLANCE)</span><span>[GLOBAL CHEAT SHEET]</span></div>
+      <table>
+        <thead>
+          <tr><th>System Layer</th><th>Hard Execution Rule</th><th>Forbidden Trap</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Workspace Split</strong></td><td>Textbook = ROM | 2-Col Scratchpad = 24h RAM | Obsidian = 1 Chapter LUT + Fixes | Anki = [X] & Reagents</td><td>Copying slides/paragraphs or keeping 50-150w atomic notes for formulas</td></tr>
+          <tr><td><strong>Lecture Depth</strong></td><td>Root Chapters = Foundational Playlists | Derivative Chapters = 2-4h Macro One-Shots / Book Examples</td><td>Watching One-Shots for GOC/Mole Concept at zero baseline OR 30-day syllabus binge</td></tr>
+          <tr><td><strong>Logic-Heavy (Phys/Math/P.Chem)</strong></td><td>Summary Sheet -> Obsidian API Table (Formula, Units, Assumptions, 0/Max/Prop Limits, Traps) -> 30/70 Examples</td><td>Reading historical prose or copying 15 lines of intermediate derivation algebra</td></tr>
+          <tr><td><strong>Data-Heavy (Bio/Inorg)</strong></td><td>Pass 0 (5m Scan) -> Pass 1 (15 PYQ Highlights) -> Pass 2 (Captions/Tables/Bold) -> Pass 3 (Finger Blank-Line)</td><td>Writing Obsidian summary notes for NCERT or reading unhighlighted filler prose</td></tr>
+          <tr><td><strong>Hybrid (Organic)</strong></td><td>WHY: Trace curved arrows on Left Scratchpad (log 5-line fix only on error) | WHAT: 4-Field -> Candidate Deck</td><td>Memorizing mechanisms by rote OR activating 150 obscure reactions in Anki at once</td></tr>
+          <tr><td><strong>Problem Drilling</strong></td><td>20-30% Passive Trace -> 70% Active Covered Attempt -> Flag [C]/[W]/[X] -> Exit at >=75% PYQ Accuracy</td><td>Staring at a stuck step >2 mins (use <=10m YouTube Debugger) or grinding ugly math</td></tr>
+          <tr><td><strong>Spaced Schedule</strong></td><td>Block 1 (Morning): Anki + Due D1/D3/D7 | Block 2 (Main): Active D0 Chapter | >30% Mock Error = Reset to D1</td><td>Studying chapters sequentially without parallel D1/D3/D7/D21 calendar anchors</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>Part A: Step-by-Step Section Quick References (Every Execution Stage)</h2>
+    <div class="split-2">
+      <div class="box">
+        <div class="box-header"><span>STEP REF 1: PHASE 1 (ORIENTATION & LECTURES)</span></div>
+        <ol>
+          <li>Check chapter type: <span class="concept-link" data-concept="root-vs-derivative">Root vs. Derivative</span>.</li>
+          <li>Divide scratchpad into 2 columns (Left = Math/Arrows, Right = Skeleton/API).</li>
+          <li>Write only symbols (<code>-&gt;</code>, <code>=&gt;</code>, <code>up/down</code>) and keyword breadcrumbs.</li>
+          <li>On derivations, extract only: Anchor Equation, Assumption/Trick, Final Proportionality.</li>
+          <li>Finish with the mandatory <span class="concept-link" data-concept="finisher-15m">15-Minute Unsolved Question Vocabulary Scan</span>.</li>
+        </ol>
+      </div>
+      <div class="box">
+        <div class="box-header"><span>STEP REF 2: PHASE 2 (EXTRACTION BY SUBJECT)</span></div>
+        <ol>
+          <li><strong>Logic-Heavy:</strong> Build <span class="concept-link" data-concept="chapter-api">Obsidian Chapter API</span> (Equation, SI Units, Valid Domain, Zero/Max/Prop limits, Sign Traps).</li>
+          <li><strong>Data-Heavy:</strong> 5m Scan -> Highlight 10-15 PYQ fragments -> Interrogate Captions & Table Rows -> Run <span class="concept-link" data-concept="blank-line-protocol">Blank-Line Redaction</span>.</li>
+          <li><strong>Hybrid Organic:</strong> Trace arrows on scratchpad; log <span class="concept-link" data-concept="mechanism-fix">5-Line Fix</span> for [X] steps; push reagents to <span class="concept-link" data-concept="candidate-deck">Candidate Deck</span>.</li>
+        </ol>
+      </div>
+      <div class="box">
+        <div class="box-header"><span>STEP REF 3: PHASE 3 (DRILLING & UNBLOCKING)</span></div>
+        <ol>
+          <li>Trace first 20-30% solved examples uncovered (inputs -> formula -> step).</li>
+          <li>Solve remaining 70% covered; grade every item <span class="concept-link" data-concept="flags-cwx">[C], [W], or [X]</span>.</li>
+          <li>If stuck &gt;2m: 30s API check -> 90s example scan -> &lt;=10m YouTube Debugger.</li>
+          <li>If math gets ugly: run <span class="concept-link" data-concept="solution-autopsy">Solution Autopsy</span> for Capitalized Trick Nouns and write <span class="concept-link" data-concept="algorithm-tracing">1-2-3 Pseudo-Code</span>.</li>
+          <li>Pass timed PYQ set (&gt;=70-80% accuracy) to mark <strong>D0 Complete</strong>.</li>
+        </ol>
+      </div>
+      <div class="box">
+        <div class="box-header"><span>STEP REF 4: PHASE 4 (RETRIEVAL & EXAM META-GAME)</span></div>
+        <ol>
+          <li><strong>D1 (15m):</strong> Blank-sheet dump of formulas/constraints, table blanks, or reactions.</li>
+          <li><strong>D3 (35m):</strong> 15-20 unseen PYQs timed (60s Bio / 90s Phys-Chem / 120s Math).</li>
+          <li><strong>D7 (20m):</strong> Redo only [X] and [W] questions from D0 & D3.</li>
+          <li><strong>D21 (60m):</strong> Cumulative mixed test. Apply <span class="concept-link" data-concept="reset-30">30% Mock Reset Rule</span>.</li>
+          <li><strong>Exam Hall:</strong> 3-Second Bio/Inorg rule; Dimensional & Extreme Boundary elimination; 0 rushed negative guesses.</li>
+        </ol>
+      </div>
+    </div>
+  </div>`;
+}
+
+function getTrackerHTML() {
+  return `
+  <div>
+    <h1>NEET / JEE Syllabus & Chapter GPS Tracker</h1>
+    <div class="box">
+      <div class="box-header"><span>ADD NEW CHAPTER TO SYLLABUS TRACKER</span></div>
+      <div class="flex-row">
+        <select id="newChSubj">
+          <option value="Physical Chemistry">Physical Chemistry</option>
+          <option value="Organic Chemistry">Organic Chemistry</option>
+          <option value="Inorganic Chemistry">Inorganic Chemistry</option>
+          <option value="Physics">Physics</option>
+          <option value="Biology">Biology</option>
+          <option value="Mathematics">Mathematics</option>
+        </select>
+        <input type="text" id="newChName" placeholder="Chapter Name..." style="width:220px;">
+        <select id="newChType">
+          <option value="Root">Root Prerequisite</option>
+          <option value="Derivative">Derivative Chapter</option>
+        </select>
+        <select id="newChCat">
+          <option value="Logic-Heavy">Logic-Heavy</option>
+          <option value="Data-Heavy">Data-Heavy</option>
+          <option value="Hybrid">Hybrid</option>
+        </select>
+        <button onclick="addChapter()">+ Add Chapter</button>
+      </div>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Subject</th>
+          <th>Chapter Name</th>
+          <th>Hierarchy / Protocol</th>
+          <th>Flowchart GPS Stage (Updatable)</th>
+          <th>D0 Date (Auto-Schedules D1-D21)</th>
+          <th>PYQ Acc %</th>
+          <th>[W] & [X] Error Queue</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${state.chapters.map(ch => `
+          <tr>
+            <td><strong>${ch.subj}</strong></td>
+            <td>${ch.name}</td>
+            <td><span class="tag">${ch.type}</span><span class="tag">${ch.cat}</span></td>
+            <td>
+              <select onchange="updateChapterStage('${ch.id}', parseInt(this.value, 10))">
+                ${GPS_STAGES.map(s => `<option value="${s.id}" ${ch.stage === s.id ? "selected" : ""}>${s.name}</option>`).join("")}
+              </select>
+            </td>
+            <td>
+              <input type="date" value="${ch.d0 \vert{}\vert{} ""}" onchange="updateChapterD0('${ch.id}', this.value)">
+            </td>
+            <td>
+              <input type="number" min="0" max="100" value="${ch.acc \vert{}\vert{} 0}" style="width:58px;" onchange="updateChapterAcc('${ch.id}', this.value)">%
+            </td>
+            <td>
+              <input type="text" value="${(ch.wx \vert{}\vert{} "").replace(/"/g, '&quot;')}" placeholder="[W]/[X] Q#..." style="width:100\%;" onchange="updateChapterWX('${ch.id}', this.value)">
+            </td>
+            <td>
+              <button onclick="selectChapterAndOpenFlow('${ch.id}')">GPS Map</button>
+              <button onclick="deleteChapter('${ch.id}')">Del</button>
+            </td>
+          </tr>
+        `).join("")}
+      </tbody>
+    </table>
+  </div>`;
+}
+
+function getCalendarHTML() {
+  const evs = buildAutoEvents();
+  const todayStr = offsetDate(0);
+  const viewDate = new Date();
+  viewDate.setDate(1);
+  viewDate.setMonth(viewDate.getMonth() + (state.calMonthOffset || 0));
+  const year = viewDate.getFullYear();
+  const month = viewDate.getMonth();
+  const monthName = viewDate.toLocaleString("en-US", { month: "long", year: "numeric" });
+  const firstDow = new Date(year, month, 1).getDay();
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+  let cells = "";
+  ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].forEach(d => {
+    cells += `<div style="font-weight:700;text-align:center;padding:4px;background:var(--bg-alt);border:1px solid var(--border);">${d}</div>`;
+  });
+  for (let i = 0; i < firstDow; i++) {
+    cells += `<div class="cal-cell" style="opacity:0.35;"></div>`;
+  }
+  for (let d = 1; d <= daysInMonth; d++) {
+    const dStr = `${year}-${String(month + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
+    const dayEvs = evs.filter(e => e.date === dStr);
+    cells += `
+      <div class="cal-cell ${dStr === todayStr ? "today" : ""}">
+        <div class="cal-date">${d} ${dStr === todayStr ? "[TODAY]" : ""}</div>
+        ${dayEvs.map(e => `
+          <div class="cal-ev ${e.done ? "done" : ""}" title="${e.chName}: ${e.label} (Click to toggle complete)" onclick="toggleEventDone('${e.id}', '${e.chId}',${e.targetStage})">
+            [${e.code}]${e.chName}
+          </div>
+        `).join("")}
+      </div>`;
+  }
+
+  return `
+  <div>
+    <h1>Auto-Scheduled Spaced Retrieval Calendar (D0 / D1 / D3 / D7 / D21)</h1>
+    <p>Whenever a chapter reaches <strong>Stage 4 (D0 Complete)</strong> or has a D0 date assigned in the Tracker, its <code>D1 (+1d)</code>, <code>D3 (+3d)</code>, <code>D7 (+7d)</code>, and <code>D21 (+21d)</code> reviews are automatically scheduled below. Clicking an event marks it complete and advances the chapter's GPS marker.</p>
+    <div class="box">
+      <div class="box-header">
+        <div class="flex-row">
+          <button onclick="shiftCalMonth(-1)">&lt; Prev Month</button>
+          <span><strong>${monthName.toUpperCase()}</strong></span>
+          <button onclick="shiftCalMonth(1)">Next Month &gt;</button>
+          <button onclick="shiftCalMonth(0, true)">Today (${todayStr})</button>
+        </div>
+        <span>TOTAL SCHEDULED EVENTS: ${evs.length}</span>
+      </div>
+      <div class="cal-grid">${cells}</div>
+    </div>
+
+    <div class="box">
+      <div class="box-header"><span>UPCOMING & DUE AUTO-SCHEDULED QUEUE (ALL CHAPTERS)</span></div>
+      <table>
+        <thead>
+          <tr><th>Date</th><th>Stage</th><th>Subject</th><th>Chapter</th><th>Mandatory Execution Protocol</th><th>Status</th></tr>
+        </thead>
+        <tbody>
+          ${evs.length === 0 ? `<tr><td colspan="6">No D0 dates set yet. Mark any chapter D0 Complete in the Tracker to auto-schedule.</td></tr>` :
+            evs.map(e => `
+              <tr>
+                <td><strong>${e.date}</strong>${e.date === todayStr ? `<span class="gps-badge">TODAY</span>` : ""}</td>
+                <td><span class="tag">${e.code}</span></td>
+                <td>${e.subj}</td>
+                <td>${e.chName}</td>
+                <td>${e.label}</td>
+                <td>
+                  <button onclick="toggleEventDone('${e.id}', '${e.chId}',${e.targetStage})">
+                    ${e.done ? "COMPLETED [UNDO]" : "MARK DONE"}
+                  </button>
+                </td>
+              </tr>
+            `).join("")}
+        </tbody>
+      </table>
+    </div>
+  </div>`;
+}
+
+function getDashboardHTML() {
+  const todayStr = offsetDate(0);
+  const evs = buildAutoEvents();
+  const dueToday = evs.filter(e => e.date <= todayStr && !e.done);
+  const activeChapters = state.chapters.filter(c => c.stage > 0);
+  const ch = state.chapters.find(c => c.id === state.selectedChapterId) || state.chapters[0];
+  const subjects = ["Physical Chemistry", "Organic Chemistry", "Inorganic Chemistry", "Physics", "Biology", "Mathematics"];
+
+  return `
+  <div class="dash-grid">
+    <div>
+      <div class="box">
+        <div class="box-header">
+          <span>COL 1: ACTIVE CHAPTERS & LIVE GPS FLOWCHART</span>
+          <span class="tag">${activeChapters.length} IN FLIGHT</span>
+        </div>
+        <div style="margin-bottom:8px;">
+          <label style="font-family:var(--font-mono);font-size:11px;font-weight:700;">Select Chapter for Live GPS Pointer:</label>
+          <select style="width:100%;margin-top:4px;" onchange="selectChapterForGPS(this.value)">
+            ${state.chapters.map(c => `<option value="${c.id}" ${c.id === ch.id ? "selected" : ""}>[${c.subj}] ${c.name} ->${GPS_STAGES[c.stage].code}</option>`).join("")}
+          </select>
+        </div>
+        <div class="flow-container">
+          ${GPS_STAGES.map(s => `
+            <div class="flow-node ${ch.stage === s.id ? "active-gps" : ""}" onclick="updateChapterStage('${ch.id}',${s.id})" style="padding:4px 6px;">
+              <div class="flex-row" style="justify-content:space-between;">
+                <span>${s.name}</span>${ch.stage === s.id ? `<span class="gps-badge">GPS POINTER</span>` : `<span class="tag">${s.code}</span>`}
+              </div>
+            </div>
+          `).join("")}
+        </div>
+      </div>
+
+      <div class="box">
+        <div class="box-header"><span>ACTIVE CHAPTERS STATUS BOARD</span></div>
+        <table>
+          <thead><tr><th>Chapter</th><th>GPS Stage</th><th>Acc</th></tr></thead>
+          <tbody>
+            ${activeChapters.map(c => `
+              <tr onclick="selectChapterForGPS('${c.id}')" style="cursor:pointer;${c.id === ch.id ? "background:var(--hl);" : ""}">
+                <td><strong>${c.name}</strong><br><span style="font-size:10px;color:var(--fg-muted);">${c.subj} (${c.type})</span></td>
+                <td><span class="tag">${GPS_STAGES[c.stage].code}</span></td>
+                <td>${c.acc}%</td>
+              </tr>
+            `).join("")}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div>
+      <div class="box">
+        <div class="box-header">
+          <span>COL 2: TODAY'S EXECUTION QUEUE (${todayStr})</span>
+          <span class="tag">${dueToday.length} DUE</span>
+        </div>
+        <p style="font-size:11.5px;"><strong>Block 1 (First 60m):</strong> Clear Daily Anki + Due D1/D3/D7 Reviews.<br><strong>Block 2 (Main Day):</strong> Execute Active D0 Chapter.</p>
+        <table>
+          <thead><tr><th>Date</th><th>Task</th><th>Action</th></tr></thead>
+          <tbody>
+            <tr>
+              <td><strong>${todayStr}</strong></td>
+              <td><strong>[ANKI]</strong> Global Errors & Gaps + Promoted Organic Deck</td>
+              <td><span class="tag">DAILY</span></td>
+            </tr>
+            ${dueToday.map(e => `
+              <tr>
+                <td>${e.date}</td>
+                <td><strong>[${e.code}]</strong>${e.chName}<br><span style="font-size:10.5px;color:var(--fg-muted);">${e.label}</span></td>
+                <td><button onclick="toggleEventDone('${e.id}', '${e.chId}',${e.targetStage})">Done</button></td>
+              </tr>
+            `).join("")}
+          </tbody>
+        </table>
+      </div>
+
+      <div class="box">
+        <div class="box-header"><span>COMPACT MONTHLY CALENDAR VIEW</span><button onclick="switchTab('calendar')">Full View</button></div>
+        ${getMiniCalendarHTML(evs, todayStr)}
+      </div>
+
+      <div class="box">
+        <div class="box-header"><span>SIDE-QUEST PARKING PAD (OCD/FOMO BUFFER)</span></div>
+        <div class="flex-row" style="margin-bottom:6px;">
+          <input type="text" id="sideQuestInput" placeholder="Park intrusive tangent for after block..." style="flex:1;">
+          <button onclick="addSideQuest()">Park</button>
+        </div>
+        <ul>
+          ${state.sideQuests.map((sq, i) => `
+            <li style="font-size:11.5px;display:flex;justify-content:space-between;align-items:center;">
+              <span>${sq}</span>
+              <button style="padding:1px 4px;font-size:10px;" onclick="removeSideQuest(${i})">x</button>
+            </li>
+          `).join("")}
+        </ul>
+      </div>
+    </div>
+
+    <div>
+      <div class="box">
+        <div class="box-header"><span>COL 3: SYLLABUS PROGRESS TRACKER BY SUBJECT</span></div>
+        ${subjects.map(subj => {
+          const list = state.chapters.filter(c => c.subj === subj);
+          const d0Done = list.filter(c => c.stage >= 4 && c.stage !== 9).length;
+          const inProg = list.filter(c => c.stage > 0 && c.stage < 4).length;
+          const pct = list.length ? Math.round((d0Done / list.length) * 100) : 0;
+          return `
+            <div style="margin-bottom:10px;border-bottom:1px solid var(--border);padding-bottom:8px;">
+              <div class="flex-row" style="justify-content:space-between;font-family:var(--font-mono);font-size:11.5px;">
+                <strong>${subj}</strong>
+                <span>${d0Done}/${list.length} D0+ (${pct}\%) \vert{}${inProg} Active</span>
+              </div>
+              <div class="progress-bar"><div class="progress-fill" style="width:${pct}%;"></div></div>
+              <div style="font-size:11px;color:var(--fg-muted);">
+                ${list.map(c => `<span class="tag" style="cursor:pointer;${c.stage >= 4 ? "border-color:var(--border-dark);font-weight:700;" : ""}" onclick="selectChapterForGPS('${c.id}')">${c.name}: ${GPS_STAGES[c.stage].code}</span>`).join(" ")}
+              </div>
+            </div>
+          `;
+        }).join("")}
+      </div>
+    </div>
+  </div>`;
+}
+
+function getMiniCalendarHTML(evs, todayStr) {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = now.getMonth();
+  const firstDow = new Date(year, month, 1).getDay();
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  let html = `<div class="cal-grid">`;
+  ["S","M","T","W","T","F","S"].forEach(d => {
+    html += `<div style="text-align:center;font-weight:700;background:var(--bg-alt);border:1px solid var(--border);">${d}</div>`;
+  });
+  for (let i = 0; i < firstDow; i++) html += `<div style="border:1px solid var(--border);opacity:0.3;"></div>`;
+  for (let d = 1; d <= daysInMonth; d++) {
+    const dStr = `${year}-${String(month + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
+    const count = evs.filter(e => e.date === dStr && !e.done).length;
+    html += `
+      <div style="border:1px solid ${dStr === todayStr ? "var(--border-dark)" : "var(--border)"};padding:3px;text-align:center;font-size:10px;${count ? "background:var(--hl);font-weight:700;" : ""}">
+        ${d}${count ? ` (${count})` : ""}
+      </div>`;
+  }
+  html += `</div>`;
+  return html;
+}
+
+function getFAQHTML() {
+  return `
+  <div>
+    <h1>Troubleshooting & Failure-Mode FAQ Database</h1>
+    <p>Every contradiction and real-world study failure mode diagnosed with its exact algorithmic fix:</p>
+    ${FAQS.map((item, i) => `
+      <div class="box">
+        <div class="box-header"><span>FAQ #${i + 1}:${item.q}</span><span>[PATCHED]</span></div>
+        <p>${item.a}</p>
+      </div>
+    `).join("")}
+    <div class="box">
+      <div class="box-header"><span>HYPERLINKED CONCEPT GLOSSARY INDEX</span></div>
+      <div class="flex-row">
+        ${Object.keys(CONCEPTS).map(k => `<span class="concept-link tag" data-concept="${k}">${CONCEPTS[k].title}</span>`).join(" ")}
+      </div>
+    </div>
+  </div>`;
+}
+
+function getTemplatesHTML() {
+  const ch = state.chapters.find(c => c.id === state.selectedChapterId) || state.chapters[0];
+  const md = `---
+subject: "${ch.subj}"
+chapter: "${ch.name}"
+hierarchy: "${ch.type}"
+protocol: "${ch.cat}"
+gps_stage: "${GPS_STAGES[ch.stage].code}"
+d0_date: "${ch.d0 || offsetDate(0)}"
+pyq_accuracy: "${ch.acc}%"
+tags: [chapter-api, stem-lut]
+---
+
+# ${ch.subj} - ${ch.name}
+
+## 0. Lifecycle & Spaced Retrieval Checklist
+- [${ch.stage >= 1 ? "x" : " "}] Phase 1: Orientation + 15-Min Unsolved Question Vocabulary Scan
+- [${ch.stage >= 2 ? "x" : " "}] Phase 2: Chapter API Table / NCERT Blank-Line Redaction
+- [${ch.stage >= 3 ? "x" : " "}] Phase 3: 30/70 Solved Examples Split ([C]/[W]/[X])
+- [${ch.stage >= 4 ? "x" : " "}] D0 Complete: Timed PYQ Drill (>=75% Accuracy)
+- [${ch.stage >= 5 ? "x" : " "}] D1 (${ch.d0 ? offsetDate(1, ch.d0) : "TBD"}): Unaided Blank-Sheet Recall
+- [${ch.stage >= 6 ? "x" : " "}] D3 (${ch.d0 ? offsetDate(3, ch.d0) : "TBD"}): Timed Unseen PYQ Stress Test
+- [${ch.stage >= 7 ? "x" : " "}] D7 (${ch.d0 ? offsetDate(7, ch.d0) : "TBD"}): Targeted Redo of [X] & [W] Queue
+- [${ch.stage >= 8 ? "x" : " "}] D21 (${ch.d0 ? offsetDate(21, ch.d0) : "TBD"}): Cumulative Multi-Chapter Mock (<30% Error)
+
+---
+
+## 1. Formula & Constraint Lookup Table (Chapter API)
+| Concept / Law | Equation (LaTeX) | Variables & Mandatory SI Units | Valid When (Assumptions) | Limits (0 / Max / Prop) & Exam Traps |
+| :--- | :--- | :--- | :--- | :--- |
+| Example | $$PV = nRT$$ | $P$: Pa/atm, $V$: m^3/L, $T$: K | Ideal gas (low P, high T) | STP: 1 bar = 22.7 L/mol vs 1 atm = 22.4 L/mol |
+
+---
+
+## 2. Procedural Algorithm Checklists (1-2-3 Pseudo-Code)
+### Algorithm: [Method Name]
+1. **Setup / Reference Node:** 
+2. **Governing Equation:** 
+3. **Unit & Sign Verification:** 
+
+---
+
+## 3. Mechanism & Error Fix Log (5-Line Bug Reports)
+### Fix: Why does [X] happen instead of [Y]?
+* **Trigger Source:** 
+* **Core Rule (1-3 Lines):** 
+* **Mini Example / Snippet:** 
+* **Exam Trap:** 
+
+---
+
+## 4. [W] & [X] Question Redo Queue (For D3 & D7)
+* ${ch.wx || "None logged yet."}
+`;
+  return `
+  <div>
+    <h1>Obsidian Markdown + LaTeX Chapter Template Generator</h1>
+    <div class="box">
+      <div class="box-header">
+        <span>SELECT CHAPTER TO GENERATE PRE-FILLED OBSIDIAN NOTE</span>
+        <div class="flex-row">
+          <select onchange="selectChapterForGPS(this.value)">
+            ${state.chapters.map(c => `<option value="${c.id}" ${c.id === ch.id ? "selected" : ""}>[${c.subj}]${c.name}</option>`).join("")}
+          </select>
+          <button onclick="copyTemplateText()">Copy Markdown</button>
+          <button onclick="downloadChapterMD()">Download .md File</button>
+        </div>
+      </div>
+      <textarea id="obsidianTemplateArea" style="width:100%;height:420px;font-family:var(--font-mono);">${md}</textarea>
+    </div>
+  </div>`;
+}
+
+function getStorageHTML() {
+  return `
+  <div>
+    <h1>Tri-Layer Data Storage & Native Backup.zip Engine</h1>
+    <div class="box">
+      <div class="box-header"><span>1. TRI-LAYER PERSISTENCE STATUS</span><span>[ACTIVE]</span></div>
+      <ul>
+        <li><strong>Layer 1 — Browser Cookies:</strong> Compact state snapshot automatically written to <code>document.cookie</code> (<code>abs_stem_cookie</code>, 1-year expiration).</li>
+        <li><strong>Layer 2 — LocalStorage:</strong> Full JSON state synchronized to <code>localStorage["abs_stem_state"]</code> on every change.</li>
+        <li><strong>Layer 3 — IndexedDB + Persistent Storage API:</strong> Asynchronous transactional database (<code>abs_stem_manual_db</code>) paired with <code>navigator.storage.persist()</code>.</li>
+      </ul>
+    </div>
+
+    <div class="split-2">
+      <div class="box">
+        <div class="box-header"><span>2. EXPORT NATIVE BACKUP.ZIP</span></div>
+        <p>Generates a standard binary <code>backup.zip</code> archive directly in the browser containing three files: <code>state.json</code> (full tracker, GPS pointers, calendar, side-quests), <code>chapters.csv</code> (spreadsheet export), and <code>ab_stem_manual.md</code> (Obsidian manual).</p>
+        <div class="flex-row" style="margin-top:10px;">
+          <button onclick="exportBackupZip()">Download backup.zip</button>
+          <button onclick="exportJSONOnly()">Download state.json</button>
+        </div>
+      </div>
+
+      <div class="box">
+        <div class="box-header"><span>3. RESTORE FROM BACKUP.ZIP OR STATE.JSON</span></div>
+        <p>Select a previously exported <code>backup.zip</code> or <code>state.json</code> file to restore all chapters, GPS stages, and scheduled calendar records across all three storage layers:</p>
+        <div class="flex-row" style="margin-top:10px;">
+          <input type="file" id="backupFileInput" accept=".zip,.json">
+          <button onclick="importBackupFile()">Load Backup</button>
+          <button onclick="resetFactoryDefaults()">Reset to Defaults</button>
+        </div>
+        <div id="importMsg" style="margin-top:8px;font-family:var(--font-mono);font-size:11px;"></div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function getTabContent(tabName) {
+  switch (tabName) {
+    case "dashboard": return getDashboardHTML();
+    case "manual": return getManualHTML();
+    case "flowcharts": return getFlowchartsHTML();
+    case "reference": return getReferenceHTML();
+    case "tracker": return getTrackerHTML();
+    case "calendar": return getCalendarHTML();
+    case "faq": return getFAQHTML();
+    case "templates": return getTemplatesHTML();
+    case "storage": return getStorageHTML();
+    default: return getDashboardHTML();
+  }
+}
+
+const TAB_LABELS = {
+  dashboard: "Dashboard (3-Col)",
+  manual: "Full Manual",
+  flowcharts: "Visual Flowcharts",
+  reference: "Quick Reference",
+  tracker: "Chapter GPS Tracker",
+  calendar: "Auto-Calendar",
+  faq: "Troubleshooting / FAQ",
+  templates: "Obsidian Generator",
+  storage: "Data & Backup.zip"
+};
+
+function renderWorkspace() {
+  const ws = document.getElementById("workspace");
+  const count = parseInt(state.paneCount || 1, 10);
+  ws.className = `workspace panes-${count}`;
+  let html = "";
+  for (let i = 0; i < count; i++) {
+    const currentTab = state.panes[i] || "dashboard";
+    html += `
+      <div class="pane">
+        <div class="pane-header">
+          <span>PANE ${i + 1}: <strong>${TAB_LABELS[currentTab] || currentTab}</strong></span>
+          <select onchange="changePaneTab(${i}, this.value)">
+            ${Object.keys(TAB_LABELS).map(k => `<option value="${k}" ${k === currentTab ? "selected" : ""}>${TAB_LABELS[k]}</option>`).join("")}
+          </select>
+        </div>
+        <div class="pane-body" id="paneBody_${i}">
+          ${getTabContent(currentTab)}
+        </div>
+      </div>`;
+  }
+  ws.innerHTML = html;
+  document.querySelectorAll("#mainNav button").forEach(btn => {
+    btn.classList.toggle("active", btn.getAttribute("data-tab") === state.panes[0]);
+  });
+  applySearchFilter();
+  updateStatusBar();
+}
+
+function switchTab(tabName) {
+  state.panes[0] = tabName;
+  saveAllStorage();
+  renderWorkspace();
+}
+
+function changePaneTab(paneIdx, tabName) {
+  state.panes[paneIdx] = tabName;
+  saveAllStorage();
+  renderWorkspace();
+}
+
+function selectChapterForGPS(chId) {
+  state.selectedChapterId = chId;
+  saveAllStorage();
+  renderWorkspace();
+}
+
+function selectChapterAndOpenFlow(chId) {
+  state.selectedChapterId = chId;
+  if (state.paneCount === 1) state.panes[0] = "flowcharts";
+  else state.panes[1] = "flowcharts";
+  saveAllStorage();
+  renderWorkspace();
+}
+
+function updateChapterStage(chId, newStage) {
+  const ch = state.chapters.find(c => c.id === chId);
+  if (!ch) return;
+  ch.stage = Number(newStage);
+  if (ch.stage >= 4 && !ch.d0) {
+    ch.d0 = offsetDate(0);
+  }
+  saveAllStorage();
+  renderWorkspace();
+}
+
+function updateChapterD0(chId, dateVal) {
+  const ch = state.chapters.find(c => c.id === chId);
+  if (!ch) return;
+  ch.d0 = dateVal;
+  if (dateVal && ch.stage < 4) ch.stage = 4;
+  saveAllStorage();
+  renderWorkspace();
+}
+
+function updateChapterAcc(chId, val) {
+  const ch = state.chapters.find(c => c.id === chId);
+  if (!ch) return;
+  ch.acc = Number(val);
+  saveAllStorage();
+  renderWorkspace();
+}
+
+function updateChapterWX(chId, val) {
+  const ch = state.chapters.find(c => c.id === chId);
+  if (!ch) return;
+  ch.wx = val;
+  saveAllStorage();
+}
+
+function addChapter() {
+  const subj = document.getElementById("newChSubj").value;
+  const name = document.getElementById("newChName").value.trim();
+  const type = document.getElementById("newChType").value;
+  const cat = document.getElementById("newChCat").value;
+  if (!name) return;
+  const id = "ch_" + Date.now();
+  state.chapters.push({ id, subj, name, type, cat, stage: 0, d0: "", acc: 0, wx: "" });
+  state.selectedChapterId = id;
+  saveAllStorage();
+  renderWorkspace();
+}
+
+function deleteChapter(chId) {
+  state.chapters = state.chapters.filter(c => c.id !== chId);
+  if (state.selectedChapterId === chId && state.chapters.length) {
+    state.selectedChapterId = state.chapters[0].id;
+  }
+  saveAllStorage();
+  renderWorkspace();
+}
+
+function toggleEventDone(evId, chId, targetStage) {
+  const ch = state.chapters.find(c => c.id === chId);
+  if (state.completedEvents[evId]) {
+    delete state.completedEvents[evId];
+  } else {
+    state.completedEvents[evId] = true;
+    if (ch && ch.stage < targetStage) ch.stage = targetStage;
+  }
+  saveAllStorage();
+  renderWorkspace();
+}
+
+function shiftCalMonth(delta, reset) {
+  state.calMonthOffset = reset ? 0 : (state.calMonthOffset || 0) + delta;
+  renderWorkspace();
+}
+
+function addSideQuest() {
+  const inp = document.getElementById("sideQuestInput");
+  if (!inp || !inp.value.trim()) return;
+  state.sideQuests.unshift(inp.value.trim());
+  saveAllStorage();
+  renderWorkspace();
+}
+
+function removeSideQuest(idx) {
+  state.sideQuests.splice(idx, 1);
+  saveAllStorage();
+  renderWorkspace();
+}
+
+function openConceptModal(key) {
+  const item = CONCEPTS[key];
+  if (!item) return;
+  document.getElementById("modalTitle").textContent = item.title;
+  document.getElementById("modalBody").innerHTML = `
+    <p style="font-size:13px;margin-bottom:12px;">${item.body}</p>
+    <div class="flex-row">
+      <button onclick="jumpToManualSection('${item.section}')">Open Section in Full Manual</button>
+      <button onclick="closeModal()">Close</button>
+    </div>`;
+  document.getElementById("conceptModal").style.display = "flex";
+}
+
+function closeModal() {
+  document.getElementById("conceptModal").style.display = "none";
+}
+
+function jumpToManualSection(secId) {
+  closeModal();
+  state.panes[0] = "manual";
+  renderWorkspace();
+  setTimeout(() => {
+    const el = document.getElementById(secId);
+    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, 50);
+}
+
+function applySearchFilter() {
+  const q = (document.getElementById("globalSearch").value || "").trim().toLowerCase();
+  if (!q) return;
+  document.querySelectorAll(".pane-body").forEach(body => {
+    const walker = document.createTreeWalker(body, NodeFilter.SHOW_TEXT, null);
+    const nodes = [];
+    while (walker.nextNode()) nodes.push(walker.currentNode);
+    nodes.forEach(node => {
+      const parent = node.parentNode;
+      if (!parent || ["SCRIPT", "STYLE", "TEXTAREA", "INPUT", "SELECT"].includes(parent.tagName)) return;
+      const idx = node.nodeValue.toLowerCase().indexOf(q);
+      if (idx !== -1) {
+        const span = document.createElement("span");
+        const before = node.nodeValue.slice(0, idx);
+        const match = node.nodeValue.slice(idx, idx + q.length);
+        const after = node.nodeValue.slice(idx + q.length);
+        span.appendChild(document.createTextNode(before));
+        const mark = document.createElement("mark");
+        mark.textContent = match;
+        span.appendChild(mark);
+        span.appendChild(document.createTextNode(after));
+        parent.replaceChild(span, node);
+      }
+    });
+  });
+}
+
+function copyTemplateText() {
+  const area = document.getElementById("obsidianTemplateArea");
+  if (!area) return;
+  area.select();
+  navigator.clipboard.writeText(area.value);
+}
+
+function downloadChapterMD() {
+  const area = document.getElementById("obsidianTemplateArea");
+  if (!area) return;
+  const ch = state.chapters.find(c => c.id === state.selectedChapterId) || state.chapters[0];
+  downloadBlob(new Blob([area.value], { type: "text/markdown" }), `${ch.subj} - ${ch.name}.md`);
+}
+
+const CRC_TABLE = (() => {
+  const t = new Uint32Array(256);
+  for (let i = 0; i < 256; i++) {
+    let c = i;
+    for (let k = 0; k < 8; k++) c = (c & 1) ? (0xEDB88320 ^ (c >>> 1)) : (c >>> 1);
+    t[i] = c >>> 0;
+  }
+  return t;
+})();
+
+function crc32(bytes) {
+  let c = 0xFFFFFFFF;
+  for (let i = 0; i < bytes.length; i++) {
+    c = CRC_TABLE[(c ^ bytes[i]) & 0xFF] ^ (c >>> 8);
+  }
+  return (c ^ 0xFFFFFFFF) >>> 0;
+}
+
+function createZipArchive(files) {
+  const enc = new TextEncoder();
+  const localParts = [];
+  const centralParts = [];
+  let offset = 0;
+
+  files.forEach(f => {
+    const nameBytes = enc.encode(f.name);
+    const dataBytes = enc.encode(f.content);
+    const crc = crc32(dataBytes);
+
+    const local = new Uint8Array(30 + nameBytes.length + dataBytes.length);
+    const lv = new DataView(local.buffer);
+    lv.setUint32(0, 0x04034b50, true);
+    lv.setUint16(4, 20, true);
+    lv.setUint16(6, 0, true);
+    lv.setUint16(8, 0, true);
+    lv.setUint16(10, 0, true);
+    lv.setUint16(12, 0, true);
+    lv.setUint32(14, crc, true);
+    lv.setUint32(18, dataBytes.length, true);
+    lv.setUint32(22, dataBytes.length, true);
+    lv.setUint16(26, nameBytes.length, true);
+    lv.setUint16(28, 0, true);
+    local.set(nameBytes, 30);
+    local.set(dataBytes, 30 + nameBytes.length);
+    localParts.push(local);
+
+    const central = new Uint8Array(46 + nameBytes.length);
+    const cv = new DataView(central.buffer);
+    cv.setUint32(0, 0x02014b50, true);
+    cv.setUint16(4, 20, true);
+    cv.setUint16(6, 20, true);
+    cv.setUint16(8, 0, true);
+    cv.setUint16(10, 0, true);
+    cv.setUint16(12, 0, true);
+    cv.setUint16(14, 0, true);
+    cv.setUint32(16, crc, true);
+    cv.setUint32(20, dataBytes.length, true);
+    cv.setUint32(24, dataBytes.length, true);
+    cv.setUint16(28, nameBytes.length, true);
+    cv.setUint16(30, 0, true);
+    cv.setUint16(32, 0, true);
+    cv.setUint16(34, 0, true);
+    cv.setUint16(36, 0, true);
+    cv.setUint32(38, 0, true);
+    cv.setUint32(42, offset, true);
+    central.set(nameBytes, 46);
+    centralParts.push(central);
+
+    offset += local.length;
+  });
+
+  const centralSize = centralParts.reduce((a, b) => a + b.length, 0);
+  const eocd = new Uint8Array(22);
+  const ev = new DataView(eocd.buffer);
+  ev.setUint32(0, 0x06054b50, true);
+  ev.setUint16(4, 0, true);
+  ev.setUint16(6, 0, true);
+  ev.setUint16(8, files.length, true);
+  ev.setUint16(10, files.length, true);
+  ev.setUint32(12, centralSize, true);
+  ev.setUint32(16, offset, true);
+  ev.setUint16(20, 0, true);
+
+  return new Blob([...localParts, ...centralParts, eocd], { type: "application/zip" });
+}
+
+function readZipStateJSON(arrayBuffer) {
+  const bytes = new Uint8Array(arrayBuffer);
+  const view = new DataView(arrayBuffer);
+  const dec = new TextDecoder();
+  let pos = 0;
+  while (pos + 30 < bytes.length) {
+    const sig = view.getUint32(pos, true);
+    if (sig !== 0x04034b50) break;
+    const compMethod = view.getUint16(pos + 8, true);
+    const compSize = view.getUint32(pos + 18, true);
+    const nameLen = view.getUint16(pos + 26, true);
+    const extraLen = view.getUint16(pos + 28, true);
+    const name = dec.decode(bytes.subarray(pos + 30, pos + 30 + nameLen));
+    const dataStart = pos + 30 + nameLen + extraLen;
+    if (name.endsWith(".json") && compMethod === 0) {
+      const jsonText = dec.decode(bytes.subarray(dataStart, dataStart + compSize));
+      return JSON.parse(jsonText);
+    }
+    pos = dataStart + compSize;
+  }
+  throw new Error("No uncompressed state.json found inside zip archive.");
+}
+
+function downloadBlob(blob, filename) {
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 200);
+}
+
+function exportBackupZip() {
+  const jsonContent = JSON.stringify(state, null, 2);
+  const csvRows = ["id,subject,chapter,hierarchy,protocol,gps_stage,d0_date,pyq_accuracy,wx_queue"];
+  state.chapters.forEach(c => {
+    csvRows.push(`"${c.id}","${c.subj}","${c.name}","${c.type}","${c.cat}","${GPS_STAGES[c.stage].code}","${c.d0}","${c.acc}","${(c.wx || "").replace(/"/g, '""')}"`);
+  });
+  const tmpDiv = document.createElement("div");
+  tmpDiv.innerHTML = getManualHTML();
+  const mdText = "# ab's stem manual\n\n" + (tmpDiv.innerText || tmpDiv.textContent);
+  const zipBlob = createZipArchive([
+    { name: "state.json", content: jsonContent },
+    { name: "chapters.csv", content: csvRows.join("\n") },
+    { name: "ab_stem_manual.md", content: mdText }
+  ]);
+  downloadBlob(zipBlob, "backup.zip");
+}
+
+function exportJSONOnly() {
+  downloadBlob(new Blob([JSON.stringify(state, null, 2)], { type: "application/json" }), "state.json");
+}
+
+async function importBackupFile() {
+  const inp = document.getElementById("backupFileInput");
+  const msg = document.getElementById("importMsg");
+  if (!inp || !inp.files.length) {
+    if (msg) msg.textContent = "ERROR: Please select a backup.zip or state.json file first.";
+    return;
+  }
+  const file = inp.files[0];
+  try {
+    let parsed = null;
+    if (file.name.endsWith(".json")) {
+      const txt = await file.text();
+      parsed = JSON.parse(txt);
+    } else {
+      const buf = await file.arrayBuffer();
+      parsed = readZipStateJSON(buf);
+    }
+    if (parsed && Array.isArray(parsed.chapters)) {
+      state = Object.assign({}, state, parsed);
+      document.documentElement.setAttribute("data-theme", state.theme);
+      await saveAllStorage();
+      renderWorkspace();
+      const msgAfter = document.getElementById("importMsg");
+      if (msgAfter) msgAfter.textContent = "SUCCESS: Backup loaded and synced to Cookies, LocalStorage, and IndexedDB.";
+    }
+  } catch (err) {
+    if (msg) msg.textContent = "IMPORT FAILED: " + err.message;
+  }
+}
+
+async function resetFactoryDefaults() {
+  state.chapters = JSON.parse(JSON.stringify(DEFAULT_CHAPTERS));
+  state.completedEvents = {};
+  state.selectedChapterId = "c1";
+  await saveAllStorage();
+  renderWorkspace();
+}
+
+document.getElementById("mainNav").addEventListener("click", e => {
+  const btn = e.target.closest("button[data-tab]");
+  if (!btn) return;
+  switchTab(btn.getAttribute("data-tab"));
+});
+
+document.getElementById("paneCountSelect").addEventListener("change", e => {
+  state.paneCount = parseInt(e.target.value, 10);
+  saveAllStorage();
+  renderWorkspace();
+});
+
+document.getElementById("themeBtn").addEventListener("click", () => {
+  state.theme = state.theme === "dark" ? "light" : "dark";
+  document.documentElement.setAttribute("data-theme", state.theme);
+  saveAllStorage();
+});
+
+document.getElementById("globalSearch").addEventListener("input", () => {
+  renderWorkspace();
+});
+
+document.addEventListener("click", e => {
+  const link = e.target.closest(".concept-link");
+  if (link) {
+    const key = link.getAttribute("data-concept").toLowerCase();
+    openConceptModal(key);
+  }
+  if (e.target.id === "conceptModal") closeModal();
+});
+
+document.addEventListener("keydown", e => {
+  if (e.key === "Escape") closeModal();
+});
+
+loadAllStorage().then(() => renderWorkspace());
+</script>
+</body>
+</html>
