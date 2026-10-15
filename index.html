@@ -98,19 +98,19 @@ pre { padding: 10px; border: 1px solid var(--border); overflow-x: auto; margin: 
 .workspace {
   flex: 1;
   display: grid;
-  gap: 0;
+  gap: 4px;
+  background: var(--border-dark);
   overflow: hidden;
   height: calc(100vh - 76px);
 }
-.workspace.panes-1 { grid-template-columns: 1fr; }
+.workspace.panes-1 { gap: 0; background: transparent; }
 .workspace.panes-2 { grid-template-columns: 1fr 1fr; }
 .workspace.panes-3 { grid-template-columns: 1fr 1fr 1fr; }
 .workspace.panes-4 { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; }
 .pane {
   display: flex;
   flex-direction: column;
-  border-right: 1px solid var(--border-dark);
-  border-bottom: 1px solid var(--border-dark);
+  border: none;
   overflow: hidden;
   background: var(--bg);
 }
@@ -118,9 +118,9 @@ pre { padding: 10px; border: 1px solid var(--border); overflow-x: auto; margin: 
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 4px 10px;
+  padding: 5px 10px;
   background: var(--bg-alt);
-  border-bottom: 1px solid var(--border);
+  border-bottom: 2px solid var(--border-dark);
   font-family: var(--font-mono);
   font-size: 11px;
 }
@@ -192,6 +192,174 @@ pre { padding: 10px; border: 1px solid var(--border); overflow-x: auto; margin: 
   color: var(--bg);
   margin-left: 4px;
   font-weight: 700;
+}
+.diagram-flow {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 6px 0;
+}
+.diagram-phase-group {
+  border: 1px solid var(--border);
+  padding: 8px;
+  background: var(--bg-alt);
+  margin-bottom: 2px;
+}
+.diagram-phase-title {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--fg-muted);
+  text-transform: uppercase;
+  margin-bottom: 6px;
+  letter-spacing: 0.5px;
+}
+.diagram-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 6px;
+}
+.diagram-block {
+  border: 1.5px solid var(--border-dark);
+  background: var(--bg);
+  padding: 6px 8px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: transform 0.1s, box-shadow 0.1s;
+}
+.diagram-block:hover {
+  background: var(--hl);
+  transform: translateY(-1px);
+}
+.diagram-block.active-gps {
+  border: 2px solid var(--border-dark);
+  background: var(--fg);
+  color: var(--bg);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+.diagram-block.active-gps .tag {
+  background: var(--bg);
+  color: var(--fg);
+  border-color: var(--bg);
+}
+.diagram-block.active-gps .diagram-desc {
+  color: var(--bg);
+  opacity: 0.9;
+}
+.diagram-block.reset-node {
+  border-color: var(--status-x);
+}
+.diagram-block.reset-node.active-gps {
+  background: var(--status-x);
+  color: #fff;
+}
+.diagram-arrow-down {
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--fg-muted);
+  padding: 3px 0;
+  user-select: none;
+}
+.diagram-arrow-right {
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--fg-muted);
+  user-select: none;
+}
+.subject-filter-bar {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+  align-items: center;
+  margin: 6px 0;
+}
+.filter-pill {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  padding: 2px 6px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--fg);
+  cursor: pointer;
+}
+.filter-pill:hover, .filter-pill.active {
+  background: var(--fg);
+  color: var(--bg);
+  border-color: var(--border-dark);
+  font-weight: 700;
+}
+.v-tree-root {
+  text-align: center;
+  padding: 6px 12px;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 12px;
+  border: 2px solid var(--border-dark);
+  background: var(--bg-alt);
+  display: inline-block;
+}
+.v-tree-branches {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-top: 8px;
+}
+@media (max-width: 950px) {
+  .v-tree-branches { grid-template-columns: 1fr; }
+}
+.v-tree-card {
+  border: 1px solid var(--border-dark);
+  background: var(--bg);
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+}
+.v-tree-card-head {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 11.5px;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 4px;
+  margin-bottom: 6px;
+}
+.v-step-box {
+  border: 1px solid var(--border);
+  background: var(--bg-alt);
+  padding: 6px 8px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  margin-bottom: 4px;
+}
+.v-step-box strong {
+  display: block;
+  margin-bottom: 2px;
+}
+.organic-tree-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  gap: 8px;
+  margin-top: 8px;
+}
+.organic-step-node {
+  border: 1px solid var(--border-dark);
+  padding: 8px;
+  background: var(--bg);
+  font-family: var(--font-mono);
+  font-size: 11px;
+}
+.organic-step-node .step-num {
+  font-weight: 700;
+  margin-bottom: 4px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 .tag {
   display: inline-block;
@@ -524,6 +692,15 @@ function offsetDate(days, baseStr) {
   return d.toISOString().slice(0, 10);
 }
 
+const DEFAULT_SUBJECTS = [
+  "Physical Chemistry",
+  "Inorganic Chemistry",
+  "Organic Chemistry",
+  "Physics",
+  "Biology",
+  "Mathematics"
+];
+
 let state = {
   theme: "light",
   paneCount: 1,
@@ -532,8 +709,181 @@ let state = {
   calMonthOffset: 0,
   chapters: JSON.parse(JSON.stringify(DEFAULT_CHAPTERS)),
   completedEvents: {},
-  sideQuests: ["Verify IUPAC 1 bar (22.7 L) vs 1 atm (22.4 L) in coaching test series"]
+  sideQuests: ["Verify IUPAC 1 bar (22.7 L) vs 1 atm (22.4 L) in coaching test series"],
+  subjectOrder: [...DEFAULT_SUBJECTS],
+  subjectReorderMode: false,
+  filterSubjDash: "All",
+  filterSubjFlow: "All",
+  filterSubjTracker: "All",
+  flowchartVariantIsolated: "diagram",
+  flowchartVariantDashboard: "linear"
 };
+
+function getSubjectList() {
+  if (!Array.isArray(state.subjectOrder) || !state.subjectOrder.length) {
+    state.subjectOrder = [...DEFAULT_SUBJECTS];
+  }
+  state.chapters.forEach(c => {
+    if (c.subj && !state.subjectOrder.includes(c.subj)) {
+      state.subjectOrder.push(c.subj);
+    }
+  });
+  return state.subjectOrder;
+}
+
+function moveSubjectOrder(subj, delta) {
+  const list = getSubjectList();
+  const idx = list.indexOf(subj);
+  if (idx === -1) return;
+  const newIdx = idx + delta;
+  if (newIdx < 0 || newIdx >= list.length) return;
+  const temp = list[idx];
+  list[idx] = list[newIdx];
+  list[newIdx] = temp;
+  state.subjectOrder = [...list];
+  saveAllStorage();
+  renderWorkspace();
+}
+
+function toggleSubjectReorderMode() {
+  state.subjectReorderMode = !state.subjectReorderMode;
+  renderWorkspace();
+}
+
+function setSubjectFilter(context, subj) {
+  if (context === "dash") {
+    state.filterSubjDash = subj;
+    if (subj !== "All") {
+      const match = state.chapters.find(c => c.id === state.selectedChapterId && c.subj === subj);
+      if (!match) {
+        const first = state.chapters.find(c => c.subj === subj);
+        if (first) state.selectedChapterId = first.id;
+      }
+    }
+  } else if (context === "flow") {
+    state.filterSubjFlow = subj;
+    if (subj !== "All") {
+      const match = state.chapters.find(c => c.id === state.selectedChapterId && c.subj === subj);
+      if (!match) {
+        const first = state.chapters.find(c => c.subj === subj);
+        if (first) state.selectedChapterId = first.id;
+      }
+    }
+  } else if (context === "tracker") {
+    state.filterSubjTracker = subj;
+  }
+  saveAllStorage();
+  renderWorkspace();
+}
+
+function toggleFlowchartVariant(context, variant) {
+  if (context === "isolated") {
+    state.flowchartVariantIsolated = variant;
+  } else if (context === "dashboard") {
+    state.flowchartVariantDashboard = variant;
+  }
+  saveAllStorage();
+  renderWorkspace();
+}
+
+function getSubjectFilterHTML(context, activeSubj) {
+  const subjects = getSubjectList();
+  const totalCount = state.chapters.length;
+  const counts = {};
+  state.chapters.forEach(c => {
+    counts[c.subj] = (counts[c.subj] || 0) + 1;
+  });
+
+  return `
+    <div class="subject-filter-bar">
+      <span style="font-family:var(--font-mono);font-size:11px;font-weight:700;">Filter Subject:</span>
+      <button class="filter-pill ${activeSubj === "All" ? "active" : ""}" onclick="setSubjectFilter('${context}', 'All')">
+        All (${totalCount})
+      </button>
+      ${subjects.map(s => `
+        <button class="filter-pill ${activeSubj === s ? "active" : ""}" onclick="setSubjectFilter('${context}', '${s}')">
+          ${s} (${counts[s] || 0})
+        </button>
+      `).join("")}
+    </div>
+  `;
+}
+
+function renderGPSFlowchart(ch, variant, context) {
+  if (variant === "linear") {
+    return `
+      <div class="flow-container">
+        ${GPS_STAGES.map((stg, idx) => `
+          <div class="flow-node ${ch.stage === stg.id ? "active-gps" : ""}" onclick="updateChapterStage('${ch.id}', ${stg.id})" style="padding:5px 8px;">
+            <div class="flex-row" style="justify-content:space-between;">
+              <span><strong>${stg.name}</strong>${ch.stage === stg.id ? `<span class="gps-badge">GPS POINTER</span>` : ""}</span>
+              <span class="tag">${stg.code}</span>
+            </div>
+            <div style="font-size:10.5px;color:var(--fg-muted);margin-top:2px;">${stg.desc}</div>
+          </div>
+          ${idx < GPS_STAGES.length - 1 ? `<div class="flow-arrow">|  v</div>` : ""}
+        `).join("")}
+      </div>`;
+  }
+
+  return `
+    <div class="diagram-flow">
+      <div class="diagram-phase-group">
+        <div class="diagram-phase-title">Phase A: Day 0 Acquisition Pipeline (Stages 0 to 4)</div>
+        <div class="diagram-grid">
+          ${[0, 1, 2, 3, 4].map(sId => renderDiagramBlock(ch, GPS_STAGES[sId])).join("")}
+        </div>
+      </div>
+
+      <div class="diagram-arrow-down">
+        <span>▼ [Day 0 Done (>=75% PYQs) triggers D1/D3/D7/D21 Auto-Calendar] ▼</span>
+      </div>
+
+      <div class="diagram-phase-group">
+        <div class="diagram-phase-title">Phase B: Spaced Parallel Retrieval Pipeline (D1 to D21)</div>
+        <div class="diagram-grid">
+          ${[5, 6, 7, 8].map(sId => renderDiagramBlock(ch, GPS_STAGES[sId])).join("")}
+        </div>
+      </div>
+
+      <div class="diagram-arrow-down" style="color:var(--status-x);">
+        <span>▼ [If Mock Error &gt; 30% — Trigger Reset] ▼</span>
+      </div>
+
+      <div class="diagram-phase-group" style="border-color:var(--status-x);background:rgba(230,81,0,0.05);">
+        <div class="diagram-phase-title" style="color:var(--status-x);">Phase C: Recovery Loop</div>
+        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+          <div style="flex:1;min-width:210px;">
+            ${renderDiagramBlock(ch, GPS_STAGES[9], true)}
+          </div>
+          <div style="font-family:var(--font-mono);font-size:11px;color:var(--status-x);font-weight:700;line-height:1.4;">
+            ↺ Reset Rule: Immediately pushes chapter back into Stage 5 (D1 Unaided Recall) ➔ Stage 6 (D3) ➔ Stage 7 (D7)!
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function renderDiagramBlock(ch, stg, isReset) {
+  const isActive = ch.stage === stg.id;
+  return `
+    <div class="diagram-block ${isActive ? "active-gps" : ""} ${isReset ? "reset-node" : ""}"
+         onclick="updateChapterStage('${ch.id}', ${stg.id})"
+         title="Click to move ${ch.name} to ${stg.code}">
+      <div class="flex-row" style="justify-content:space-between;margin-bottom:4px;">
+        <span class="tag" style="font-weight:700;">${stg.code}</span>
+        ${isActive ? `<span class="gps-badge">GPS ACTIVE</span>` : ""}
+      </div>
+      <div style="font-family:var(--font-mono);font-size:11px;font-weight:700;line-height:1.25;margin-bottom:4px;">
+        ${stg.name}
+      </div>
+      <div class="diagram-desc" style="font-size:10px;color:var(--fg-muted);line-height:1.25;">
+        ${stg.desc}
+      </div>
+    </div>
+  `;
+}
 
 function buildAutoEvents() {
   const events = [];
@@ -858,109 +1208,304 @@ function getManualHTML() {
 }
 
 function getFlowchartsHTML() {
-  const ch = state.chapters.find(c => c.id === state.selectedChapterId) || state.chapters[0];
+  const filterSubj = state.filterSubjFlow || "All";
+  const filteredChapters = filterSubj === "All"
+    ? state.chapters
+    : state.chapters.filter(c => c.subj === filterSubj);
+
+  let ch = filteredChapters.find(c => c.id === state.selectedChapterId);
+  if (!ch && filteredChapters.length) {
+    ch = filteredChapters[0];
+  } else if (!ch) {
+    ch = state.chapters[0];
+  }
+
+  const variant = state.flowchartVariantIsolated || "diagram";
+
   return `
   <div>
     <h1>Visual Flowcharts & Interactive Execution Maps</h1>
+
+    <!-- 1. UNIVERSAL CHAPTER EXECUTION LOOP -->
     <div class="box">
       <div class="box-header">
         <span>1. UNIVERSAL CHAPTER EXECUTION LOOP (LIVE GPS POINTER MAP)</span>
         <div class="flex-row">
-          <span>Inspect Chapter:</span>
-          <select onchange="selectChapterForGPS(this.value)">
-            ${state.chapters.map(c => `<option value="${c.id}" ${c.id === ch.id ? "selected" : ""}>[${c.subj}] ${c.name} (${GPS_STAGES[c.stage].code})</option>`).join("")}
-          </select>
+          <span style="font-size:11px;font-family:var(--font-mono);font-weight:700;">View Variant:</span>
+          <button class="${variant === "linear" ? "active" : ""}" onclick="toggleFlowchartVariant('isolated', 'linear')">Standard List</button>
+          <button class="${variant === "diagram" ? "active" : ""}" onclick="toggleFlowchartVariant('isolated', 'diagram')">Diagram Flow</button>
         </div>
       </div>
-      <p>Click any block below to move <strong>${ch.name}</strong> directly to that execution stage (reaching Stage 4 automatically schedules D1, D3, D7, D21 on the calendar):</p>
-      <div class="flow-container">
-        ${GPS_STAGES.map((stg, idx) => `
-          <div class="flow-node ${ch.stage === stg.id ? "active-gps" : ""}" onclick="updateChapterStage('${ch.id}',${stg.id})">
-            <div class="flex-row" style="justify-content:space-between;">
-              <span><strong>${stg.name}</strong>${ch.stage === stg.id ? `<span class="gps-badge">GPS: YOU ARE HERE</span>` : ""}</span>
-              <span class="tag">${stg.code}</span>
-            </div>
-            <div style="font-size:11px;color:var(--fg-muted);margin-top:2px;">${stg.desc}</div>
+
+      <div style="margin-bottom:8px;">
+        ${getSubjectFilterHTML('flow', filterSubj)}
+      </div>
+
+      <div class="flex-row" style="margin-bottom:8px;justify-content:space-between;">
+        <div class="flex-row">
+          <strong style="font-family:var(--font-mono);font-size:11px;">Active Chapter:</strong>
+          <select onchange="selectChapterForGPS(this.value)">
+            ${filteredChapters.map(c => `<option value="${c.id}" ${c.id === ch.id ? "selected" : ""}>[${c.subj}] ${c.name} (${GPS_STAGES[c.stage].code})</option>`).join("")}
+          </select>
+        </div>
+        <div style="font-family:var(--font-mono);font-size:11px;color:var(--fg-muted);">
+          Current GPS Stage: <strong>${GPS_STAGES[ch.stage].name}</strong>
+        </div>
+      </div>
+
+      <p style="font-size:11.5px;color:var(--fg-muted);margin-bottom:6px;">
+        Click any block below to advance or reposition <strong>${ch.name}</strong> on the syllabus track. Reaching Stage 4 automatically schedules D1, D3, D7, and D21 on your calendar.
+      </p>
+
+      ${renderGPSFlowchart(ch, variant, 'isolated')}
+    </div>
+
+    <!-- 2. SUBJECT ROUTING DECISION TREE (PERFECTED VISUAL FLOWCHART) -->
+    <div class="box">
+      <div class="box-header">
+        <span>2. SUBJECT ROUTING DECISION TREE (PROTOCOL MAP)</span>
+        <span class="tag">ALGORITHMIC FLOW</span>
+      </div>
+
+      <div style="text-align:center;margin:8px 0 12px 0;">
+        <div class="v-tree-root">
+          ⚡ START: NEW CHAPTER ENTRY ⚡
+        </div>
+        <div class="diagram-arrow-down" style="font-size:12px;font-weight:700;color:var(--border-dark);margin:4px 0;">
+          │<br>
+          ├──────────────────────────┼──────────────────────────┤<br>
+          ▼                          ▼                          ▼
+        </div>
+      </div>
+
+      <div class="v-tree-branches">
+        <!-- Branch 1: Logic-Heavy -->
+        <div class="v-tree-card">
+          <div class="v-tree-card-head flex-row" style="justify-content:space-between;">
+            <span>1. LOGIC-HEAVY PATHWAY</span>
+            <span class="tag">Phys / Math / P.Chem</span>
           </div>
-          ${idx < GPS_STAGES.length - 1 ? `<div class="flow-arrow">|  v</div>` : ""}
-        `).join("")}
+          <div class="v-step-box">
+            <strong>Step 1: Formula Sheet First</strong>
+            Skip discovery stories & lengthy introductions. Jump straight to the formula sheet to map the mathematical skeleton.
+          </div>
+          <div class="diagram-arrow-down">▼</div>
+          <div class="v-step-box">
+            <strong>Step 2: Build Obsidian API Table</strong>
+            5 mandatory columns: Concept/Law, LaTeX Equation, Mandatory SI Units, Validity Assumptions, Limits (0/Max/Prop) & Traps.
+          </div>
+          <div class="diagram-arrow-down">▼</div>
+          <div class="v-step-box">
+            <strong>Step 3: Boundary Limit Interrogation</strong>
+            Test what happens at zero (0), infinity (max), and variable proportionalities before solving problems.
+          </div>
+          <div class="diagram-arrow-down">▼</div>
+          <div class="v-step-box">
+            <strong>Step 4: 30/70 Solved Examples Split</strong>
+            Trace first 20-30% uncovered like code (input -> formula -> substitution). Cover remaining 70% and solve completely on scratchpad.
+          </div>
+          <div class="diagram-arrow-down">▼</div>
+          <div class="v-step-box" style="border:1.5px solid var(--border-dark);font-weight:700;background:var(--hl);">
+            <strong>Exit Milestone: Timed Chapter PYQs (>=75%)</strong>
+            Ugly brute-force math? Run Solution Autopsy for named trick & write 1-2-3 Pseudo-Code Checklist.
+          </div>
+        </div>
+
+        <!-- Branch 2: Data-Heavy -->
+        <div class="v-tree-card">
+          <div class="v-tree-card-head flex-row" style="justify-content:space-between;">
+            <span>2. DATA-HEAVY PATHWAY</span>
+            <span class="tag">Biology & Inorganic</span>
+          </div>
+          <div class="v-step-box">
+            <strong>Decision: Conceptual vs Factual?</strong>
+            If conceptual (Genetics, Bonding, Physio) ➔ 2-3h macro lecture.<br>
+            If factual (Morphology, p-Block) ➔ Skip lecture completely, direct to NCERT!
+          </div>
+          <div class="diagram-arrow-down">▼</div>
+          <div class="v-step-box">
+            <strong>Pass 0: 5-Minute Orientation Scan</strong>
+            Scan headings, subheadings, diagrams, and table headers without reading prose.
+          </div>
+          <div class="diagram-arrow-down">▼</div>
+          <div class="v-step-box">
+            <strong>Pass 1: PYQ High-Value Zone Creation</strong>
+            Locate 10-15 PYQs directly in NCERT; highlight strictly the minimum answering phrase.
+          </div>
+          <div class="diagram-arrow-down">▼</div>
+          <div class="v-step-box">
+            <strong>Pass 2: Visual Anchor Interrogation</strong>
+            Priority order: (1) Figure Captions & Diagrams, (2) Tables (every row is an MCQ), (3) Bold/Italic Terms.
+          </div>
+          <div class="diagram-arrow-down">▼</div>
+          <div class="v-step-box" style="border:1.5px solid var(--border-dark);font-weight:700;background:var(--hl);">
+            <strong>Pass 3: Finger Blank-Line Redaction</strong>
+            Cover testable word with finger & recite: instant recall = [C]; hesitated/missed = [X] ➔ Convert to Cloze Anki Card.
+          </div>
+        </div>
+
+        <!-- Branch 3: Hybrid Organic -->
+        <div class="v-tree-card">
+          <div class="v-tree-card-head flex-row" style="justify-content:space-between;">
+            <span>3. HYBRID DUAL-TRACK</span>
+            <span class="tag">Organic Chemistry</span>
+          </div>
+          <div class="v-step-box" style="background:var(--hl);">
+            <strong>TRACK 1 (WHY): ELECTRON LOGIC</strong>
+            Read NCERT Organic prose at 0.5x speed filtering for RDS, intermediate stability, and rearrangements.
+          </div>
+          <div class="diagram-arrow-down">▼</div>
+          <div class="v-step-box">
+            <strong>Left Column Curved Arrow Tracing</strong>
+            Trace electron pushing on scratchpad. If obvious from GOC, throw away paper.
+          </div>
+          <div class="diagram-arrow-down">▼</div>
+          <div class="v-step-box">
+            <strong>Intuition Broken or [X] Error?</strong>
+            Log a 5-Line Mechanism Fix in Obsidian (Title, Trigger, Rule, Mini Transformation, Exam Trap).
+          </div>
+          <div style="height:6px;"></div>
+          <div class="v-step-box" style="background:var(--hl);">
+            <strong>TRACK 2 (WHAT): REAGENT BUFFER</strong>
+            Extract 4 fields per reaction: Reactant Pattern, Reagents & Conditions, Major Product, High-Yield Exception.
+          </div>
+          <div class="diagram-arrow-down">▼</div>
+          <div class="v-step-box" style="border:1.5px solid var(--border-dark);font-weight:700;background:var(--hl);">
+            <strong>Suspended Candidate Deck</strong>
+            Store reactions in Anki candidate buffer; UN-SUSPEND into daily queue ONLY upon PYQ or mock test encounter.
+          </div>
+        </div>
       </div>
     </div>
 
+    <!-- 3. UNBLOCKING & ANKI GATES (VISUAL FLOWCHARTS) -->
     <div class="split-2">
       <div class="box">
-        <div class="box-header"><span>2. SUBJECT ROUTING DECISION TREE</span></div>
-        <pre>
-[NEW CHAPTER ENTRY]
-        |
-        +---> Is it Physics, Math, or Physical Chem?
-        |       YES --> [LOGIC-HEAVY PROTOCOL]
-        |               1. Summary Sheet First -> Build Obsidian API LUT
-        |               2. Interrogate Zero / Max / Proportionality limits
-        |               3. 30% Passive Trace -> 70% Active Examples
-        |               4. Timed PYQs + Solution Autopsy for ugly math
-        |
-        +---> Is it Biology or Inorganic Chem?
-        |       YES --> Conceptual (Bonding/Coord/Genetics/Physio)?
-        |               |-- YES -> Overview Lecture + NCERT Protocol
-        |               |-- NO  -> Skip Lecture -> Direct NCERT 4-Pass:
-        |                          Pass 0: 5m Heading/Diagram/Table Scan
-        |                          Pass 1: Highlight 10-15 PYQ Answer Fragments
-        |                          Pass 2: Captions -> Tables -> Bold Terms
-        |                          Pass 3: Finger Blank-Line Redaction -> [X] to Anki
-        |
-        +---> Is it Organic Chemistry?
-                YES --> [HYBRID DUAL-TRACK PROTOCOL]
-                        Track 1 (WHY): Scratchpad Curved Arrows -> 5-Line Fix in Obsidian
-                        Track 2 (WHAT): 4-Field Reagent -> Anki Candidate Deck (Suspended)
-        </pre>
+        <div class="box-header">
+          <span>3A. 2-MINUTE UNBLOCKING LADDER</span>
+          <span class="tag">DEBUGGER</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:4px;">
+          <div class="v-step-box" style="border:2px solid var(--border-dark);background:var(--bg-alt);text-align:center;font-weight:700;">
+            ⚠️ ROADBLOCK: STUCK ON STEP &gt; 2 MINUTES ⚠️
+          </div>
+          <div class="diagram-arrow-down">▼ (0 to 30 Seconds)</div>
+          <div class="v-step-box">
+            <strong>Level 1: 30-Second API Table Self-Audit</strong>
+            Check Obsidian API Table: Are units strictly standard SI? Sign conventions right? Did you violate a physical assumption?
+          </div>
+          <div class="diagram-arrow-down">▼ (Still stuck? 30s to 120 Seconds)</div>
+          <div class="v-step-box">
+            <strong>Level 2: 90-Second Pattern Audit</strong>
+            Scan the 2-3 solved examples immediately preceding this problem in your module for the matching algebraic trick.
+          </div>
+          <div class="diagram-arrow-down">▼ (Still stuck after 2 Minutes)</div>
+          <div class="v-step-box">
+            <strong>Level 3: &lt;=10m Targeted YouTube Debugger Query</strong>
+            Search the EXACT stuck phrasing or step name (never watch a full lecture). Stop the second the roadblock is explained.
+          </div>
+          <div class="diagram-arrow-down">▼ Outcome Branch</div>
+          <div class="flex-row" style="gap:8px;align-items:stretch;">
+            <div class="v-step-box" style="flex:1;border:1.5px solid var(--status-c);background:rgba(76,175,80,0.06);margin-bottom:0;">
+              <strong style="color:var(--status-c);">✓ ROADBLOCK RESOLVED</strong>
+              Log 1-3 line fix rule into your Obsidian Chapter API Table and immediately finish solving the problem.
+            </div>
+            <div class="v-step-box" style="flex:1;border:1.5px solid var(--status-x);background:rgba(244,67,54,0.06);margin-bottom:0;">
+              <strong style="color:var(--status-x);">✗ STILL BLOCKED AT 10M</strong>
+              Mark [X] flag on question stem. Park in D3/D7 Error Queue. Move on to next problem immediately!
+            </div>
+          </div>
+        </div>
       </div>
 
       <div class="box">
-        <div class="box-header"><span>3. 2-MINUTE UNBLOCKING & ANKI INTAKE GATES</span></div>
-        <pre>
-[STUCK ON PROBLEM STEP > 2 MINUTES]
-        |
-        v
-[Step 1: 30s Self-Audit] -> Check Obsidian API units, signs & domain limits
-        | (Still stuck)
-        v
-[Step 2: 90s Pattern Check] -> Scan preceding 2-3 solved examples in module
-        | (Still stuck)
-        v
-[Step 3: <=10m YouTube Debugger] -> Search EXACT stuck step phrase
-        |
-        +-- Resolved? -> Log 1-3 line fix in Obsidian -> Resume Problem
-        +-- Still Blocked after 10m? -> Mark [X], Park in Queue, Move On!
+        <div class="box-header">
+          <span>3B. ANKI CONTROLLED INTAKE GATES</span>
+          <span class="tag">ZERO DROWNING</span>
+        </div>
+        <p style="font-size:11px;color:var(--fg-muted);margin-bottom:6px;">Cards are created exclusively via verified failures. Never pre-load entire formula sheets:</p>
+        <div style="display:flex;flex-direction:column;gap:6px;">
+          <div class="flex-row" style="align-items:stretch;gap:6px;">
+            <div class="v-step-box" style="flex:1;margin-bottom:0;">
+              <strong>Trigger 1: NCERT Blank-Line Miss</strong>
+              Failed to recite covered testable keyword aloud during Pass 3.
+            </div>
+            <div class="diagram-arrow-right">►</div>
+            <div class="v-step-box" style="flex:1;margin-bottom:0;border:1.5px solid var(--border-dark);font-weight:700;">
+              Add Cloze Deletion Card
+            </div>
+          </div>
 
--------------------------------------------------------------------------
-[ANKI CONTROLLED INTAKE GATE (NO PRE-LOADING)]
-        |
-        +-- Did you fail a Blank-Line redaction check in NCERT? ---> [ADD CLOZE CARD]
-        +-- Did you blank on a formula/constraint during D1 Recall? -> [ADD BASIC CARD]
-        +-- Did you miss a PYQ ([X]) or repeat [W] twice? ----------> [ADD BASIC CARD]
-        +-- Is it an Organic 'What' Reaction? -> [ADD TO SUSPENDED CANDIDATE DECK]
-                                                  (Promote ONLY on PYQ/Mock hit)
-        </pre>
+          <div class="flex-row" style="align-items:stretch;gap:6px;">
+            <div class="v-step-box" style="flex:1;margin-bottom:0;">
+              <strong>Trigger 2: D1 Blank-Sheet Miss</strong>
+              Forgot formula, constant, or unit limit during unaided recall.
+            </div>
+            <div class="diagram-arrow-right">►</div>
+            <div class="v-step-box" style="flex:1;margin-bottom:0;border:1.5px solid var(--border-dark);font-weight:700;">
+              Add Atomic Basic Card
+            </div>
+          </div>
+
+          <div class="flex-row" style="align-items:stretch;gap:6px;">
+            <div class="v-step-box" style="flex:1;margin-bottom:0;">
+              <strong>Trigger 3: PYQ [X] Miss or 2x [W]</strong>
+              Factual retrieval failure during D0 or D3 stress test.
+            </div>
+            <div class="diagram-arrow-right">►</div>
+            <div class="v-step-box" style="flex:1;margin-bottom:0;border:1.5px solid var(--border-dark);font-weight:700;">
+              Add Diagnostic Basic Card
+            </div>
+          </div>
+
+          <div class="flex-row" style="align-items:stretch;gap:6px;">
+            <div class="v-step-box" style="flex:1;margin-bottom:0;">
+              <strong>Trigger 4: Organic 'What' Reaction</strong>
+              Extracted 4-field reagent and major product transformation.
+            </div>
+            <div class="diagram-arrow-right">►</div>
+            <div class="v-step-box" style="flex:1;margin-bottom:0;border:1.5px solid var(--border-dark);font-weight:700;">
+              Add to Suspended Candidate Deck
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
+    <!-- 4. ORGANIC CHEMISTRY DEPENDENCY ROADMAP -->
     <div class="box">
-      <div class="box-header"><span>4. NON-NEGOTIABLE 11-STEP ORGANIC CHEMISTRY DEPENDENCY TREE</span></div>
-      <pre>
-[0. Chemical Bonding: sp/sp2/sp3, Formal Charge, Dipole]
-   |
-   v
-[1. IUPAC Nomenclature] --> [2. Structural Isomerism] --> [3. GOC: Inductive, Resonance, Hyperconjugation, Intermediates]
-                                                                 |
-   +-------------------------------------------------------------+
-   v
-[4. Stereoisomerism (3D/Chiral)] --> [5. POC] --> [6. Hydrocarbons] --> [7. Haloalkanes (ORM-1: SN1, SN2, E1, E2)]
-                                                                               |
-   +---------------------------------------------------------------------------+
-   v
-[8. Alcohols, Phenols & Ethers] --> [9. Aldehydes, Ketones & Carboxylic Acids] --> [10. Amines] --> [11. Biomolecules]
-      </pre>
+      <div class="box-header">
+        <span>4. NON-NEGOTIABLE 11-STEP ORGANIC CHEMISTRY DEPENDENCY ROADMAP</span>
+        <span class="tag">STEP-BY-STEP TREE</span>
+      </div>
+      <p style="font-size:11px;color:var(--fg-muted);margin-bottom:6px;">
+        Steps 0 through 4 are non-negotiable Root Prerequisites. Never attempt derivative synthesis without mastering them:
+      </p>
+      <div class="organic-tree-grid">
+        ${[
+          { s: 0, n: "Chemical Bonding", t: "Prereq", desc: "sp/sp2/sp3 hybridization, formal charge, dipole moments & resonance basics." },
+          { s: 1, n: "IUPAC Nomenclature", t: "Root", desc: "Principal functional group priority order & systematic chain numbering." },
+          { s: 2, n: "Structural Isomerism", t: "Root", desc: "Tautomerism, enol content, Bredt's rule, and chain/position/functional isomers." },
+          { s: 3, n: "General Organic Chem (GOC)", t: "Bedrock Root", desc: "Inductive (-I/+I), Resonance (+M/-M), Hyperconjugation & Intermediate Stability (C+, C-, Free Radicals, Carbene)." },
+          { s: 4, n: "Stereoisomerism", t: "Root", desc: "Chiral centers, enantiomers, diastereomers, meso compounds, Fischer/Newman, R/S & E/Z." },
+          { s: 5, n: "Practical Org Chem (POC)", t: "Tooling", desc: "Lassaigne's extract, functional group qualitative tests & chromatography." },
+          { s: 6, n: "Hydrocarbons", t: "Derivative", desc: "Alkanes (free radical), Alkenes/Alkynes (electrophilic addition: Markovnikov) & Benzene EAS." },
+          { s: 7, n: "Haloalkanes & Haloarenes", t: "ORM-1 Mechanism", desc: "SN1 vs SN2 nucleophilic substitution & E1 vs E2 elimination dynamics (Zaitsev/Hoffmann)." },
+          { s: 8, n: "Alcohols, Phenols & Ethers", t: "Derivative", desc: "Acidity of phenols, Williamson ether synthesis & Lucas test." },
+          { s: 9, n: "Carbonyls & Carboxylic Acids", t: "Derivative", desc: "Nucleophilic addition, Aldol, Cannizzaro, Grignard additions & HVZ reaction." },
+          { s: 10, n: "Amines & Diazonium Salts", t: "Derivative", desc: "Basicity trends (aqueous vs gas), Hoffmann bromamide & Sandmeyer coupling." },
+          { s: 11, n: "Biomolecules & Polymers", t: "Data-Heavy", desc: "Carbohydrates (mutarotation/reducing sugars), amino acids (isoelectric point) & DNA/RNA." }
+        ].map((node, idx) => `
+          <div class="organic-step-node" style="${node.t.includes('Root') ? 'border-width:2px;background:var(--bg-alt);' : ''}">
+            <div class="step-num">
+              <span>${node.s}. ${node.n}</span>
+              <span class="tag">${node.t}</span>
+            </div>
+            <div style="font-size:10.5px;color:var(--fg-muted);">${node.desc}</div>
+            ${idx < 11 ? `<div style="text-align:right;font-size:11px;font-weight:700;margin-top:4px;color:var(--fg-muted);">➔ Step ${node.s + 1}</div>` : ""}
+          </div>
+        `).join("")}
+      </div>
     </div>
   </div>`;
 }
@@ -1032,6 +1577,11 @@ function getReferenceHTML() {
 }
 
 function getTrackerHTML() {
+  const filterSubj = state.filterSubjTracker || "All";
+  const filteredChapters = filterSubj === "All"
+    ? state.chapters
+    : state.chapters.filter(c => c.subj === filterSubj);
+
   return `
   <div>
     <h1>NEET / JEE Syllabus & Chapter GPS Tracker</h1>
@@ -1039,14 +1589,9 @@ function getTrackerHTML() {
       <div class="box-header"><span>ADD NEW CHAPTER TO SYLLABUS TRACKER</span></div>
       <div class="flex-row">
         <select id="newChSubj">
-          <option value="Physical Chemistry">Physical Chemistry</option>
-          <option value="Organic Chemistry">Organic Chemistry</option>
-          <option value="Inorganic Chemistry">Inorganic Chemistry</option>
-          <option value="Physics">Physics</option>
-          <option value="Biology">Biology</option>
-          <option value="Mathematics">Mathematics</option>
+          ${getSubjectList().map(s => `<option value="${s}">${s}</option>`).join("")}
         </select>
-        <input type="text" id="newChName" placeholder="Chapter Name..." style="width:220px;">
+        <input type="text" id="newChName" placeholder="Chapter Name..." style="width:220px;" onkeydown="if(event.key==='Enter')addChapter()">
         <select id="newChType">
           <option value="Root">Root Prerequisite</option>
           <option value="Derivative">Derivative Chapter</option>
@@ -1060,47 +1605,55 @@ function getTrackerHTML() {
       </div>
     </div>
 
-    <table>
-      <thead>
-        <tr>
-          <th>Subject</th>
-          <th>Chapter Name</th>
-          <th>Hierarchy / Protocol</th>
-          <th>Flowchart GPS Stage (Updatable)</th>
-          <th>D0 Date (Auto-Schedules D1-D21)</th>
-          <th>PYQ Acc %</th>
-          <th>[W] & [X] Error Queue</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        ${state.chapters.map(ch => `
+    <div class="box">
+      <div class="box-header">
+        <span>SYLLABUS GPS DIRECTORY (${filteredChapters.length} CHAPTERS SHOWN)</span>
+        <span class="tag">FILTER: ${filterSubj.toUpperCase()}</span>
+      </div>
+      ${getSubjectFilterHTML('tracker', filterSubj)}
+      <table style="margin-top:8px;">
+        <thead>
           <tr>
-            <td><strong>${ch.subj}</strong></td>
-            <td>${ch.name}</td>
-            <td><span class="tag">${ch.type}</span><span class="tag">${ch.cat}</span></td>
-            <td>
-              <select onchange="updateChapterStage('${ch.id}', parseInt(this.value, 10))">
-                ${GPS_STAGES.map(s => `<option value="${s.id}" ${ch.stage === s.id ? "selected" : ""}>${s.name}</option>`).join("")}
-              </select>
-            </td>
-            <td>
-              <input type="date" value="${ch.d0 || ""}" onchange="updateChapterD0('${ch.id}', this.value)">
-            </td>
-            <td>
-              <input type="number" min="0" max="100" value="${ch.acc || 0}" style="width:58px;" onchange="updateChapterAcc('${ch.id}', this.value)">%
-            </td>
-            <td>
-              <input type="text" value="${(ch.wx || "").replace(/"/g, '&quot;')}" placeholder="[W]/[X] Q#..." style="width:100%;" onchange="updateChapterWX('${ch.id}', this.value)">
-            </td>
-            <td>
-              <button onclick="selectChapterAndOpenFlow('${ch.id}')">GPS Map</button>
-              <button onclick="deleteChapter('${ch.id}')">Del</button>
-            </td>
+            <th>Subject</th>
+            <th>Chapter Name</th>
+            <th>Hierarchy / Protocol</th>
+            <th>Flowchart GPS Stage (Updatable)</th>
+            <th>D0 Date (Auto-Schedules D1-D21)</th>
+            <th>PYQ Acc %</th>
+            <th>[W] & [X] Error Queue</th>
+            <th>Actions</th>
           </tr>
-        `).join("")}
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          ${filteredChapters.length === 0 ? `<tr><td colspan="8" style="text-align:center;padding:12px;color:var(--fg-muted);">No chapters found for subject "${filterSubj}".</td></tr>` :
+            filteredChapters.map(ch => `
+            <tr>
+              <td><strong>${ch.subj}</strong></td>
+              <td>${ch.name}</td>
+              <td><span class="tag">${ch.type}</span><span class="tag">${ch.cat}</span></td>
+              <td>
+                <select onchange="updateChapterStage('${ch.id}', parseInt(this.value, 10))">
+                  ${GPS_STAGES.map(s => `<option value="${s.id}" ${ch.stage === s.id ? "selected" : ""}>${s.name}</option>`).join("")}
+                </select>
+              </td>
+              <td>
+                <input type="date" value="${ch.d0 || ""}" onchange="updateChapterD0('${ch.id}', this.value)">
+              </td>
+              <td>
+                <input type="number" min="0" max="100" value="${ch.acc || 0}" style="width:58px;" onchange="updateChapterAcc('${ch.id}', this.value)">%
+              </td>
+              <td>
+                <input type="text" value="${(ch.wx || "").replace(/"/g, '&quot;')}" placeholder="[W]/[X] Q#..." style="width:100%;" onchange="updateChapterWX('${ch.id}', this.value)">
+              </td>
+              <td>
+                <button onclick="selectChapterAndOpenFlow('${ch.id}')">GPS Map</button>
+                <button onclick="deleteChapter('${ch.id}')">Del</button>
+              </td>
+            </tr>
+          `).join("")}
+        </tbody>
+      </table>
+    </div>
   </div>`;
 }
 
@@ -1186,9 +1739,22 @@ function getDashboardHTML() {
   const todayStr = offsetDate(0);
   const evs = buildAutoEvents();
   const dueToday = evs.filter(e => e.date <= todayStr && !e.done);
-  const activeChapters = state.chapters.filter(c => c.stage > 0);
-  const ch = state.chapters.find(c => c.id === state.selectedChapterId) || state.chapters[0];
-  const subjects = ["Physical Chemistry", "Organic Chemistry", "Inorganic Chemistry", "Physics", "Biology", "Mathematics"];
+  
+  const filterSubj = state.filterSubjDash || "All";
+  const filteredChapters = filterSubj === "All"
+    ? state.chapters
+    : state.chapters.filter(c => c.subj === filterSubj);
+
+  let ch = filteredChapters.find(c => c.id === state.selectedChapterId);
+  if (!ch && filteredChapters.length) {
+    ch = filteredChapters[0];
+  } else if (!ch) {
+    ch = state.chapters[0];
+  }
+
+  const activeChapters = (filterSubj === "All" ? state.chapters : filteredChapters).filter(c => c.stage > 0);
+  const variant = state.flowchartVariantDashboard || "linear";
+  const subjects = getSubjectList();
 
   return `
   <div class="dash-grid">
@@ -1196,31 +1762,37 @@ function getDashboardHTML() {
       <div class="box">
         <div class="box-header">
           <span>COL 1: ACTIVE CHAPTERS & LIVE GPS FLOWCHART</span>
-          <span class="tag">${activeChapters.length} IN FLIGHT</span>
+          <div class="flex-row">
+            <span style="font-size:10px;font-family:var(--font-mono);font-weight:700;">Variant:</span>
+            <button class="${variant === "linear" ? "active" : ""}" onclick="toggleFlowchartVariant('dashboard', 'linear')">List</button>
+            <button class="${variant === "diagram" ? "active" : ""}" onclick="toggleFlowchartVariant('dashboard', 'diagram')">Diagram</button>
+          </div>
         </div>
+
+        <div style="margin-bottom:6px;">
+          ${getSubjectFilterHTML('dash', filterSubj)}
+        </div>
+
         <div style="margin-bottom:8px;">
           <label style="font-family:var(--font-mono);font-size:11px;font-weight:700;">Select Chapter for Live GPS Pointer:</label>
           <select style="width:100%;margin-top:4px;" onchange="selectChapterForGPS(this.value)">
-            ${state.chapters.map(c => `<option value="${c.id}" ${c.id === ch.id ? "selected" : ""}>[${c.subj}] ${c.name} ->${GPS_STAGES[c.stage].code}</option>`).join("")}
+            ${filteredChapters.map(c => `<option value="${c.id}" ${c.id === ch.id ? "selected" : ""}>[${c.subj}] ${c.name} -> ${GPS_STAGES[c.stage].code}</option>`).join("")}
           </select>
         </div>
-        <div class="flow-container">
-          ${GPS_STAGES.map(s => `
-            <div class="flow-node ${ch.stage === s.id ? "active-gps" : ""}" onclick="updateChapterStage('${ch.id}',${s.id})" style="padding:4px 6px;">
-              <div class="flex-row" style="justify-content:space-between;">
-                <span>${s.name}</span>${ch.stage === s.id ? `<span class="gps-badge">GPS POINTER</span>` : `<span class="tag">${s.code}</span>`}
-              </div>
-            </div>
-          `).join("")}
-        </div>
+
+        ${renderGPSFlowchart(ch, variant, 'dashboard')}
       </div>
 
       <div class="box">
-        <div class="box-header"><span>ACTIVE CHAPTERS STATUS BOARD</span></div>
+        <div class="box-header">
+          <span>ACTIVE CHAPTERS STATUS BOARD (${activeChapters.length})</span>
+          <span class="tag">FILTER: ${filterSubj.toUpperCase()}</span>
+        </div>
         <table>
           <thead><tr><th>Chapter</th><th>GPS Stage</th><th>Acc</th></tr></thead>
           <tbody>
-            ${activeChapters.map(c => `
+            ${activeChapters.length === 0 ? `<tr><td colspan="3" style="text-align:center;color:var(--fg-muted);">No active chapters for "${filterSubj}".</td></tr>` :
+              activeChapters.map(c => `
               <tr onclick="selectChapterForGPS('${c.id}')" style="cursor:pointer;${c.id === ch.id ? "background:var(--hl);" : ""}">
                 <td><strong>${c.name}</strong><br><span style="font-size:10px;color:var(--fg-muted);">${c.subj} (${c.type})</span></td>
                 <td><span class="tag">${GPS_STAGES[c.stage].code}</span></td>
@@ -1250,7 +1822,7 @@ function getDashboardHTML() {
             ${dueToday.map(e => `
               <tr>
                 <td>${e.date}</td>
-                <td><strong>[${e.code}]</strong>${e.chName}<br><span style="font-size:10.5px;color:var(--fg-muted);">${e.label}</span></td>
+                <td><strong>[${e.code}]</strong> ${e.chName}<br><span style="font-size:10.5px;color:var(--fg-muted);">${e.label}</span></td>
                 <td><button onclick="toggleEventDone('${e.id}', '${e.chId}',${e.targetStage})">Done</button></td>
               </tr>
             `).join("")}
@@ -1266,7 +1838,7 @@ function getDashboardHTML() {
       <div class="box">
         <div class="box-header"><span>SIDE-QUEST PARKING PAD (OCD/FOMO BUFFER)</span></div>
         <div class="flex-row" style="margin-bottom:6px;">
-          <input type="text" id="sideQuestInput" placeholder="Park intrusive tangent for after block..." style="flex:1;">
+          <input type="text" id="sideQuestInput" placeholder="Park intrusive tangent for after block..." style="flex:1;" onkeydown="if(event.key==='Enter')addSideQuest()">
           <button onclick="addSideQuest()">Park</button>
         </div>
         <ul>
@@ -1282,7 +1854,12 @@ function getDashboardHTML() {
 
     <div>
       <div class="box">
-        <div class="box-header"><span>COL 3: SYLLABUS PROGRESS TRACKER BY SUBJECT</span></div>
+        <div class="box-header">
+          <span>COL 3: SYLLABUS PROGRESS TRACKER BY SUBJECT</span>
+          <button onclick="toggleSubjectReorderMode()">
+            ${state.subjectReorderMode ? "Done Reordering" : "Reorder Subjects"}
+          </button>
+        </div>
         ${subjects.map(subj => {
           const list = state.chapters.filter(c => c.subj === subj);
           const d0Done = list.filter(c => c.stage >= 4 && c.stage !== 9).length;
@@ -1291,7 +1868,15 @@ function getDashboardHTML() {
           return `
             <div style="margin-bottom:10px;border-bottom:1px solid var(--border);padding-bottom:8px;">
               <div class="flex-row" style="justify-content:space-between;font-family:var(--font-mono);font-size:11.5px;">
-                <strong>${subj}</strong>
+                <div class="flex-row">
+                  <strong>${subj}</strong>
+                  ${state.subjectReorderMode ? `
+                    <div class="flex-row" style="gap:2px;">
+                      <button style="padding:1px 5px;font-size:10px;" onclick="moveSubjectOrder('${subj}', -1)" title="Move ${subj} Up">▲</button>
+                      <button style="padding:1px 5px;font-size:10px;" onclick="moveSubjectOrder('${subj}', 1)" title="Move ${subj} Down">▼</button>
+                    </div>
+                  ` : ""}
+                </div>
                 <span>${d0Done}/${list.length} D0+ (${pct}%) | ${inProg} Active</span>
               </div>
               <div class="progress-bar"><div class="progress-fill" style="width:${pct}%;"></div></div>
