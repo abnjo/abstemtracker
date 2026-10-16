@@ -600,8 +600,8 @@ const GPS_STAGES = [
   { id: 3, code: "D0_DRILL", name: "3. Day 0, Step 2B: Practice Drill & Diagnosis", desc: "Solve 20-30 practice questions (or 40-50 Bio MCQs); diagnose errors with 4-step routine." },
   { id: 4, code: "D0_DONE", name: "4. Day 0 Complete: End-of-Chapter Cleanup", desc: "Obsidian chapter file compiled, Anki cards created, rough notes deleted. Auto-schedules D1, D3, D7, D21." },
   { id: 5, code: "D1_RECALL", name: "5. Day 1: Cued Recall (15-20m)", desc: "Cover formula/product columns in Obsidian or NCERT labels/tables; verify retention. Missed items to Anki." },
-  { id: 6, code: "D3_TEST", name: "6. Day 3: Redo Queue & Timed PYQ Test", desc: "Clear Day 0 [W] and [X] queues + solve 20-30 unseen PYQs under exam timing (>=75-80% accuracy target)." },
-  { id: 7, code: "D7_REDO", name: "7. Day 7: Targeted Error Redo (15-20m)", desc: "Re-solve remaining [W] and [X] questions cold. Must pass twice to clear." },
+  { id: 6, code: "D3_TEST", name: "6. Day 3: Redo Queue & Timed PYQ Test", desc: "Stopwatch re-test of D0 [W] Queue (Pass -> [C]; Strike 2 -> mutates to [X]) + 1st Cold Re-Test of [X] Queue + 20-30 unseen Timed PYQs (>=75-80%)." },
+  { id: 7, code: "D7_REDO", name: "7. Day 7: Mandatory 2nd Cold Re-Test of [X] Penalty Queue (15-20m)", desc: "Mandatory 2nd Cold Re-Test of [X] Penalty Queue (15-20m) — Must pass cold on BOTH D3 and D7 to graduate to [C]." },
   { id: 8, code: "D21_MOCK", name: "8. Day 21 Passed: Mixed Mock & Maintenance", desc: "Passed cumulative multi-chapter mixed test (<30% error). Maintained via daily Anki + monthly mocks." },
   { id: 9, code: "RESET_30", name: "9. >30% Mock Error Reset Triggered", desc: "Missed >30% questions in cumulative mock; chapter reset to D1 Cued Recall -> D3 -> D7." }
 ];
@@ -620,7 +620,7 @@ const CONCEPTS = {
   "anki-rules": {
     title: "Atomic Anki Flashcards (Two Decks)",
     section: "sec-tools",
-    body: "Keeps two decks: '1. Global: Errors & Facts' and '2. Organic: Reagents'. Created only from verified misses: NCERT self-test blanks, forgotten constants/rules from practice questions, Day 1 cued recall misses, or NCERT/PYQ tested Organic reactions. One isolated fact per card."
+    body: "Keeps two decks: '1. Global: Errors & Facts' and '2. Organic: Reagents (Candidate Deck)'. Deck 2 is suspended by default and cards are only un-suspended into active daily review when verified by NCERT, PYQs, or test errors. Cards are created only from verified misses: NCERT self-test blanks, forgotten constants/rules from practice questions, Day 1 cued recall misses, or tested Organic reactions. One isolated fact per card."
   },
   "primary-source": {
     title: "Primary Source Lockdown (One Book Per Subject)",
@@ -650,7 +650,7 @@ const CONCEPTS = {
   "flags-cwx": {
     title: "Question Triage Flags: [C], [W], [X]",
     section: "sec-p3-drilling",
-    body: "[C] Confirmed: Solved correctly, rapidly, and cleanly within exam time cap. [W] Weak: Right answer, but slow, brute-force algebra, or hesitated. Sent to Day 3 Speed-Redo Queue. [X] Blocked: Wrong answer, sign/unit trap, or blank. Sent to Day 3 and Day 7 Error-Redo Queue."
+    body: "[C] Confirmed: Solved correctly, rapidly, and cleanly within exam time cap. [W] Weak: Right answer, but slow, brute-force algebra, or hesitated. Sent to Day 3 Speed-Drill Queue. [X] Blocked: Wrong answer, sign/unit trap, or blank. Sent to Day 3 and Day 7 Error-Redo Queue."
   },
   "stuck-routine": {
     title: "4-Step Routine When Stuck (2-Minute Rule)",
@@ -675,7 +675,7 @@ const CONCEPTS = {
   "targeted-redo-d7": {
     title: "Day 7 Targeted Error Redo (15-20 Minutes)",
     section: "sec-p4-review",
-    body: "7 days after Day 0: Re-solve all remaining [W] and [X] questions cold. Any [X] question passed on both Day 3 and Day 7 is permanently cleared to [C]. Repeated misses trigger an Obsidian logic fix rewrite."
+    body: "7 days after Day 0: Mandatory second cold re-test of the [X] Penalty Queue (including any [W] items that failed D3 and mutated into [X]). Must pass cold on both Day 3 and Day 7 to graduate to [C]. Repeated misses trigger an Obsidian logic fix rewrite."
   },
   "reset-30": {
     title: "30% Mock Error Reset Rule",
@@ -1376,7 +1376,10 @@ function getManualHTML() {
       <div class="box">
         <div class="box-header"><span>PROTOCOL A: LOGIC-HEAVY (PHYSICS, MATH, PHYSICAL CHEMISTRY)</span><span class="tag">FORMULA API</span></div>
         <ol>
-          <li><strong>5-Minute Formula Sheet Preview:</strong> Flip to the chapter summary/formula sheet before opening page 1. Map the mathematical skeleton.</li>
+          <li><strong>Step 1 — Cross-Check Module Formula Summary (2–5 Mins) Before Solving Problems:</strong>
+            <p style="margin:4px 0;"><strong>If coming from a Phase 1 Lecture:</strong> Compare your Right-Column lecture notes against the printed Summary/Formula page at the back of your textbook/coaching module so zero special-case formulas or constants are missed, then compile your Obsidian Chapter API Table and discard your rough scratchpad.</p>
+            <p style="margin:4px 0;"><strong>If skipping the lecture (Direct Book Entry):</strong> Skip Page 1 theory prose, flip straight to the printed Summary/Formula sheet at the end of the textbook chapter to initialize your Obsidian API Table, and then proceed to Phase 3 Solved Examples.</p>
+          </li>
           <li><strong>4-Symbol Margin Scalpel:</strong> When reading textbook/PDF, mark only:
             <ul>
               <li><code>[ ]</code> <strong>Box:</strong> Box the starting governing equation only (never intermediate algebra).</li>
@@ -1496,14 +1499,14 @@ function getManualHTML() {
       <ul>
         <li><strong>Stage 1 — The 30 / 70 Solved Example Split:</strong>
           <ul>
-            <li><em>First 20-30% Solved Examples:</em> Keep solution uncovered. Trace line-by-line: (1) Given input variables and hidden conditions (e.g., "starts from rest" $implies u=0$), (2) Connecting formula from table, (3) Sign rule or substitution used.</li>
+            <li><em>First 20-30% Solved Examples:</em> Keep solution uncovered. Trace line-by-line: (1) Given input variables and hidden conditions (e.g., "starts from rest" $\\implies u=0$), (2) Connecting formula from table, (3) Sign rule or substitution used.</li>
             <li><em>Remaining 70% Solved Examples:</em> Cover solution and solve independently on scratchpad.</li>
             <li><em>Short-Chapter Exception:</em> If a chapter has &lt;6 worked examples total, read all once, close book, and solve all from scratch on blank paper.</li>
           </ul>
         </li>
         <li><strong>2-Minute Unblocking Ladder (When Stuck >2 Minutes):</strong>
           <ol>
-            <li><strong>30s Self-Check:</strong> Check scratchpad for dropped minus signs, arithmetic slips, or unit conversions ($	ext{cm} ightarrow 	ext{m}$, $^circ	ext{C} ightarrow 	ext{K}$).</li>
+            <li><strong>30s Self-Check:</strong> Check scratchpad for dropped minus signs, arithmetic slips, or unit conversions ($\\text{cm} \\rightarrow \\text{m}$, $^\\circ\\text{C} \\rightarrow \\text{K}$).</li>
             <li><strong>60s Solution Autopsy:</strong> Scan printed solution for <em>Capitalized/Italicized Method Nouns</em> (e.g., "By Nodal Analysis", "Negative Mass", "Lami's Theorem").</li>
             <li><strong>5-10m YouTube Debugger Cap:</strong> If solution skips algebra, search exact method name + "short trick" on YouTube. Watch 1 problem solve (&le;10m), close video immediately, and re-solve.</li>
           </ol>
@@ -1515,10 +1518,10 @@ function getManualHTML() {
         <strong>Recipe 1: Kirchhoff Nodal Analysis (x-Method for Circuits)</strong>
         <ol>
           <li>Find junction connecting most branches; label its potential $x$.</li>
-          <li>Label clean bottom reference wire (ground) as $0	ext{ V}$.</li>
+          <li>Label clean bottom reference wire (ground) as $0\\text{ V}$.</li>
           <li>Label known node voltages using connected batteries.</li>
           <li>Assume node $x$ is highest potential and solve KCL in one line:
-            $$rac{x - V_1}{R_1} + rac{x - V_2}{R_2} + rac{x - V_3}{R_3} = 0$$
+            $$\\frac{x - V_1}{R_1} + \\frac{x - V_2}{R_2} + \\frac{x - V_3}{R_3} = 0$$
           </li>
         </ol>
       </div>
@@ -1527,9 +1530,9 @@ function getManualHTML() {
         <strong>Recipe 2: Pulley Constraint Equations</strong>
         <ol>
           <li>Pick fixed reference line (ceiling/ground); mark positions ($x_1, x_2, x_p$) or tensions ($T$) along movable string segments.</li>
-          <li>Use zero net virtual work ($sum ec{T} cdot ec{a} = 0$) or differentiate constant length ($sum x_i = L implies sum a_i = 0$).</li>
+          <li>Use zero net virtual work ($\\sum \\vec{T} \\cdot \\vec{a} = 0$) or differentiate constant length ($\\sum x_i = L \\implies \\sum a_i = 0$).</li>
           <li>For standard movable pulley with two hanging blocks:
-            $$ec{a}_p = rac{ec{a}_1 + ec{a}_2}{2} iff a_1 + a_2 = 2a_p$$
+            $$\\vec{a}_p = \\frac{\\vec{a}_1 + \\vec{a}_2}{2} \\iff a_1 + a_2 = 2a_p$$
           </li>
         </ol>
       </div>
@@ -1538,9 +1541,9 @@ function getManualHTML() {
         <strong>Recipe 3: Cavity Center-of-Mass ("Negative Mass" Shortcut)</strong>
         <ol>
           <li>Treat original uncut object as Mass 1 ($M_1 = +M$) at center $C_1 = (X_1, Y_1)$.</li>
-          <li>Treat cut-out cavity as superimposed negative mass ($M_2 = -m$, where $m propto r^3$ for 3D spheres [$r=R/2 implies m=M/8$] and $m propto r^2$ for 2D discs [$r=R/2 implies m=M/4$]) at cavity center $C_2 = (X_2, Y_2)$.</li>
+          <li>Treat cut-out cavity as superimposed negative mass ($M_2 = -m$, where $m \\propto r^3$ for 3D spheres [$r=R/2 \\implies m=M/8$] and $m \\propto r^2$ for 2D discs [$r=R/2 \\implies m=M/4$]) at cavity center $C_2 = (X_2, Y_2)$.</li>
           <li>Plug directly into 2-body formula:
-            $$X_{	ext{com}} = rac{M_1 X_1 - |M_2| X_2}{M_1 - |M_2|}$$
+            $$X_{\\text{com}} = \\frac{M_1 X_1 - |M_2| X_2}{M_1 - |M_2|}$$
           </li>
         </ol>
       </div>
@@ -1583,7 +1586,7 @@ function getManualHTML() {
             <td><strong>[W] Speed-Drill Queue</strong></td>
             <td>Correct answer, BUT slow, hesitated, brute-force algebra, or 50/50 guess.</td>
             <td>Log 1-line shortcut in Obsidian. No Anki &amp; no YouTube on D0.</td>
-            <td>Stopwatch re-test. If fast &amp; clean $ightarrow$ promote to [C]. If slow/wrong again $ightarrow$ <strong>Strike 2: mutates into [X]</strong>.</td>
+            <td>Stopwatch re-test. If fast &amp; clean $\\rightarrow$ promote to [C]. If slow/wrong again $\\rightarrow$ <strong>Strike 2: mutates into [X]</strong>.</td>
             <td>N/A (cleared or mutated on D3).</td>
             <td>Pass 1x fast &amp; clean on D3.</td>
           </tr>
@@ -1623,7 +1626,7 @@ function getManualHTML() {
             </tbody>
           </table>
         </li>
-        <li><strong>1-4 Grading Discipline:</strong> Again (1): Wrong/missed $ightarrow$ 1 min; Hard (2): Hesitated $ightarrow$ short interval; Good (3): Normal speed $ightarrow$ standard interval; Easy (4): Reflex $ightarrow$ pushes weeks ahead.</li>
+        <li><strong>1-4 Grading Discipline:</strong> Again (1): Wrong/missed $\\rightarrow$ 1 min; Hard (2): Hesitated $\\rightarrow$ short interval; Good (3): Normal speed $\\rightarrow$ standard interval; Easy (4): Reflex $\\rightarrow$ pushes weeks ahead.</li>
       </ul>
     </div>
 
@@ -1648,7 +1651,7 @@ function getManualHTML() {
       </div>
       <div class="tactical-card">
         <h4>Unit Matching &amp; Limit Elimination</h4>
-        <p>Check dimensions of options before long algebra. Plug extreme limits ($	heta = 0^circ, m_1 = m_2, r ightarrow infty$) into options to eliminate impossible formulas in 15 seconds.</p>
+        <p>Check dimensions of options before long algebra. Plug extreme limits ($\\theta = 0^\\circ, m_1 = m_2, r \\rightarrow \\infty$) into options to eliminate impossible formulas in 15 seconds.</p>
       </div>
       <div class="tactical-card">
         <h4>Two-Pass Sweep &amp; Zero Negative Marks</h4>
@@ -1660,7 +1663,7 @@ function getManualHTML() {
     <h2 id="sec-template">8. Obsidian Master Chapter Template</h2>
     <div class="box">
       <div class="box-header"><span>MASTER NOTE SYNTAX (COPYABLE)</span><button onclick="copyTemplateText()">Copy Template</button></div>
-      <pre>
+      <pre id="manualTemplatePre">
 ---
 subject: "[Subject]"
 chapter: "[Chapter Name]"
@@ -1680,8 +1683,8 @@ tags: [chapter-reference, stem-vault]
 * **Lifecycle Checkpoints:**
   * [ ] **Day 0 (Learn & Drill):** Overview + Formula Extraction + 30/70 Examples + 20-30 Practice Questions
   * [ ] **Day 1 (Date: ):** Cued Recall of Formulas / Traps / Highlighted NCERT Lines
-  * [ ] **Day 3 (Date: ):** [W] & [X] Redo Queue + Timed Unseen PYQ Test (>= 75% target)
-  * [ ] **Day 7 (Date: ):** Cold Redo of Remaining [X] and [W] Questions
+  * [ ] **Day 3 (Date: ):** Step 1: [W] Queue Stopwatch Re-Test (1x Pass -> [C]; Fail -> [X]) + [X] Queue 1st Cold Re-Test -> Step 2: Timed Unseen PYQs (>= 75-80%)
+  * [ ] **Day 7 (Date: ):** Mandatory 2nd Cold Re-Test of [X] Penalty Queue (Must pass BOTH D3 & D7 cold to clear to [C])
   * [ ] **Day 21 (Date: ):** Mixed Multi-Chapter Mock Test (< 30% error rate)
 * **Pre-Solve Habit Checklist:**
   * Circle NOT, INCORRECT, or FALSE in question stem before options.
@@ -1829,7 +1832,12 @@ function getFlowchartsHTML() {
       <div class="v-tree-branches">
         <div class="v-tree-card">
           <div class="v-tree-card-head">Protocol A (Logic-Heavy)</div>
-          <div class="v-step-box">1. 5-Min Formula Preview<br>2. Two-Column Notes + 4 Margin Marks<br>3. 3-Item Derivation Filter<br>4. 3 Limit Checks (0, Max, Proportionality)</div>
+          <div class="v-step-box">
+            <strong>Step 1 — Cross-Check Module Formula Summary (2–5 Mins) Before Solving Problems:</strong><br>
+            &bull; <em>If coming from a Phase 1 Lecture:</em> Compare your Right-Column lecture notes against the printed Summary/Formula page at the back of your textbook/coaching module so zero special-case formulas or constants are missed, then compile your Obsidian Chapter API Table and discard your rough scratchpad.<br>
+            &bull; <em>If skipping the lecture (Direct Book Entry):</em> Skip Page 1 theory prose, flip straight to the printed Summary/Formula sheet at the end of the textbook chapter to initialize your Obsidian API Table, and then proceed to Phase 3 Solved Examples.
+          </div>
+          <div class="v-step-box">2. Two-Column Notes + 4 Margin Marks<br>3. 3-Item Derivation Filter<br>4. 3 Limit Checks (0, Max, Proportionality)</div>
         </div>
         <div class="v-tree-card">
           <div class="v-tree-card-head">Protocol B (Data-Heavy NCERT)</div>
@@ -2321,8 +2329,8 @@ tags: [chapter-reference, stem-vault]
 * **Lifecycle Checkpoints:**
   * [${ch.stage >= 4 ? "x" : " "}] **Day 0 (Learn & Drill):** Overview + Formula/NCERT Extraction + 30/70 Worked Examples + 20-30 Practice Questions
   * [${ch.stage >= 5 ? "x" : " "}] **Day 1 (${ch.d0 ? offsetDate(1, ch.d0) : "TBD"}):** Cued Recall of Formulas / Traps / Highlighted NCERT Lines
-  * [${ch.stage >= 6 ? "x" : " "}] **Day 3 (${ch.d0 ? offsetDate(3, ch.d0) : "TBD"}):** [W] & [X] Redo Queue + Timed Unseen PYQ Test (>= 75% target)
-  * [${ch.stage >= 7 ? "x" : " "}] **Day 7 (${ch.d0 ? offsetDate(7, ch.d0) : "TBD"}):** Cold Redo of Remaining [X] and [W] Questions
+  * [${ch.stage >= 6 ? "x" : " "}] **Day 3 (${ch.d0 ? offsetDate(3, ch.d0) : "TBD"}):** Step 1: [W] Queue Stopwatch Re-Test (1x Pass -> [C]; Fail -> [X]) + [X] Queue 1st Cold Re-Test -> Step 2: Timed Unseen PYQs (>= 75-80%)
+  * [${ch.stage >= 7 ? "x" : " "}] **Day 7 (${ch.d0 ? offsetDate(7, ch.d0) : "TBD"}):** Mandatory 2nd Cold Re-Test of [X] Penalty Queue (Must pass BOTH D3 & D7 cold to clear to [C])
   * [${ch.stage >= 8 ? "x" : " "}] **Day 21 (${ch.d0 ? offsetDate(21, ch.d0) : "TBD"}):** Mixed Multi-Chapter Mock Test (< 30% error rate)
 * **Pre-Solve Habit Checklist:**
   * Circle NOT, INCORRECT, or FALSE in the question stem before looking at options.
@@ -2741,14 +2749,12 @@ function performGlobalSearch(query) {
 
 function copyTemplateText() {
   const area = document.getElementById("obsidianTemplateArea");
-  if (!area) return;
-  area.select();
+  const manualPre = document.getElementById("manualTemplatePre");
+  const textToCopy = area ? area.value : (manualPre ? manualPre.innerText : "");
+  if (!textToCopy) return;
+  if (area) area.select();
   if (navigator.clipboard && navigator.clipboard.writeText) {
-    navigator.clipboard.writeText(area.value).catch(() => {
-      if (document.execCommand) document.execCommand("copy");
-    });
-  } else if (document.execCommand) {
-    document.execCommand("copy");
+    navigator.clipboard.writeText(textToCopy);
   }
 }
 
