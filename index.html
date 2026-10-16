@@ -594,16 +594,16 @@ mark { background: var(--fg); color: var(--bg); padding: 0 2px; }
 
 <script>
 const GPS_STAGES = [
-  { id: 0, code: "QUEUED", name: "0. Queued", desc: "Chapter in primary syllabus list; awaiting Day 0 study." },
-  { id: 1, code: "D0_LEARN", name: "1. Day 0, Step 1: Learning & Extraction", desc: "Formula Sheet scan / NCERT pass + Two-Column notes + 15m question vocabulary scan." },
-  { id: 2, code: "D0_EXAMPLES", name: "2. Day 0, Step 2A: 30/70 Worked Examples", desc: "Trace first 20-30% solved examples uncovered; solve remaining 70% covered with [C]/[W]/[X] flags." },
-  { id: 3, code: "D0_DRILL", name: "3. Day 0, Step 2B: Practice Drill & Diagnosis", desc: "Solve 20-30 practice questions (or 40-50 Bio MCQs); diagnose errors with 4-step routine." },
-  { id: 4, code: "D0_DONE", name: "4. Day 0 Complete: End-of-Chapter Cleanup", desc: "Obsidian chapter file compiled, Anki cards created, rough notes deleted. Auto-schedules D1, D3, D7, D21." },
-  { id: 5, code: "D1_RECALL", name: "5. Day 1: Cued Recall (15-20m)", desc: "Cover formula/product columns in Obsidian or NCERT labels/tables; verify retention. Missed items to Anki." },
-  { id: 6, code: "D3_TEST", name: "6. Day 3: Redo Queue & Timed PYQ Test", desc: "Stopwatch re-test of D0 [W] Queue (Pass -> [C]; Strike 2 -> mutates to [X]) + 1st Cold Re-Test of [X] Queue + 20-30 unseen Timed PYQs (>=75-80%)." },
-  { id: 7, code: "D7_REDO", name: "7. Day 7: Mandatory 2nd Cold Re-Test of [X] Penalty Queue (15-20m)", desc: "Mandatory 2nd Cold Re-Test of [X] Penalty Queue (15-20m) — Must pass cold on BOTH D3 and D7 to graduate to [C]." },
-  { id: 8, code: "D21_MOCK", name: "8. Day 21 Passed: Mixed Mock & Maintenance", desc: "Passed cumulative multi-chapter mixed test (<30% error). Maintained via daily Anki + monthly mocks." },
-  { id: 9, code: "RESET_30", name: "9. >30% Mock Error Reset Triggered", desc: "Missed >30% questions in cumulative mock; chapter reset to D1 Cued Recall -> D3 -> D7." }
+  { id: 0, code: "QUEUED", name: "0. Queued (Not Started)", desc: "Chapter waiting in syllabus queue for Block 2 acquisition." },
+  { id: 1, code: "D0_P1_P2", name: "1. D0 (Phases 1 & 2): Orientation & Extraction", desc: "Phase 1 Lecture/NCERT Scan + 15m Vocab Check -> Phase 2 Obsidian API Table / NCERT 4-Pass." },
+  { id: 2, code: "D0_P3_EX", name: "2. D0 (Phase 3A): 30/70 Worked Examples", desc: "Trace first 20-30% module examples uncovered; solve remaining 70% covered with [C]/[W]/[X] flags." },
+  { id: 3, code: "D0_P3_DRILL", name: "3. D0 (Phase 3B): Module Drills & Older PYQs", desc: "Solve 20-30 module exercises + 15-20 timed older PYQs; diagnose every [W]/[X] via Error Matrix." },
+  { id: 4, code: "D0_DONE", name: "4. D0 Complete (Exit Gate >=75-80% Passed)", desc: "Obsidian & Anki updated; scratchpad trashed. Stamps D0 date & starts Phase 4 clock (D1, D3, D7, D21)." },
+  { id: 5, code: "P4_D1", name: "5. Phase 4 — D1 (+1d): Cued / Blank-Sheet Recall", desc: "15-20m in Block 1: Recall formulas, constraints, diagrams, or reactions from memory. Blanks -> [X] + Anki." },
+  { id: 6, code: "P4_D3", name: "6. Phase 4 — D3 (+3d): [W]/[X] Redo + Unseen PYQs", desc: "15m: [W] Stopwatch Re-Test (Fail = Strike 2 -> [X]) & [X] 1st Cold Test -> 30m: 20-30 Unseen Recent PYQs." },
+  { id: 7, code: "P4_D7", name: "7. Phase 4 — D7 (+7d): [X] 2nd Cold Verification", desc: "15-20m: Mandatory 2nd Cold Re-Test of [X] Penalty Queue. Must pass BOTH D3 and D7 cold to graduate to [C]." },
+  { id: 8, code: "P4_D21", name: "8. Phase 4 — D21 (+21d): Cumulative Mixed Mock", desc: "Passed multi-chapter timed mock (<30% error). Enters automated Anki + monthly mock maintenance." },
+  { id: 9, code: "P4_RESET", name: "9. Phase 4 — >30% Mock Error Reset Triggered", desc: "Missed >30% of chapter questions in a cumulative mock; loops back through RESET-D1 -> RESET-D3 -> RESET-D7." }
 ];
 
 const CONCEPTS = {
@@ -1026,10 +1026,10 @@ function renderGPSFlowchart(ch, variant, viewType) {
 
 function renderGPSFlowchartDiagram(ch, viewType) {
   const phases = [
-    { title: "PHASE 0: QUEUE", stages: [GPS_STAGES[0]] },
-    { title: "PHASE 1 & 2: DAY 0 EXECUTION", stages: [GPS_STAGES[1], GPS_STAGES[2], GPS_STAGES[3], GPS_STAGES[4]] },
-    { title: "PHASE 3: SPACED RETRIEVAL (D1 -> D3 -> D7 -> D21)", stages: [GPS_STAGES[5], GPS_STAGES[6], GPS_STAGES[7], GPS_STAGES[8]] },
-    { title: "RECOVERY: 30% MOCK ERROR RESET", stages: [GPS_STAGES[9]] }
+    { title: "STAGE 0: SYLLABUS QUEUE", stages: [GPS_STAGES[0]] },
+    { title: "DAY 0 ACQUISITION (PHASES 1, 2 & 3 — CAN SPAN 1 OR MORE DAYS)", stages: [GPS_STAGES[1], GPS_STAGES[2], GPS_STAGES[3], GPS_STAGES[4]] },
+    { title: "PHASE 4: PARALLEL SPACED RETRIEVAL (D1 -> D3 -> D7 -> D21)", stages: [GPS_STAGES[5], GPS_STAGES[6], GPS_STAGES[7], GPS_STAGES[8]] },
+    { title: "PHASE 4 RECOVERY: >30% MOCK ERROR RESET LOOP", stages: [GPS_STAGES[9]] }
   ];
 
   return `
@@ -1247,6 +1247,35 @@ function getManualHTML() {
       </div>
     </details>
 
+    <h2 id="sec-glossary">0. Master Glossary &amp; End-to-End System Flow</h2>
+    <div class="box">
+      <div class="box-header"><span>HOW THE 4 PHASES CONNECT TO THE SCHEDULER (GPS STAGES 0–9)</span><span class="tag">ARCHITECTURE</span></div>
+      <p><strong>The Macro Rule:</strong> You learn the syllabus <strong>one chapter at a time (<code>D0</code>)</strong>, while reviewing previously completed chapters in parallel (<code>D1, D3, D7, D21</code>). Every study day is split into two blocks:</p>
+      <ul>
+        <li><strong>Block 1 — Morning Review Queue (First 60–90 Mins):</strong> Clear due Anki cards (15–20m) + execute any scheduled <strong>Phase 4 (<code>D1</code>, <code>D3</code>, <code>D7</code>, or <code>D21</code>)</strong> reviews due today for <em>already completed chapters</em>.</li>
+        <li><strong>Block 2 — Main Acquisition Block (Rest of Day):</strong> Work 100% on your single active <strong><code>D0</code> Chapter</strong> through <strong>Phase 1 &rarr; Phase 2 &rarr; Phase 3</strong>.</li>
+      </ul>
+      <p><strong>What If <code>D0</code> Takes More Than 1 Calendar Day?</strong> <code>D0</code> is an <em>acquisition stage</em>, NOT a 24-hour timer. A short chapter may finish <code>D0</code> in 1 day; a heavy Root chapter (like Mole Concept, GOC, or Rotational Motion) may take 3–5 days across Stages 1, 2, and 3. <strong>The <code>D1 / D3 / D7 / D21</code> spaced review clock NEVER starts until you pass the Phase 3 Exit Gate and mark <code>Stage 4 (D0_DONE)</code>.</strong> If <code>D0</code> spans multiple days, spend the last 10 minutes of each night transferring that day's Right-Column formulas/misses into Obsidian/Anki so rough notes never sit unprocessed for more than 24 hours.</p>
+    </div>
+
+    <table>
+      <thead>
+        <tr><th>Term / Primitive</th><th>Exact Operational Definition</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Primary Source (ROM)</strong></td><td>Your single locked-in textbook (NCERT) or coaching module per subject. Read-only database; never copy its prose or derivations into a notebook.</td></tr>
+        <tr><td><strong>Two-Column Workspace (RAM)</strong></td><td>Disposable rough paper or tablet split vertically. <strong>Left Column (Scratchpad):</strong> messy math, working out examples, pushing curved electron arrows. <strong>Right Column (Draft List):</strong> headings, shorthand formulas, units, constraints, and raw facts to transfer to Obsidian/Anki. Purged within 24 hours.</td></tr>
+        <tr><td><strong>Chapter API / Lookup Table (LUT)</strong></td><td>Your permanent Obsidian note (one file per chapter). Lists every formula like a code function: LaTeX Equation, Input Variables &amp; Mandatory SI Units, Valid Assumptions, Boundary Limits ($0 / \\text{Max} / \\propto$), and Exam Traps.</td></tr>
+        <tr><td><strong>Problem Recipe (1-2-3 Pseudo-Code)</strong></td><td>A 3-step numbered checklist in Obsidian for executing a recurring multi-step problem type (e.g., Kirchhoff Nodal <code>x</code>-Method, Pulley Constraints, Cavity Negative Mass).</td></tr>
+        <tr><td><strong>5-Line Mechanism / Concept Fix</strong></td><td>A compact bug report in Obsidian written only when your physical/chemical intuition breaks (Title, Trigger Question ID, 1–3 Line Rule, Mini Example, Exam Trap).</td></tr>
+        <tr><td><strong>Root vs. Derivative Chapters</strong></td><td><strong>Root Chapters:</strong> Foundational prerequisites (Mole Concept, Chemical Bonding, IUPAC, Isomerism, GOC, Calculus/Vectors, Kinematics, NLM) requiring full ground-up playlists if your baseline is weak. <strong>Derivative Chapters:</strong> Later chapters that apply Root rules and use 2–4h summary lectures or direct book study.</td></tr>
+        <tr><td><strong><code>[C]</code> Confirmed Flag</strong></td><td>Solved 100% correctly, optimal method, under exam time cap ($\\le 90\\text{s}$ NEET; $\\le 2\\text{m}$ JEE). Mastered—ignore until <code>D21</code> mixed mocks.</td></tr>
+        <tr><td><strong><code>[W]</code> Weak Flag (Speed Pipeline)</strong></td><td>Correct answer, BUT slow, brute-force algebra, hesitated, or 50/50 guess. Zero Anki/YouTube on <code>D0</code>; log 1-line shortcut in Obsidian and re-test under a stopwatch on <code>D3</code> (Pass = <code>[C]</code>; Slow/Wrong again = <strong>Strike 2 &rarr; mutates into <code>[X]</code></strong>).</td></tr>
+        <tr><td><strong><code>[X]</code> Blocked Flag (Penalty Pipeline)</strong></td><td>Wrong answer, blank, sign/unit trap, or failed <code>D1</code>/NCERT recall. Triggers 2-Minute Unblocking Ladder + same-day Anki card (if fact gap) or Obsidian 5-Line Fix (if logic gap). <strong>Must pass cold on BOTH <code>D3</code> and <code>D7</code></strong> to graduate to <code>[C]</code>.</td></tr>
+        <tr><td><strong>Candidate Deck (Suspended Anki)</strong></td><td>Deck 2 (<code>2. Organic: Reagents</code>) where named reactions are stored suspended and only un-suspended into daily review when verified by NCERT, PYQs, or test errors.</td></tr>
+      </tbody>
+    </table>
+
     <!-- PART II: SYSTEM ARCHITECTURE & 4-TIER HARDWARE/SOFTWARE GRID -->
     <h2 id="sec-tools">1. System Architecture &amp; Hardware/Software Grid</h2>
     <h3>A. The 4-Tier Hardware &amp; Software Split</h3>
@@ -1344,25 +1373,36 @@ function getManualHTML() {
     </div>
 
     <!-- PART IV: THE 4-PHASE EXECUTION ENGINE -->
-    <h2 id="sec-phase1">3. Phase 1: Orientation &amp; Baseline Capture</h2>
-    <p>Complete this entire loop (<code>Phase 1</code> -&gt; <code>Phase 2</code> -&gt; <code>Phase 3</code> -&gt; <code>Phase 4</code>) <strong>one chapter at a time</strong>. Never binge lectures across the syllabus for 30 days without solving problems.</p>
-    <ul>
-      <li><strong>Two-Column Notes Execution:</strong> Keep Left Column for rough scratchpad math and Right Column for clean formulas, units, and facts.</li>
-      <li><strong>4 Anti-Bloat Capture Rules:</strong>
-        <ol>
-          <li>Never write full sentences: use breadcrumbs and operators (<code>-&gt;, =&gt;, therefore, prop, up, down, =</code>).</li>
-          <li>Pivot Capture: Write the starting physical condition and jump directly to the final formula.</li>
-          <li>Ignore intermediate algebra: trace the 15 lines of derivation algebra on scratchpad once; never copy it into notes.</li>
-          <li>Narrow window: keep rough notepad narrow to prevent sprawling text.</li>
-        </ol>
-      </li>
-      <li><strong>3-Item Derivation Filter:</strong> Record only: (1) Starting Law &amp; Valid Assumption, (2) Final Formula with required SI units &amp; sign rules, (3) Limits (0, Max, Proportionality).</li>
-      <li><strong>15-to-30 Minute Video Bailout Rule:</strong> If a video makes no sense after 15 minutes, reduce speed to 1x and trace on paper. If after 30 minutes the teacher is skipping foundational steps, close the video immediately and switch to a ground-up playlist or direct textbook examples.</li>
-      <li><strong>15-Minute Unsolved Question Vocabulary Scan:</strong> Right after chapter overview, spend 15 minutes reading module/PYQ questions without solving them to verify technical term recognition.</li>
-    </ul>
+    <h2 id="sec-phase1">3. Phase 1: Chapter Entry, Orientation &amp; Baseline Capture (GPS Stage 1 — D0)</h2>
+    <div class="box">
+      <div class="box-header"><span>WHAT WE ARE DOING IN PHASE 1 &amp; HOW TO START A NEW CHAPTER</span><span class="tag">GPS STAGE 1</span></div>
+      <p><strong>Goal:</strong> Install the chapter's vocabulary, visual models, and structural skeleton so the textbook and PYQs do not look like alien hieroglyphics. You execute Phase 1 during <strong>Block 2</strong> of your day on your single active <code>D0</code> chapter.</p>
+      
+      <h4>Step 1.1 — Choose Your Entry Path by Chapter Type</h4>
+      <ul>
+        <li><strong>Path A — Logic-Heavy (Physics, Math, PChem), Hybrid (Organic), &amp; Conceptual Bio/Inorganic (Genetics, Biotech, Coordination):</strong> Open your chosen video lecture (full ground-up playlist if it is a <strong>Root Chapter</strong> and your baseline is weak; 2–4 hour macro lecture if it is a <strong>Derivative Chapter</strong>). <em>(If your baseline is already strong, skip the video and go straight to Phase 2 Step 1).</em></li>
+        <li><strong>Path B — Purely Descriptive Biology &amp; Inorganic (Morphology, Anatomy, Ecology, p/d/f-Block facts):</strong> <strong>Do NOT watch video lectures.</strong> Open your physical NCERT book and Chapter PYQ book directly and jump straight to <strong>Phase 2, Protocol B (NCERT 4-Pass Method)</strong>.</li>
+      </ul>
+
+      <h4>Step 1.2 — How to Execute During the Lecture (Two-Column Workspace)</h4>
+      <ul>
+        <li><strong>Divide your page or tablet vertically into two columns:</strong>
+          <ul>
+            <li><strong>Left Column (Disposable Scratchpad):</strong> Work out algebra alongside the teacher and trace curved electron arrows in real time. <strong>Rule:</strong> When the teacher spends 20 minutes solving 5 repetitive board drill questions, <strong>put your pen down and just watch</strong> how they set up the governing equation.</li>
+            <li><strong>Right Column (Draft Skeleton &amp; API):</strong> Record only headings, core formulas, variable definitions, mandatory units, and traps using the <strong>4 Anti-Bloat Rules</strong>: (1) Keyword breadcrumbs only—never write full grammatical sentences, (2) Use mathematical operators ($\\rightarrow, \\implies, \\therefore, \\propto, \\uparrow, \\downarrow$), (3) Capture only the conceptual pivot, (4) Keep the column physically narrow.</li>
+          </ul>
+        </li>
+        <li><strong>The 3-Item Derivation Filter:</strong> Never transcribe 15 lines of intermediate derivation algebra. Record only: (1) Starting Law &amp; Valid Physical Assumption, (2) Final Equation with required SI units &amp; sign rules, and (3) Final Proportionality ($\\propto$).</li>
+        <li><strong>The 15–30 Minute Video Bailout Gate:</strong> If a video makes no sense after 15 minutes, drop playback speed to $1\\times$ and trace actively on paper for up to 30 minutes. If the instructor is still skipping foundational steps you do not know, close the video immediately and switch to a ground-up playlist or reverse-engineer the textbook's Solved Examples.</li>
+      </ul>
+
+      <h4>Step 1.3 — Phase 1 Exit Check: The 15-Minute Unsolved Question Vocabulary Scan</h4>
+      <p>Immediately after finishing the lecture (or today's lecture chunk), close the video, open your coaching module or PYQ book to the <strong>unsolved exercises</strong>, and spend <strong>15 minutes strictly reading the question stems without solving them</strong>. Confirm that you recognize the technical nouns (e.g., <em>"molarity," "limiting reagent," "hyperconjugation," "paraxial rays"</em>) and can mentally map each question to a heading in your Right Column. Once confirmed, move to <strong>Phase 2</strong>.</p>
+    </div>
 
     <!-- PHASE 2: SUBJECT EXTRACTION PROTOCOLS (TABBED UI) -->
-    <h2 id="sec-p2-extraction">4. Phase 2: Subject Extraction Protocols</h2>
+    <h2 id="sec-p2-extraction">4. Phase 2: Subject Extraction Protocols (Bridge From GPS Stage 1 to Stage 2)</h2>
+    <p><strong>What We Are Doing in Phase 2 (Executed Within 24h of Phase 1, Before Problem Drilling):</strong> Phase 1 gave you rough Right-Column lecture notes and basic familiarity. In Phase 2, you convert that raw capture into your permanent, testable chapter asset (your <strong>Obsidian Chapter API Lookup Table</strong> for Logic-Heavy/Organic, or your <strong>Highlighted &amp; Self-Tested NCERT</strong> for Bio/Inorganic) and <strong>throw away the temporary scratchpad</strong> before starting Phase 3 problem drilling.</p>
     <p>Select your subject type to inspect the exact extraction protocol:</p>
     
     <div class="manual-tabs">
@@ -1493,27 +1533,34 @@ function getManualHTML() {
     </div>
 
     <!-- PHASE 3: DRILLING, ALGORITHM TRACING & SOLUTION AUTOPSY -->
-    <h2 id="sec-p3-drilling">5. Phase 3: Drilling, Algorithm Tracing &amp; Solution Autopsy</h2>
+    <h2 id="sec-p3-drilling">5. Phase 3: Drilling, Flagging, Algorithm Tracing &amp; D0 Exit Gate (GPS Stages 2, 3 &amp; 4)</h2>
     <div class="box">
-      <div class="box-header"><span>THE 30 / 70 WORKED EXAMPLE SPLIT &amp; 2-MINUTE UNBLOCKING LADDER</span><span class="tag">EXECUTION</span></div>
+      <div class="box-header"><span>STEP-BY-STEP D0 PROBLEM DRILLING &amp; DEBUGGING ENGINE</span><span class="tag">GPS STAGES 2–4</span></div>
+      <p><strong>What We Are Doing in Phase 3:</strong> Building a formula table does not mean you can solve MCQs in 90 seconds. In Phase 3—with your Obsidian Chapter API Table open beside you—you drill through two specific <code>D0</code> question buckets (<strong>Set A: In-Chapter Worked Examples</strong> &rarr; <strong>Set B: Module Drills &amp; Older PYQs</strong>) until you pass the <code>D0</code> Exit Gate (<code>GPS Stage 4</code>).</p>
+
+      <h4>Step 3.1 — Practice Set A: The 30 / 70 In-Chapter Worked Example Split (GPS Stage 2: D0_P3_EX)</h4>
       <ul>
-        <li><strong>Stage 1 — The 30 / 70 Solved Example Split:</strong>
-          <ul>
-            <li><em>First 20-30% Solved Examples:</em> Keep solution uncovered. Trace line-by-line: (1) Given input variables and hidden conditions (e.g., "starts from rest" $\\implies u=0$), (2) Connecting formula from table, (3) Sign rule or substitution used.</li>
-            <li><em>Remaining 70% Solved Examples:</em> Cover solution and solve independently on scratchpad.</li>
-            <li><em>Short-Chapter Exception:</em> If a chapter has &lt;6 worked examples total, read all once, close book, and solve all from scratch on blank paper.</li>
-          </ul>
-        </li>
-        <li><strong>2-Minute Unblocking Ladder (When Stuck >2 Minutes):</strong>
-          <ol>
-            <li><strong>30s Self-Check:</strong> Check scratchpad for dropped minus signs, arithmetic slips, or unit conversions ($\\text{cm} \\rightarrow \\text{m}$, $^\\circ\\text{C} \\rightarrow \\text{K}$).</li>
-            <li><strong>60s Solution Autopsy:</strong> Scan printed solution for <em>Capitalized/Italicized Method Nouns</em> (e.g., "By Nodal Analysis", "Negative Mass", "Lami's Theorem").</li>
-            <li><strong>5-10m YouTube Debugger Cap:</strong> If solution skips algebra, search exact method name + "short trick" on YouTube. Watch 1 problem solve (&le;10m), close video immediately, and re-solve.</li>
-          </ol>
-        </li>
+        <li><strong>First 20–30% of Worked Examples (Uncovered Trace):</strong> Keep the printed solution uncovered. Read it line-by-line like code: (1) Identify given input variables and hidden English conditions (e.g., <em>"starts from rest"</em> $\\implies u=0$), (2) Identify which formula from your Obsidian API Table bridges inputs to output, and (3) Spot any sign convention or unit trap. <em>If a new constraint appears that wasn't in your lecture, add it to your Obsidian API Table immediately.</em></li>
+        <li><strong>Remaining 70% of Worked Examples (Covered Attempt):</strong> Cover the solution with paper and solve from scratch on your Left Scratchpad under a timer. Grade every single attempt immediately using the <strong>Universal Flagging System (<code>[C]</code>, <code>[W]</code>, <code>[X]</code>)</strong> below.</li>
+        <li><strong>Short-Chapter Exception (&lt;6 Worked Examples):</strong> If a chapter has fewer than 6 worked examples total, read all of them once uncovered, close the book, and re-solve all of them from scratch on blank paper.</li>
       </ul>
 
-      <h4>Procedural Algorithm Tracing &amp; 3 Built-In 1-2-3 Problem Recipes</h4>
+      <h4>Step 3.2 — Grade Every Attempt Immediately: The Decoupled <code>[C]</code> / <code>[W]</code> / <code>[X]</code> Flags</h4>
+      <p>Apply these three flags to every worked example (in Set A), module drill (in Set B), and PYQ you attempt:</p>
+      <ul>
+        <li><span class="tag flag-C">[C] Confirmed</span> <strong>Solved 100% correctly, optimal method, under target exam time</strong> ($\\le 90\\text{s}$ NEET; $\\le 2\\text{m}$ JEE/IAT). <em>Action:</em> Do nothing. Ignore until <code>D21</code> cumulative mixed mocks.</li>
+        <li><span class="tag flag-W">[W] Weak (Speed Pipeline)</span> <strong>Correct answer, BUT slow, used ugly brute-force algebra, hesitated, or guessed 50/50.</strong> <em>Immediate D0 Action:</em> <strong>Zero Anki and Zero YouTube.</strong> Inspect the printed solution, write a 1-line shortcut or 1-2-3 Problem Recipe in Obsidian, and add the Question ID to your <strong><code>[W]</code> Speed-Drill Queue</strong> (to be re-tested under a strict stopwatch on <code>D3</code>).</li>
+        <li><span class="tag flag-X">[X] Blocked (Penalty Pipeline)</span> <strong>Wrong answer, went completely blank, or fell for a sign/unit/constraint trap.</strong> <em>Immediate D0 Action:</em> Run the <strong>2-Minute Unblocking Ladder</strong> below, apply the <strong>Post-Practice Error Diagnosis Matrix</strong> (create an Anki card TODAY if you forgot a fact/sign rule, or write a 5-Line Fix in Obsidian TODAY if you misunderstood a concept/constraint), and log the Question ID in your <strong><code>[X]</code> Penalty Queue</strong> (must pass cold on <strong>both <code>D3</code> and <code>D7</code></strong>).</li>
+      </ul>
+
+      <h4>Step 3.3 — When Stuck &gt;2 Minutes: The 2-Minute Unblocking Ladder &amp; Solution Autopsy</h4>
+      <ol>
+        <li><strong>30s Self-Check:</strong> Check your scratchpad against your Obsidian API Table for dropped minus signs, arithmetic slips, or missed unit conversions ($\\text{cm} \\rightarrow \\text{m}$, $^\\circ\\text{C} \\rightarrow \\text{K}$, $\\text{bar} \\rightarrow \\text{Pa}$).</li>
+        <li><strong>60s Solution Autopsy (For "Unknown Unknowns"):</strong> Competitive exams never test 10 minutes of ugly manual calculus. If your algebra turns into a multi-page mess, stop brute-forcing immediately and open the printed solution. Ignore the numbers and scan the text strictly for <strong>Capitalized or Italicized Method Nouns</strong> (e.g., <em>"By Nodal Analysis"</em>, <em>"Using Concept of Negative Mass"</em>, <em>"Applying Lami's Theorem"</em>, <em>"By Method of Images"</em>).</li>
+        <li><strong>5–10m YouTube Debugger Cap:</strong> If the printed solution skips steps, search that exact method noun + <code>"short trick"</code> on YouTube. Watch one 5-to-10-minute problem execution clip, write a <strong>1-2-3 Problem Recipe</strong> in Obsidian, close YouTube immediately, and re-solve the question. (If still stuck after 10 minutes, mark <code>[X]</code>, park it, and move on).</li>
+      </ol>
+
+      <h4>Procedural Algorithm Tracing: 3 Built-In 1-2-3 Problem Recipes</h4>
       <div class="box" style="background:var(--bg-alt);">
         <strong>Recipe 1: Kirchhoff Nodal Analysis (x-Method for Circuits)</strong>
         <ol>
@@ -1525,7 +1572,6 @@ function getManualHTML() {
           </li>
         </ol>
       </div>
-
       <div class="box" style="background:var(--bg-alt);">
         <strong>Recipe 2: Pulley Constraint Equations</strong>
         <ol>
@@ -1536,7 +1582,6 @@ function getManualHTML() {
           </li>
         </ol>
       </div>
-
       <div class="box" style="background:var(--bg-alt);">
         <strong>Recipe 3: Cavity Center-of-Mass ("Negative Mass" Shortcut)</strong>
         <ol>
@@ -1548,37 +1593,65 @@ function getManualHTML() {
         </ol>
       </div>
 
-      <h4>3 Unsolved Practice Tiers &amp; Hard "Done" Exit Gate</h4>
+      <h4>Step 3.4 — Practice Set B: Unsolved Module Drills &amp; The D0 PYQ Exit Gate (GPS Stage 3 &rarr; Stage 4)</h4>
+      <p>After finishing the worked examples (Set A), move to the unsolved questions at the back of your module and PYQ book. <strong>How PYQs are split between Day 0 and Day 3:</strong></p>
       <ul>
-        <li><strong>Tier 1:</strong> Single-Concept / Topic-wise drills (20-30 Qs in Phys/Math/Chem or 40-50 Bio MCQs) on Day 0.</li>
-        <li><strong>Tier 2:</strong> Exam Timing Drills under stopwatch (&le;90s NEET; &le;2m JEE).</li>
-        <li><strong>Tier 3:</strong> Timed Unseen PYQs (most recent 5-7 years saved strictly for Day 3).</li>
-        <li><strong>Hard "Done" Exit Gate:</strong> &ge; 75-80% timed PYQ accuracy + zero recurring conceptual errors.</li>
+        <li><strong>Tier 1 — Topic-Wise Module Drills (Executed on <code>D0</code>, GPS Stage 3):</strong> Solve <strong>20–30 Level-1 / Topic-wise coaching module questions</strong> in Physics/Math/Chem (or <strong>40–50 NCERT-based MCQs</strong> in Biology) to build tool-selection speed.</li>
+        <li><strong>Tier 2 — The <code>D0</code> Timed PYQ Gate (Older PYQs Executed on <code>D0</code>, GPS Stage 3):</strong> Take <strong>15–20 older Chapter PYQs</strong> (e.g., from 5–10 years ago) and solve them under a strict exam stopwatch ($\\le 90\\text{s}$ NEET; $\\le 2\\text{m}$ JEE).</li>
+        <li><strong>Tier 3 — The <code>D3</code> Unseen PYQ Reserve (Recent PYQs Saved Strictly for Day 3):</strong> Hold back the <strong>most recent 3–5 years of Chapter PYQs (20–30 questions)</strong> completely untouched on <code>D0</code>. You will use this unseen reserve 3 days later on <strong><code>D3</code> (Phase 4)</strong> to test true retention after a 72-hour memory gap.</li>
+        <li><strong>The Hard <code>D0</code> Exit Gate (<code>GPS Stage 4: D0_DONE</code>):</strong> A chapter's <code>D0</code> acquisition phase is officially complete when you score <strong>$\\ge 75\\text{--}80\\%$ accuracy on Tier 2 Timed PYQs</strong>, log all <code>[W]</code> and <code>[X]</code> questions from Set A and Set B into Obsidian/Anki, and trash your paper scratchpad. Mark the chapter as <strong><code>Stage 4: D0_DONE</code></strong> in the GPS Tracker.</li>
       </ul>
     </div>
 
     <!-- PHASE 4: SPACED RETRIEVAL, DECOUPLED [C]/[W]/[X] & ANKI -->
-    <h2 id="sec-p4-review">6. Phase 4: Parallel Spaced Retrieval, Decoupled [C]/[W]/[X] &amp; Anki</h2>
+    <h2 id="sec-p4-review">6. Phase 4: Parallel Spaced Retrieval (D1–D21), Decoupled [W]/[X] Resolution &amp; Anki (GPS Stages 5–9)</h2>
     <div class="box">
-      <div class="box-header"><span>DAILY TWO-BLOCK PARALLEL ENGINE</span><span>[OPERATIONAL]</span></div>
-      <p>Divide every study day into two fixed blocks so reviews never crowd out new chapters:</p>
+      <div class="box-header"><span>THE BRIDGE FROM D0 COMPLETION (STAGE 4) TO THE AUTO-CALENDAR (STAGES 5–9)</span><span>[OPERATIONAL]</span></div>
+      <p><strong>How Phase 3 Flows Into Phase 4:</strong> The moment you pass the Phase 3 Exit Gate and flip a chapter to <strong><code>Stage 4 (D0_DONE)</code></strong>, the website stamps today's date as <code>D0</code> and automatically schedules four future review dates on your calendar: <strong><code>D1 (+1d)</code></strong>, <strong><code>D3 (+3d)</code></strong>, <strong><code>D7 (+7d)</code></strong>, and <strong><code>D21 (+21d)</code></strong>. Starting tomorrow, that chapter moves into <strong>Block 1 (Morning Review Queue)</strong>, while <strong>Block 2 (Main Study Block)</strong> opens <code>D0</code> (Phase 1) of your next chapter.</p>
+
+      <h4>Exact Execution Protocol for Each Scheduled Phase 4 Milestone</h4>
       <ul>
-        <li><strong>Block 1: Morning Review Queue (First 60-90m — Highest Energy):</strong> Clear daily Anki (20m) + execute due D1, D3, or D7 tasks on your calendar (40-70m).</li>
-        <li><strong>Block 2: Active D0 Block (Remainder of Day):</strong> Work exclusively on your single current Day 0 chapter.</li>
+        <li><strong><code>D1</code> — 1 Day After <code>D0</code> Done: Cued / Blank-Sheet Recall (15–20 Mins in Block 1 — <code>GPS Stage 5</code>):</strong>
+          <ul>
+            <li><em>Physics, Math &amp; Physical Chem:</em> Open your Obsidian Chapter API Table, cover the Formula, Units, Assumptions, and Traps columns (looking only at the Concept Name), and write the formulas, units, and sign rules from memory on blank paper. Any missed item is flagged <code>[X]</code> and turned into an Anki card immediately.</li>
+            <li><em>Biology &amp; Inorganic:</em> Re-test your NCERT <code>[X]</code>/<code>[W]</code> margin flags, covered diagram labels, and covered table columns.</li>
+            <li><em>Organic:</em> Cover the Reagents, Conditions, and Products columns of your Obsidian Reaction Table and write them from memory.</li>
+          </ul>
+        </li>
+        <li><strong><code>D3</code> — 3 Days After <code>D0</code> Done: Queue Clearance + Unseen PYQ Stress Test (40–45 Mins in Block 1 — <code>GPS Stage 6</code>):</strong>
+          <ul>
+            <li><em>Part 1 (First 15 Mins — <code>[W]</code> &amp; <code>[X]</code> Queue Re-Test):</em> First, re-solve your <code>D0</code> <strong><code>[W]</code> Speed-Drill Queue</strong> under a strict stopwatch (if solved fast &amp; clean &rarr; promote to <code>[C]</code>; if slow or wrong again &rarr; <strong>Strike 2: mutates into <code>[X]</code></strong>). Second, run the <strong>1st Cold Re-Test</strong> of your <code>D0</code> <strong><code>[X]</code> Penalty Queue</strong> with zero notes open.</li>
+            <li><em>Part 2 (Next 25–30 Mins — Unseen Recent PYQs):</em> Solve your <strong>Tier 3 Reserve of 20–30 unseen recent Chapter PYQs</strong> under strict exam timing with zero notes open. Grade every question <code>[C]</code>, <code>[W]</code>, or <code>[X]</code> and run any misses through the Error Diagnosis Matrix below.</li>
+          </ul>
+        </li>
+        <li><strong><code>D7</code> — 7 Days After <code>D0</code> Done: Mandatory 2nd Cold Verification of <code>[X]</code> Queue (15–20 Mins in Block 1 — <code>GPS Stage 7</code>):</strong>
+          <ul>
+            <li>Re-solve every question in your <strong><code>[X]</code> Penalty Queue</strong> (including any <code>[W]</code> items that failed <code>D3</code> Strike 2 and any new <code>[X]</code> misses from <code>D3</code>) cold from scratch.</li>
+            <li><em>Graduation Rule:</em> An <code>[X]</code> question only graduates to <code>[C]</code> when it passes cold on <strong>BOTH <code>D3</code> AND <code>D7</code></strong>. If you miss it on <code>D3</code> or <code>D7</code>, your initial fix failed—rewrite your 5-Line Fix Rule in Obsidian and keep it locked in <code>[X]</code>.</li>
+          </ul>
+        </li>
+        <li><strong><code>D21</code> &amp; Post-<code>D21</code> Maintenance — Cumulative Mixed Mock &amp; 30% Reset Rule (<code>GPS Stages 8 &amp; 9</code>):</strong>
+          <ul>
+            <li>On <strong><code>D21</code> (21 days after <code>D0</code>)</strong>, take a 60–180 minute timed mixed test combining questions from all completed chapters.</li>
+            <li><strong>What Happens After <code>D21</code>?</strong> Stop scheduling manual calendar reviews for the chapter. Two automated systems keep it alive permanently: (1) <strong>Daily Anki reviews</strong> in Block 1, and (2) <strong>Monthly Mixed Mocks</strong>.</li>
+            <li><strong>The 30% Mock Error Reset Rule (<code>GPS Stage 9</code>):</strong> If you miss <strong>&gt;30% of the questions</strong> from any previously completed chapter during a <code>D21</code> or monthly mock, that chapter loses its completed status and resets to <code>Stage 9</code> (triggering <code>RESET-D1</code> &rarr; <code>RESET-D3</code> &rarr; <code>RESET-D7</code> on your calendar).</li>
+          </ul>
+        </li>
       </ul>
 
+      <h4>Sample Parallel Execution Calendar (How Block 1 &amp; Block 2 Run Together)</h4>
       <table>
-        <thead><tr><th>Day</th><th>Block 1: Morning Review Queue (60-90m)</th><th>Block 2: Active D0 Chapter (Rest of Day)</th></tr></thead>
+        <thead><tr><th>Calendar Day</th><th>Block 1: Morning Review Queue (60–90m — Phase 4 Tasks)</th><th>Block 2: Main Acquisition Block (Rest of Day — Active D0 Chapter)</th></tr></thead>
         <tbody>
-          <tr><td><strong>Mon (Day 1)</strong></td><td>Daily Anki Queue</td><td><strong>Chapter 1 (D0: Learn, Drill &amp; Cleanup)</strong></td></tr>
-          <tr><td><strong>Tue (Day 2)</strong></td><td>Daily Anki + <strong>Ch 1 (D1: Cued Recall)</strong></td><td><strong>Chapter 2 (D0: Learn, Drill &amp; Cleanup)</strong></td></tr>
-          <tr><td><strong>Wed (Day 3)</strong></td><td>Daily Anki + <strong>Ch 2 (D1: Cued Recall)</strong></td><td><strong>Chapter 3 (D0: Learn, Drill &amp; Cleanup)</strong></td></tr>
-          <tr><td><strong>Thu (Day 4)</strong></td><td>Daily Anki + <strong>Ch 1 (D3: Redos + Timed PYQs)</strong> + <strong>Ch 3 (D1)</strong></td><td><strong>Chapter 4 (D0: Learn, Drill &amp; Cleanup)</strong></td></tr>
-          <tr><td><strong>Mon (Day 8)</strong></td><td>Daily Anki + <strong>Ch 1 (D7: Error Redo)</strong> + <strong>Ch 4 (D3)</strong></td><td><strong>Continue Active D0 Chapter</strong></td></tr>
+          <tr><td><strong>Mon (Day 1)</strong></td><td>Daily Anki Queue (15–20m)</td><td><strong>Chapter 1 (D0: Phases 1, 2 &amp; 3 &rarr; Mark Stage 4 Done)</strong></td></tr>
+          <tr><td><strong>Tue (Day 2)</strong></td><td>Daily Anki + <strong>Ch 1 (D1: Cued Recall — 15m)</strong></td><td><strong>Chapter 2 (D0: Phases 1, 2 &amp; 3)</strong></td></tr>
+          <tr><td><strong>Wed (Day 3)</strong></td><td>Daily Anki + <strong>Ch 2 (D1: Cued Recall — 15m)</strong></td><td><strong>Chapter 3 (D0: Phases 1, 2 &amp; 3)</strong></td></tr>
+          <tr><td><strong>Thu (Day 4)</strong></td><td>Daily Anki + <strong>Ch 1 (D3: [W]/[X] Redo + Unseen PYQs)</strong> + <strong>Ch 3 (D1)</strong></td><td><strong>Chapter 4 (D0: Phases 1, 2 &amp; 3)</strong></td></tr>
+          <tr><td><strong>Mon (Day 8)</strong></td><td>Daily Anki + <strong>Ch 1 (D7: 2nd Cold [X] Test)</strong> + <strong>Ch 4 (D3)</strong></td><td><strong>Continue Current Active D0 Chapter</strong></td></tr>
         </tbody>
       </table>
 
-      <h3>Strict Separation Table: [W] vs. [X] Queues</h3>
+      <h3>Strict Separation Table: [W] Speed-Drill Queue vs. [X] Penalty Queue</h3>
       <table>
         <thead><tr><th>Queue</th><th>Trigger Condition</th><th>Action on Day 0</th><th>Day 3 Test Protocol</th><th>Day 7 Test Protocol</th><th>Exit Condition</th></tr></thead>
         <tbody>
@@ -1592,23 +1665,24 @@ function getManualHTML() {
           </tr>
           <tr>
             <td><strong>[X] Penalty Queue</strong></td>
-            <td>Wrong answer, sign/unit trap, or blank.</td>
-            <td>Run 4-step stuck routine. Log in Obsidian [X] list (+ Anki if pure fact).</td>
-            <td>Mandatory cold re-test under exam timer. If passed, mark 1/2 (retained for D7).</td>
-            <td>Mandatory cold re-test under exam timer.</td>
+            <td>Wrong answer, sign/unit trap, blank, or failed D1/NCERT recall.</td>
+            <td>Run 2-Min Ladder. Create Anki card today (if fact gap) or Obsidian 5-Line Fix today (if logic gap).</td>
+            <td>1st Mandatory cold re-test under exam timer. If passed, mark 1/2 (retained for D7).</td>
+            <td>2nd Mandatory cold re-test under exam timer.</td>
             <td><strong>Must pass cold on BOTH Day 3 and Day 7</strong> to clear to [C].</td>
           </tr>
         </tbody>
       </table>
 
-      <h3>Post-Practice Error Diagnosis Matrix</h3>
+      <h3>Post-Practice Error Diagnosis Matrix (Run Immediately After Grading ANY Worked Example Set, D0 Module/PYQ Drill, D3 Unseen PYQ Test, or D21 Mock)</h3>
+      <p>Whenever you finish grading a set of questions (Set A worked examples on <code>D0</code>, Set B module/PYQ drills on <code>D0</code>, unseen PYQs on <code>D3</code>, or a mock on <code>D21</code>), route every non-<code>[C]</code> question through this 4-row matrix before closing your desk:</p>
       <table>
         <thead><tr><th>Error Type</th><th>What Actually Happened</th><th>Immediate Fix Action (Do This Today)</th></tr></thead>
         <tbody>
-          <tr><td><strong>1. Memory / Fact Failure [X]</strong></td><td>Forgot constant, reagent, exception, biological term, or sign convention.</td><td>Create atomic Anki card today. Atomic single-fact formatting.</td></tr>
-          <tr><td><strong>2. Concept / Constraint Failure [X]</strong></td><td>Used formula outside assumptions, or misjudged electron density.</td><td>Add Trap Warning to Obsidian Formula Table or write 1-5 line Logic Fix.</td></tr>
-          <tr><td><strong>3. Repeated Reading / Careless Error [X]</strong></td><td>Misread NOT/INCORRECT, dropped minus sign, or missed cm to m.</td><td>Add mandatory Pre-Solve Checklist item on Line 1 of Obsidian Note.</td></tr>
-          <tr><td><strong>4. Speed / Method Bottleneck [W]</strong></td><td>Right answer via 5 minutes of brute force math.</td><td>Extract 1-2-3 Step Recipe and add Question ID to [W] Speed-Drill Queue.</td></tr>
+          <tr><td><strong>1. Memory / Fact Failure [X]</strong></td><td>Forgot constant, reagent, exception, biological term, or sign convention.</td><td>Create atomic Anki card today + log Question ID in <code>[X]</code> Penalty Queue (test on D3 &amp; D7).</td></tr>
+          <tr><td><strong>2. Concept / Constraint Failure [X]</strong></td><td>Used formula outside assumptions, or misjudged electron density/mechanism.</td><td>Add Trap Warning to Obsidian Formula Table or write 5-Line Logic Fix + log ID in <code>[X]</code> Queue.</td></tr>
+          <tr><td><strong>3. Repeated Reading / Careless Error [X]</strong></td><td>Misread NOT/INCORRECT, dropped minus sign, or missed cm to m conversion.</td><td>Add mandatory Pre-Solve Habit rule to Section 0 of Obsidian Note + log ID in <code>[X]</code> Queue.</td></tr>
+          <tr><td><strong>4. Speed / Method Bottleneck [W]</strong></td><td>Got right answer, but took 5 minutes of brute-force math or hesitated.</td><td>Extract 1-2-3 Problem Recipe in Obsidian + log ID in <code>[W]</code> Speed-Drill Queue (stopwatch test on D3).</td></tr>
         </tbody>
       </table>
 
@@ -1621,8 +1695,8 @@ function getManualHTML() {
             <thead><tr><th>Target Type</th><th>Bad Card (Too Vague / Bloated)</th><th>Good Card (Atomic &amp; Exam-Targeted)</th></tr></thead>
             <tbody>
               <tr><td><strong>Physics Sign Trap</strong></td><td>Front: Mirror formula.<br>Back: 1/v + 1/u = 1/f</td><td><strong>Front:</strong> Spherical mirror $1/v + 1/u = 1/f$: sign of focal length $f$ for <strong>concave</strong> mirror?<br><strong>Back:</strong> Negative ($f < 0$)</td></tr>
-              <tr><td><strong>Thermodynamic Constraint</strong></td><td>Front: Work formula?<br>Back: w = -nRT ln(V2/V1)</td><td><strong>Front:</strong> Under what exact conditions is $w = -2.303 nRT \log_{10}(V_2/V_1)$ valid?<br><strong>Back:</strong> Reversible, isothermal process for an ideal gas.</td></tr>
-              <tr><td><strong>Organic Reagent &amp; Product</strong></td><td>Front: Reimer-Tiemann mechanism.</td><td><strong>Front:</strong> $\text{Phenol} + \text{CHCl}_3 + \text{aq. NaOH} \\xrightarrow{1.\Delta, 2.\text{H}_3\text{O}^+} \text{?}$ (Name + Product + Intermediate)<br><strong>Back:</strong> Reimer-Tiemann $\rightarrow$ Salicylaldehyde. Electrophile: Dichlorocarbene ($:\text{CCl}_2$).</td></tr>
+              <tr><td><strong>Thermodynamic Constraint</strong></td><td>Front: Work formula?<br>Back: w = -nRT ln(V2/V1)</td><td><strong>Front:</strong> Under what exact conditions is $w = -2.303 nRT \\log_{10}(V_2/V_1)$ valid?<br><strong>Back:</strong> Reversible, isothermal process for an ideal gas.</td></tr>
+              <tr><td><strong>Organic Reagent &amp; Product</strong></td><td>Front: Reimer-Tiemann mechanism.</td><td><strong>Front:</strong> $\\text{Phenol} + \\text{CHCl}_3 + \\text{aq. NaOH} \\xrightarrow{1.\\Delta, 2.\\text{H}_3\\text{O}^+} \\text{?}$ (Name + Product + Intermediate)<br><strong>Back:</strong> Reimer-Tiemann $\\rightarrow$ Salicylaldehyde. Electrophile: Dichlorocarbene ($:\\text{CCl}_2$).</td></tr>
             </tbody>
           </table>
         </li>
@@ -1776,22 +1850,22 @@ function getFlowchartsHTML() {
 
     <!-- 2. DAILY MACRO LOOP -->
     <div class="box">
-      <div class="box-header"><span>2. DAILY TWO-BLOCK MACRO LOOP</span><span class="tag">DAILY ENGINE</span></div>
+      <div class="box-header"><span>2. DAILY TWO-BLOCK MACRO LOOP (PARALLEL SCHEDULER)</span><span class="tag">DAILY ENGINE</span></div>
       <div class="split-2">
         <div class="box" style="background:var(--bg-alt);">
-          <strong>BLOCK 1: MORNING REVIEW QUEUE (First 60-90m)</strong>
+          <strong>BLOCK 1: MORNING REVIEW QUEUE — PHASE 4 (First 60-90m)</strong>
           <ol style="margin-top:6px;font-size:11.5px;">
-            <li>First 20m: Clear daily Anki queue across both decks.</li>
-            <li>Next 40-70m: Execute due D1 Cued Recall, D3 Timed PYQs, or D7 Error Redos.</li>
+            <li>First 15-20m: Clear daily Anki queue (Deck 1: Global Errors &amp; Facts + Deck 2: Active Organic Reagents).</li>
+            <li>Next 40-70m: Execute due Phase 4 calendar tasks for finished chapters: <strong>D1</strong> (Cued Recall), <strong>D3</strong> ([W] Stopwatch + [X] 1st Cold Test + Unseen PYQs), <strong>D7</strong> ([X] 2nd Cold Test), or <strong>D21</strong> (Mixed Mock).</li>
           </ol>
         </div>
         <div class="box" style="background:var(--bg-alt);">
-          <strong>BLOCK 2: MAIN ACTIVE DAY 0 CHAPTER (Rest of Day)</strong>
+          <strong>BLOCK 2: MAIN ACTIVE DAY 0 CHAPTER — PHASES 1, 2 &amp; 3 (Rest of Day)</strong>
           <ol style="margin-top:6px;font-size:11.5px;">
-            <li>Phase 1: Orientation &amp; Baseline Two-Column Notes.</li>
-            <li>Phase 2: Subject Extraction Protocol (A, B, or C).</li>
-            <li>Phase 3: 30/70 Solved Examples + 20-30 Practice Drills.</li>
-            <li>Phase 4: Compile Obsidian Note + Anki Cards; Delete Scratchpad.</li>
+            <li><strong>Phase 1 (GPS Stage 1):</strong> Lecture / NCERT Scan + Two-Column Rough Notes + 15m Question Vocab Scan.</li>
+            <li><strong>Phase 2 (Stage 1 &rarr; 2 Bridge):</strong> Cross-check module formula summary &rarr; Compile Obsidian API Table (or NCERT 4-Pass) &rarr; Trash rough scratchpad.</li>
+            <li><strong>Phase 3A (GPS Stage 2):</strong> 30/70 In-Chapter Worked Examples Split (grade [C]/[W]/[X]).</li>
+            <li><strong>Phase 3B (GPS Stage 3 &rarr; Stage 4 Exit Gate):</strong> 20-30 Module Drills + 15-20 Timed Older PYQs (&ge;75-80% accuracy) &rarr; Log [W]/[X] in Obsidian &amp; Anki &rarr; Mark Stage 4 (D0_DONE) to start Phase 4 calendar clock.</li>
           </ol>
         </div>
       </div>
