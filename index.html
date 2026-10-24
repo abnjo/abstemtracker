@@ -10,14 +10,21 @@
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
 <style>
 :root {
-  --bg: #ffffff;
-  --bg-alt: #f5f5f5;
+  --bg: #f8f9fa;
+  --bg-alt: #f1f3f5;
+  --surface-1: #ffffff;
+  --surface-2: #fcfdfe;
+  --surface-3: #f1f3f5;
+  --surface-inset: #e9ecef;
   --fg: #111111;
   --fg-muted: #555555;
-  --border: #cccccc;
-  --border-dark: #111111;
+  --border: #d0d7de;
+  --border-dark: #1b1f24;
   --accent: #111111;
-  --hl: #e8e8e8;
+  --hl: #e9ecef;
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.03);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -1px rgba(0, 0, 0, 0.04);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.09), 0 4px 6px -2px rgba(0, 0, 0, 0.04);
   --status-c: #1b5e20;
   --status-w: #e65100;
   --status-x: #b71c1c;
@@ -25,14 +32,21 @@
   --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 }
 [data-theme="dark"] {
-  --bg: #0d0d0d;
-  --bg-alt: #161616;
-  --fg: #e6e6e6;
-  --fg-muted: #999999;
-  --border: #333333;
-  --border-dark: #e6e6e6;
+  --bg: #090a0c;
+  --bg-alt: #121518;
+  --surface-1: #161b22;
+  --surface-2: #1c2128;
+  --surface-3: #21262d;
+  --surface-inset: #0d1117;
+  --fg: #e6edf3;
+  --fg-muted: #8b949e;
+  --border: #30363d;
+  --border-dark: #e6edf3;
   --accent: #ffffff;
-  --hl: #262626;
+  --hl: #282e36;
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.5), 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.6), 0 2px 4px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 12px 24px rgba(0, 0, 0, 0.7), 0 4px 8px rgba(0, 0, 0, 0.5);
   --status-c: #4caf50;
   --status-w: #ff9800;
   --status-x: #f44336;
@@ -115,7 +129,9 @@ pre { padding: 10px; border: 1px solid var(--border); overflow-x: auto; margin: 
 .pane {
   display: flex;
   flex-direction: column;
-  border: 2px solid var(--border-dark);
+  border: 1.5px solid var(--border-dark);
+  border-radius: 4px;
+  box-shadow: var(--shadow-sm);
   overflow: hidden;
   background: var(--bg);
 }
@@ -124,6 +140,9 @@ pre { padding: 10px; border: 1px solid var(--border); overflow-x: auto; margin: 
   justify-content: space-between;
   align-items: center;
   padding: 5px 10px;
+  background: var(--surface-3);
+  border-bottom: 1.5px solid var(--border);
+}
   background: var(--bg-alt);
   border-bottom: 2px solid var(--border-dark);
   font-family: var(--font-mono);
@@ -144,18 +163,29 @@ pre { padding: 10px; border: 1px solid var(--border); overflow-x: auto; margin: 
   .dash-grid { grid-template-columns: 1fr; height: auto; }
 }
 .box {
-  border: 1px solid var(--border-dark);
-  padding: 10px;
-  margin-bottom: 10px;
-  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  padding: 12px;
+  margin-bottom: 12px;
+  background: var(--surface-1);
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow 0.15s ease, border-color 0.15s ease;
+}
+.box:hover {
+  box-shadow: var(--shadow-md);
+  border-color: var(--border-dark);
 }
 .box-header {
   font-family: var(--font-mono);
   font-weight: 700;
-  font-size: 12px;
+  font-size: 11.5px;
+  letter-spacing: 0.5px;
+  background: var(--surface-3);
+  padding: 6px 12px;
+  margin: -12px -12px 10px -12px;
   border-bottom: 1px solid var(--border);
-  padding-bottom: 4px;
-  margin-bottom: 8px;
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -545,7 +575,9 @@ details.audit-drawer[open] summary {
 /* Timer Only & Practice Session Styles */
 .timer-hero {
   border: 1.5px solid var(--border-dark);
-  background: var(--bg-alt);
+  background: var(--surface-2);
+  border-radius: 6px;
+  box-shadow: var(--shadow-md);
   padding: 16px;
   text-align: center;
   margin-bottom: 12px;
@@ -574,11 +606,14 @@ details.audit-drawer[open] summary {
   font-size: 13px;
   padding: 6px 16px;
   font-weight: 700;
+  border-radius: 4px;
 }
 .omr-container {
   overflow-x: auto;
-  border: 1px solid var(--border-dark);
-  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  box-shadow: var(--shadow-sm);
+  background: var(--surface-1);
   max-height: 520px;
   overflow-y: auto;
 }
@@ -594,13 +629,15 @@ details.audit-drawer[open] summary {
   vertical-align: middle;
 }
 .omr-table th {
-  background: var(--bg-alt);
+  background: var(--surface-3);
   position: sticky;
   top: 0;
   z-index: 2;
   font-family: var(--font-mono);
   font-size: 11px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
+.omr-row:nth-child(even) { background: var(--surface-2); }
 .omr-row:hover { background: var(--hl); }
 .omr-row.active-q {
   background: var(--hl);
@@ -698,25 +735,35 @@ details.audit-drawer[open] summary {
 .sheet-tab-btn {
   font-family: var(--font-mono);
   font-size: 11px;
-  padding: 4px 10px;
+  padding: 5px 12px;
   border: 1px solid var(--border);
-  background: var(--bg-alt);
+  border-radius: 4px;
+  background: var(--surface-2);
   cursor: pointer;
   white-space: nowrap;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.12s ease;
+}
+.sheet-tab-btn:hover {
+  background: var(--surface-3);
+  border-color: var(--border-dark);
 }
 .sheet-tab-btn.active {
   background: var(--fg);
   color: var(--bg);
   border-color: var(--fg);
   font-weight: 700;
+  box-shadow: var(--shadow-md);
 }
 .radar-box {
   display: flex;
   flex-direction: column;
   align-items: center;
   padding: 12px;
-  background: var(--bg-alt);
+  background: var(--surface-2);
   border: 1px solid var(--border);
+  border-radius: 5px;
+  box-shadow: var(--shadow-sm);
 }
 .session-summary-grid {
   display: grid;
@@ -725,10 +772,16 @@ details.audit-drawer[open] summary {
   margin-bottom: 12px;
 }
 .stat-card-mini {
-  background: var(--bg-alt);
+  background: var(--surface-2);
   border: 1px solid var(--border);
+  border-radius: 4px;
+  box-shadow: var(--shadow-sm);
   padding: 8px;
   text-align: center;
+  transition: box-shadow 0.15s ease;
+}
+.stat-card-mini:hover {
+  box-shadow: var(--shadow-md);
 }
 .stat-card-val {
   font-family: var(--font-mono);
@@ -2999,18 +3052,15 @@ let activeTimerState = {
   sessionId: null,
   sheetIndex: 0,
   startTime: 0,
-  lastDeltaZeroTime: 0,
   accumulatedSessionMs: 0,
-  accumulatedDeltaMs: 0,
   isRunning: false,
   timerOnlyStart: 0,
   timerOnlyAccumulated: 0,
-  timerOnlyLastLap: 0,
-  timerOnlyLapAccumulated: 0,
+  timerOnlyLapStartSec: 0,
+  timerOnlyLapNudgeSec: 0,
   timerOnlyRunning: false,
   timerOnlyCompleted: false,
   // Pomodoro runtime
-  pomodoroPhase: "study", // "study" or "break"
   breakStartTime: 0,
   breakDurationMs: 0,
   breakAccumulatedMs: 0,
@@ -3020,7 +3070,7 @@ let activeTimerState = {
 function onGlobalTimerTick() {
   const now = Date.now();
 
-  // 1. Practice Session Timer Tick
+  // 1. Practice Session Timer Tick (Synchronized Second Phase)
   if (activeTimerState.isRunning && activeTimerState.type === "practice") {
     const session = state.sessions ? state.sessions.find(s => s.id === activeTimerState.sessionId) : null;
     if (!session) return;
@@ -3028,24 +3078,20 @@ function onGlobalTimerTick() {
     if (!sheet) return;
 
     const sessionElapsed = (now - activeTimerState.startTime) + activeTimerState.accumulatedSessionMs;
-    const deltaElapsed = (now - activeTimerState.lastDeltaZeroTime) + activeTimerState.accumulatedDeltaMs;
-
     sheet.elapsedSessionMs = sessionElapsed;
-    sheet.currentDeltaMs = deltaElapsed;
-
-    // High performance DOM update
-    const sessDisp = document.getElementById("practiceSessionTimerDisp");
-    if (sessDisp) sessDisp.textContent = formatHMS(sessionElapsed);
-    const deltaDisp = document.getElementById("practiceDeltaTimerDisp");
-    if (deltaDisp) deltaDisp.textContent = formatMS(deltaElapsed);
-
-    // Live earned break calculation: break = study / 5
-    const earnedBreakSec = Math.floor((sessionElapsed / 1000) / 5);
-    const earnedBreakDisp = document.getElementById("practiceEarnedBreakDisp");
-    if (earnedBreakDisp) earnedBreakDisp.textContent = formatMS(earnedBreakSec * 1000);
-
-    const deltaSec = Math.floor(deltaElapsed / 1000);
     const sessionSec = Math.floor(sessionElapsed / 1000);
+
+    // Synchronized delta calculation:
+    // deltaSec derives directly from sessionSec, guaranteeing identical millisecond second rollover!
+    const deltaSec = Math.max(0, sessionSec - (sheet.questionStartSessionSec || 0) + (sheet.nudgeDeltaSec || 0));
+    sheet.currentDeltaSec = deltaSec;
+    sheet.currentDeltaMs = deltaSec * 1000;
+
+    // High performance DOM update - both tick at the exact same millisecond
+    const sessDisp = document.getElementById("practiceSessionTimerDisp");
+    if (sessDisp) sessDisp.textContent = formatHMS(sessionSec * 1000);
+    const deltaDisp = document.getElementById("practiceDeltaTimerDisp");
+    if (deltaDisp) deltaDisp.textContent = formatMS(deltaSec * 1000);
 
     // Delta TTS & Beeps
     const ttsMode = sheet.ttsMode || state.practiceSettings.ttsMode || "delta";
@@ -3085,7 +3131,7 @@ function onGlobalTimerTick() {
     }
   }
 
-  // 2. Timer Only Tick
+  // 2. Timer Only Tick (Synchronized Second Phase)
   const tState = state.timerOnly || {};
   const timerMode = tState.mode || "stopwatch";
 
@@ -3093,11 +3139,12 @@ function onGlobalTimerTick() {
   if (activeTimerState.breakRunning) {
     const breakElapsed = (now - activeTimerState.breakStartTime) + activeTimerState.breakAccumulatedMs;
     const remainingMs = Math.max(0, activeTimerState.breakDurationMs - breakElapsed);
+    const remainingSec = Math.ceil(remainingMs / 1000);
 
     const bigDisp = document.getElementById("timerOnlyBigDisp");
-    if (bigDisp) bigDisp.textContent = formatMS(remainingMs);
+    if (bigDisp) bigDisp.textContent = formatMS(remainingSec * 1000);
     const lapDisp = document.getElementById("timerOnlyLapDisp");
-    if (lapDisp) lapDisp.textContent = `Break Countdown (Remaining: ${formatMS(remainingMs)})`;
+    if (lapDisp) lapDisp.textContent = `Break Countdown (Remaining: ${formatMS(remainingSec * 1000)})`;
 
     if (remainingMs === 0 && !activeTimerState.timerOnlyCompleted) {
       activeTimerState.timerOnlyCompleted = true;
@@ -3111,23 +3158,25 @@ function onGlobalTimerTick() {
 
   if (activeTimerState.timerOnlyRunning) {
     const elapsed = (now - activeTimerState.timerOnlyStart) + activeTimerState.timerOnlyAccumulated;
-    const lapElapsed = (now - activeTimerState.timerOnlyLastLap) + activeTimerState.timerOnlyLapAccumulated;
+    const sessionSec = Math.floor(elapsed / 1000);
+    const lapSec = Math.max(0, sessionSec - (activeTimerState.timerOnlyLapStartSec || 0) + (activeTimerState.timerOnlyLapNudgeSec || 0));
 
-    let dispMs = elapsed;
+    let dispMs = sessionSec * 1000;
     if (timerMode === "timer") {
-      const targetMs = (tState.targetDurationSec || 3600) * 1000;
-      dispMs = Math.max(0, targetMs - elapsed);
-      if (dispMs === 0 && !activeTimerState.timerOnlyCompleted) {
+      const targetSec = tState.targetDurationSec || 3600;
+      const remainSec = Math.max(0, targetSec - sessionSec);
+      dispMs = remainSec * 1000;
+      if (remainSec === 0 && !activeTimerState.timerOnlyCompleted) {
         activeTimerState.timerOnlyCompleted = true;
         appAudioTTS.playTripleBeep();
         appAudioTTS.speak("Countdown timer finished! Session complete.", tState.speechRate, tState.speechVoice);
       }
     } else if (timerMode === "pomodoro") {
-      const pomodoroStudyMs = (tState.pomodoroStudySec || 1500) * 1000;
-      if (elapsed >= pomodoroStudyMs && !activeTimerState.timerOnlyCompleted) {
+      const pomodoroStudySec = tState.pomodoroStudySec || 1500;
+      if (sessionSec >= pomodoroStudySec && !activeTimerState.timerOnlyCompleted) {
         activeTimerState.timerOnlyCompleted = true;
         appAudioTTS.playTripleBeep();
-        const earnedSec = Math.floor((elapsed / 1000) / 5);
+        const earnedSec = Math.floor(sessionSec / 5);
         appAudioTTS.speak(`Pomodoro study cycle completed! You earned ${appAudioTTS.formatSpokenTime(earnedSec)} of break.`, tState.speechRate, tState.speechVoice);
       }
     }
@@ -3137,15 +3186,12 @@ function onGlobalTimerTick() {
     const lapDisp = document.getElementById("timerOnlyLapDisp");
     if (lapDisp) {
       if (timerMode === "pomodoro") {
-        const earnedSec = Math.floor((elapsed / 1000) / 5);
-        lapDisp.textContent = `Earned Break (Study / 5): ${formatMS(earnedSec * 1000)} | Lap: ${formatMS(lapElapsed)}`;
+        const earnedSec = Math.floor(sessionSec / 5);
+        lapDisp.textContent = `Earned Break (Study / 5): ${formatMS(earnedSec * 1000)} | Lap: ${formatMS(lapSec * 1000)}`;
       } else {
-        lapDisp.textContent = `Lap / Delta: ${formatMS(lapElapsed)}`;
+        lapDisp.textContent = `Lap / Delta: ${formatMS(lapSec * 1000)}`;
       }
     }
-
-    const lapSec = Math.floor(lapElapsed / 1000);
-    const sessionSec = Math.floor(elapsed / 1000);
 
     const ttsMode = tState.ttsMode || "mixed";
     const deltaIntervals = parseIntervalsStr(tState.deltaIntervals || "30,60,90,120");
@@ -3188,14 +3234,12 @@ function toggleTimerOnly() {
     // Pause study timer
     activeTimerState.timerOnlyRunning = false;
     activeTimerState.timerOnlyAccumulated += Date.now() - activeTimerState.timerOnlyStart;
-    activeTimerState.timerOnlyLapAccumulated += Date.now() - activeTimerState.timerOnlyLastLap;
     appAudioTTS.stopWorker();
     appAudioTTS.pauseAudio();
   } else {
     // Start / Resume study timer
     activeTimerState.timerOnlyRunning = true;
     activeTimerState.timerOnlyStart = Date.now();
-    activeTimerState.timerOnlyLastLap = Date.now();
     activeTimerState.timerOnlyCompleted = false;
     appAudioTTS.startWorker();
   }
@@ -3205,9 +3249,9 @@ function toggleTimerOnly() {
 function resetTimerOnly() {
   activeTimerState.timerOnlyRunning = false;
   activeTimerState.timerOnlyStart = 0;
-  activeTimerState.timerOnlyLastLap = 0;
   activeTimerState.timerOnlyAccumulated = 0;
-  activeTimerState.timerOnlyLapAccumulated = 0;
+  activeTimerState.timerOnlyLapStartSec = 0;
+  activeTimerState.timerOnlyLapNudgeSec = 0;
   activeTimerState.timerOnlyCompleted = false;
   activeTimerState.breakRunning = false;
   activeTimerState.breakStartTime = 0;
@@ -3221,21 +3265,22 @@ function resetTimerOnly() {
 function lapTimerOnly() {
   if (!activeTimerState.timerOnlyRunning) return;
   const now = Date.now();
-  const lapElapsed = (now - activeTimerState.timerOnlyLastLap) + activeTimerState.timerOnlyLapAccumulated;
-  const totalElapsed = (now - activeTimerState.timerOnlyStart) + activeTimerState.timerOnlyAccumulated;
+  const elapsed = (now - activeTimerState.timerOnlyStart) + activeTimerState.timerOnlyAccumulated;
+  const sessionSec = Math.floor(elapsed / 1000);
+  const lapSec = Math.max(0, sessionSec - (activeTimerState.timerOnlyLapStartSec || 0) + (activeTimerState.timerOnlyLapNudgeSec || 0));
 
   if (!state.timerOnly) state.timerOnly = {};
   if (!state.timerOnly.laps) state.timerOnly.laps = [];
 
   state.timerOnly.laps.unshift({
     lapNum: state.timerOnly.laps.length + 1,
-    deltaSec: Math.floor(lapElapsed / 1000),
-    totalSec: Math.floor(totalElapsed / 1000),
+    deltaSec: lapSec,
+    totalSec: sessionSec,
     timestamp: new Date().toLocaleTimeString()
   });
 
-  activeTimerState.timerOnlyLastLap = now;
-  activeTimerState.timerOnlyLapAccumulated = 0;
+  activeTimerState.timerOnlyLapStartSec = sessionSec;
+  activeTimerState.timerOnlyLapNudgeSec = 0;
   appAudioTTS.lastDispatchedDeltaSec = -1;
   appAudioTTS.playSyntheticBeep();
 
@@ -3244,11 +3289,7 @@ function lapTimerOnly() {
 }
 
 function nudgeTimerOnly(deltaSec) {
-  if (activeTimerState.timerOnlyRunning) {
-    activeTimerState.timerOnlyAccumulated += deltaSec * 1000;
-  } else {
-    activeTimerState.timerOnlyAccumulated = Math.max(0, activeTimerState.timerOnlyAccumulated + deltaSec * 1000);
-  }
+  activeTimerState.timerOnlyLapNudgeSec = (activeTimerState.timerOnlyLapNudgeSec || 0) + deltaSec;
   renderWorkspace();
 }
 
@@ -3269,15 +3310,13 @@ function setTimerOnlyTTSMode(ttsMode) {
 
 function startPomodoroBreak() {
   appAudioTTS.ensureAudio();
-  // Pause study timer if running
   if (activeTimerState.timerOnlyRunning) {
     activeTimerState.timerOnlyRunning = false;
     activeTimerState.timerOnlyAccumulated += Date.now() - activeTimerState.timerOnlyStart;
-    activeTimerState.timerOnlyLapAccumulated += Date.now() - activeTimerState.timerOnlyLastLap;
   }
 
   const studySec = Math.floor(activeTimerState.timerOnlyAccumulated / 1000);
-  const earnedSec = Math.max(60, Math.floor(studySec / 5)); // Dynamic break: study / 5 (minimum 1m)
+  const earnedSec = Math.max(60, Math.floor(studySec / 5)); // Dynamic break: study / 5
 
   activeTimerState.breakRunning = true;
   activeTimerState.breakStartTime = Date.now();
@@ -3324,23 +3363,22 @@ function getTimerOnlyHTML() {
   const isBreak = activeTimerState.breakRunning;
   const now = Date.now();
 
-  let dispMs = activeTimerState.timerOnlyAccumulated;
-  let lapElapsed = activeTimerState.timerOnlyLapAccumulated;
+  const elapsed = isRunning
+    ? (now - activeTimerState.timerOnlyStart) + activeTimerState.timerOnlyAccumulated
+    : activeTimerState.timerOnlyAccumulated;
+  const sessionSec = Math.floor(elapsed / 1000);
+  const lapSec = Math.max(0, sessionSec - (activeTimerState.timerOnlyLapStartSec || 0) + (activeTimerState.timerOnlyLapNudgeSec || 0));
 
+  let dispMs = sessionSec * 1000;
   if (isBreak) {
     const bElapsed = (now - activeTimerState.breakStartTime) + activeTimerState.breakAccumulatedMs;
     dispMs = Math.max(0, activeTimerState.breakDurationMs - bElapsed);
-  } else if (isRunning) {
-    dispMs = (now - activeTimerState.timerOnlyStart) + activeTimerState.timerOnlyAccumulated;
-    lapElapsed = (now - activeTimerState.timerOnlyLastLap) + activeTimerState.timerOnlyLapAccumulated;
+  } else if (t.mode === "timer") {
+    const remainSec = Math.max(0, (t.targetDurationSec || 3600) - sessionSec);
+    dispMs = remainSec * 1000;
   }
 
-  if (!isBreak && t.mode === "timer") {
-    dispMs = Math.max(0, (t.targetDurationSec || 3600) * 1000 - (isRunning ? (now - activeTimerState.timerOnlyStart) + activeTimerState.timerOnlyAccumulated : activeTimerState.timerOnlyAccumulated));
-  }
-
-  const studySec = isBreak ? Math.floor(activeTimerState.timerOnlyAccumulated / 1000) : (isRunning ? Math.floor(((now - activeTimerState.timerOnlyStart) + activeTimerState.timerOnlyAccumulated) / 1000) : Math.floor(activeTimerState.timerOnlyAccumulated / 1000));
-  const earnedBreakSec = Math.floor(studySec / 5);
+  const earnedBreakSec = Math.floor(sessionSec / 5);
 
   return `
   <div>
@@ -3366,18 +3404,18 @@ function getTimerOnlyHTML() {
       </div>
 
       ${isBreak ? `
-        <div style="background:var(--status-c);color:#fff;padding:6px 12px;font-weight:700;margin-bottom:8px;font-family:var(--font-mono);border-radius:3px;">
+        <div style="background:var(--status-c);color:#fff;padding:6px 12px;font-weight:700;margin-bottom:8px;font-family:var(--font-mono);border-radius:4px;">
           [ACTIVE BREAK PHASE] Step away and rest! Dynamic formula: Study / 5
         </div>
       ` : (t.mode === 'pomodoro' ? `
-        <div style="background:var(--bg-alt);border:1px solid var(--border);padding:4px 8px;font-size:11px;font-family:var(--font-mono);margin-bottom:6px;">
-          Dynamic Earned Break: <strong>${formatMS(earnedBreakSec * 1000)}</strong> (Study Time: ${formatHMS(studySec * 1000)})
+        <div style="background:var(--surface-3);border:1px solid var(--border);border-radius:4px;padding:4px 8px;font-size:11px;font-family:var(--font-mono);margin-bottom:6px;">
+          Dynamic Earned Break: <strong>${formatMS(earnedBreakSec * 1000)}</strong> (Study Time: ${formatHMS(sessionSec * 1000)})
         </div>
       ` : '')}
 
       <div class="timer-big-display" id="timerOnlyBigDisp">${isBreak ? formatMS(dispMs) : formatHMS(dispMs)}</div>
       <div class="timer-sub-display" id="timerOnlyLapDisp">
-        ${isBreak ? `Break Remaining: ${formatMS(dispMs)}` : (t.mode === 'pomodoro' ? `Earned Break (Study/5): ${formatMS(earnedBreakSec * 1000)} | Lap: ${formatMS(lapElapsed)}` : `Lap / Question Delta: ${formatMS(lapElapsed)}`)}
+        ${isBreak ? `Break Remaining: ${formatMS(dispMs)}` : (t.mode === 'pomodoro' ? `Earned Break (Study/5): ${formatMS(earnedBreakSec * 1000)} | Lap: ${formatMS(lapSec * 1000)}` : `Lap / Delta: ${formatMS(lapSec * 1000)}`)}
       </div>
 
       <div class="timer-btn-row">
@@ -3387,7 +3425,7 @@ function getTimerOnlyHTML() {
           <button class="timer-btn-lg ${isRunning ? '' : 'active'}" style="${isRunning ? 'background:var(--status-x);color:#fff;border-color:var(--status-x);' : 'background:var(--status-c);color:#fff;border-color:var(--status-c);'}" onclick="toggleTimerOnly()">
             ${isRunning ? '[PAUSE]' : '[START]'}
           </button>
-          <button class="timer-btn-lg" onclick="lapTimerOnly()">[NEXT Q / LAP (ZERO DELTA)]</button>
+          <button class="timer-btn-lg" onclick="lapTimerOnly()">[LAP]</button>
           <button class="timer-btn-lg" onclick="nudgeTimerOnly(-${t.nudgeStepSec || 5})">-${t.nudgeStepSec || 5}s</button>
           <button class="timer-btn-lg" onclick="nudgeTimerOnly(${t.nudgeStepSec || 5})">+${t.nudgeStepSec || 5}s</button>
           ${t.mode === 'pomodoro' ? `<button class="timer-btn-lg" style="background:var(--status-c);color:#fff;" onclick="startPomodoroBreak()">[TAKE EARNED BREAK (${formatMS(earnedBreakSec * 1000)})]</button>` : ''}
@@ -3401,7 +3439,7 @@ function getTimerOnlyHTML() {
         <div class="box-header"><span>ACTIVE INTERVAL CONFIGURATION</span></div>
         <p style="font-size:11.5px;color:var(--fg-muted);">Configured intervals trigger an acoustic 880Hz beep and/or spoken voice announcement from the respective reference zero-point:</p>
         <ul style="font-size:12px;margin:6px 0 10px 18px;">
-          <li><strong>Delta TTS Zero-Point:</strong> Last clicked question / lap button. Current Intervals: <code>${t.deltaIntervals || "30,60,90,120"}s</code></li>
+          <li><strong>Delta / Lap TTS Zero-Point:</strong> Last recorded lap button. Current Intervals: <code>${t.deltaIntervals || "30,60,90,120"}s</code></li>
           <li><strong>Full TTS Zero-Point:</strong> Beginning of study session. Current Intervals: <code>${t.fullIntervals || "300,600,900"}s</code></li>
           <li><strong>Break Formula:</strong> Dynamic $\\text{Break Time} = \\lfloor \\text{Study Time} / 5 \\rfloor$ (e.g. 25m study = 5m break; 50m study = 10m break).</li>
           <li><strong>Acoustic Beep:</strong> ${t.enableBeeps !== false ? '[Enabled (880Hz Sine)]' : '[Disabled]'}</li>
@@ -3413,7 +3451,7 @@ function getTimerOnlyHTML() {
       <div class="box">
         <div class="box-header"><span>LAP &amp; DELTA HISTORY (${(t.laps || []).length})</span></div>
         <div style="max-height:220px;overflow-y:auto;">
-          ${(!t.laps || t.laps.length === 0) ? '<p style="color:var(--fg-muted);font-size:11.5px;">No laps recorded yet. Click "[NEXT Q / LAP]" to record split times.</p>' : `
+          ${(!t.laps || t.laps.length === 0) ? '<p style="color:var(--fg-muted);font-size:11.5px;">No laps recorded yet. Click "[LAP]" to record split times.</p>' : `
             <table>
               <thead><tr><th>Lap #</th><th>Delta Time</th><th>Total Elapsed</th><th>Time</th></tr></thead>
               <tbody>
@@ -3470,11 +3508,13 @@ function startPracticeSessionTimer(sessionId, sheetIndex) {
   activeTimerState.sessionId = sessionId;
   activeTimerState.sheetIndex = sheetIndex;
   activeTimerState.startTime = Date.now();
-  activeTimerState.lastDeltaZeroTime = Date.now();
   activeTimerState.accumulatedSessionMs = sheet.elapsedSessionMs || 0;
-  activeTimerState.accumulatedDeltaMs = sheet.currentDeltaMs || 0;
   activeTimerState.isRunning = true;
   sheet.isRunning = true;
+
+  if (sheet.questionStartSessionSec === undefined) {
+    sheet.questionStartSessionSec = Math.floor((sheet.elapsedSessionMs || 0) / 1000);
+  }
 
   appAudioTTS.startWorker();
   renderWorkspace();
@@ -3488,7 +3528,6 @@ function pausePracticeSessionTimer(sessionId, sheetIndex) {
   if (activeTimerState.isRunning && activeTimerState.type === "practice") {
     const now = Date.now();
     activeTimerState.accumulatedSessionMs += (now - activeTimerState.startTime);
-    activeTimerState.accumulatedDeltaMs += (now - activeTimerState.lastDeltaZeroTime);
     activeTimerState.isRunning = false;
     appAudioTTS.stopWorker();
     appAudioTTS.pauseAudio();
@@ -3502,10 +3541,12 @@ function resetPracticeSessionTimer(sessionId, sheetIndex) {
   const session = state.sessions ? state.sessions.find(s => s.id === sessionId) : null;
   if (session && session.sheets[sheetIndex]) {
     session.sheets[sheetIndex].elapsedSessionMs = 0;
+    session.sheets[sheetIndex].questionStartSessionSec = 0;
+    session.sheets[sheetIndex].nudgeDeltaSec = 0;
+    session.sheets[sheetIndex].currentDeltaSec = 0;
     session.sheets[sheetIndex].currentDeltaMs = 0;
   }
   activeTimerState.accumulatedSessionMs = 0;
-  activeTimerState.accumulatedDeltaMs = 0;
   saveAllStorage();
   renderWorkspace();
 }
@@ -3517,10 +3558,16 @@ function nudgePracticeDelta(sessionId, sheetIndex, deltaSec) {
   const sheet = session.sheets[sheetIndex];
   if (!sheet) return;
 
-  sheet.currentDeltaMs = Math.max(0, (sheet.currentDeltaMs || 0) + deltaSec * 1000);
-  activeTimerState.accumulatedDeltaMs = sheet.currentDeltaMs;
+  sheet.nudgeDeltaSec = (sheet.nudgeDeltaSec || 0) + deltaSec;
+  const sessionSec = Math.floor((sheet.elapsedSessionMs || 0) / 1000);
+  const currentDeltaSec = Math.max(0, sessionSec - (sheet.questionStartSessionSec || 0) + (sheet.nudgeDeltaSec || 0));
+  sheet.currentDeltaSec = currentDeltaSec;
+  sheet.currentDeltaMs = currentDeltaSec * 1000;
+
+  const deltaDisp = document.getElementById("practiceDeltaTimerDisp");
+  if (deltaDisp) deltaDisp.textContent = formatMS(currentDeltaSec * 1000);
+
   saveAllStorage();
-  renderWorkspace();
 }
 
 function onOMRBubbleClick(sessionId, sheetIndex, qIndex, optionVal) {
@@ -3531,12 +3578,11 @@ function onOMRBubbleClick(sessionId, sheetIndex, qIndex, optionVal) {
   const q = sheet.questions[qIndex];
   if (!q) return;
 
-  const now = Date.now();
-  const currentDeltaMs = activeTimerState.isRunning
-    ? (now - activeTimerState.lastDeltaZeroTime) + activeTimerState.accumulatedDeltaMs
-    : (sheet.currentDeltaMs || 0);
-
-  const deltaSec = Math.round(currentDeltaMs / 1000);
+  const sessionElapsed = activeTimerState.isRunning
+    ? (Date.now() - activeTimerState.startTime) + activeTimerState.accumulatedSessionMs
+    : (sheet.elapsedSessionMs || 0);
+  const sessionSec = Math.floor(sessionElapsed / 1000);
+  const deltaSec = Math.max(0, sessionSec - (sheet.questionStartSessionSec || 0) + (sheet.nudgeDeltaSec || 0));
 
   // Line 15: If an old choice on the OMR is modified, the delta since the past question should get added to that question
   const isOldChoice = (sheet.activeQuestionIndex !== undefined && qIndex < sheet.activeQuestionIndex && q.selectedOption !== null);
@@ -3562,16 +3608,49 @@ function onOMRBubbleClick(sessionId, sheetIndex, qIndex, optionVal) {
     sheet.activeQuestionIndex = qIndex + 1;
   }
 
-  // Zero-point reset for Delta TTS
-  activeTimerState.lastDeltaZeroTime = now;
-  activeTimerState.accumulatedDeltaMs = 0;
+  // Zero-point reset synchronized with current sessionSec
+  sheet.questionStartSessionSec = sessionSec;
+  sheet.nudgeDeltaSec = 0;
+  sheet.currentDeltaSec = 0;
   sheet.currentDeltaMs = 0;
   appAudioTTS.lastDispatchedDeltaSec = -1;
 
   if (sheet.enableBeeps !== false) appAudioTTS.playSyntheticBeep();
 
   saveAllStorage();
-  renderWorkspace();
+
+  // In-place targeted DOM update to prevent scroll resetting to top
+  const rowEl = document.getElementById(`omr_row_${sessionId}_${sheetIndex}_${qIndex}`);
+  if (rowEl) {
+    rowEl.querySelectorAll('.omr-bubble').forEach(b => {
+      b.classList.toggle('selected', b.dataset.opt === optionVal);
+    });
+    const deltaInp = rowEl.querySelector('.delta-val-input');
+    if (deltaInp) deltaInp.value = q.deltaTimeSec || 0;
+
+    const oldActiveRow = document.querySelector('.omr-row.active-q');
+    if (oldActiveRow && oldActiveRow !== rowEl) {
+      oldActiveRow.classList.remove('active-q');
+      const tag = oldActiveRow.querySelector('.active-indicator');
+      if (tag) tag.remove();
+    }
+    const nextRow = document.getElementById(`omr_row_${sessionId}_${sheetIndex}_${sheet.activeQuestionIndex}`);
+    if (nextRow) {
+      nextRow.classList.add('active-q');
+      const numTd = nextRow.querySelector('td:first-child');
+      if (numTd && !numTd.querySelector('.active-indicator')) {
+        numTd.insertAdjacentHTML('beforeend', '<br><span class="active-indicator" style="font-size:9px;color:var(--status-c);font-weight:700;">[ACTIVE]</span>');
+      }
+    }
+    const ansCountEl = document.getElementById('practiceAnsweredCount');
+    if (ansCountEl) {
+      ansCountEl.textContent = `${sheet.questions.filter(x => x.selectedOption !== null).length} / ${sheet.questions.length}`;
+    }
+    const deltaDisp = document.getElementById("practiceDeltaTimerDisp");
+    if (deltaDisp) deltaDisp.textContent = "00:00";
+  } else {
+    renderWorkspace();
+  }
 }
 
 function onDeltaEditInput(sessionId, sheetIndex, qIndex, valStr) {
@@ -3596,7 +3675,14 @@ function adjustQuestionDeltaSec(sessionId, sheetIndex, qIndex, deltaSec) {
   const q = sheet.questions[qIndex];
   q.deltaTimeSec = Math.max(0, (q.deltaTimeSec || 0) + deltaSec);
   saveAllStorage();
-  renderWorkspace();
+
+  const rowEl = document.getElementById(`omr_row_${sessionId}_${sheetIndex}_${qIndex}`);
+  if (rowEl) {
+    const deltaInp = rowEl.querySelector('.delta-val-input');
+    if (deltaInp) deltaInp.value = q.deltaTimeSec;
+  } else {
+    renderWorkspace();
+  }
 }
 
 function toggleQuestionFlag(sessionId, sheetIndex, qIndex, flagVal) {
@@ -3609,7 +3695,20 @@ function toggleQuestionFlag(sessionId, sheetIndex, qIndex, flagVal) {
   q.flag = (q.flag === flagVal) ? null : flagVal;
   q.flagOverridden = true;
   saveAllStorage();
-  renderWorkspace();
+
+  const rowEl = document.getElementById(`omr_row_${sessionId}_${sheetIndex}_${qIndex}`);
+  if (rowEl) {
+    rowEl.querySelectorAll('.btn-flag').forEach(btn => {
+      btn.classList.remove('active-c', 'active-w', 'active-x');
+      if (q.flag === 'C' && btn.textContent.includes('C')) btn.classList.add('active-c');
+      if (q.flag === 'W' && btn.textContent.includes('W')) btn.classList.add('active-w');
+      if (q.flag === 'X' && btn.textContent.includes('X')) btn.classList.add('active-x');
+    });
+    const badge = document.getElementById(`flag_badge_${q.qNum}`);
+    if (badge) badge.innerHTML = '';
+  } else {
+    renderWorkspace();
+  }
 }
 
 function selectQuestionErrorType(sessionId, sheetIndex, qIndex, errType) {
@@ -3624,60 +3723,165 @@ function selectQuestionErrorType(sessionId, sheetIndex, qIndex, errType) {
   else if ((errType === "memory" || errType === "concept" || errType === "reading") && !q.flag) q.flag = "X";
   q.flagOverridden = true;
   saveAllStorage();
-  renderWorkspace();
+
+  const rowEl = document.getElementById(`omr_row_${sessionId}_${sheetIndex}_${qIndex}`);
+  if (rowEl) {
+    rowEl.querySelectorAll('.btn-flag').forEach(btn => {
+      btn.classList.remove('active-c', 'active-w', 'active-x');
+      if (q.flag === 'C' && btn.textContent.includes('C')) btn.classList.add('active-c');
+      if (q.flag === 'W' && btn.textContent.includes('W')) btn.classList.add('active-w');
+      if (q.flag === 'X' && btn.textContent.includes('X')) btn.classList.add('active-x');
+    });
+  } else {
+    renderWorkspace();
+  }
 }
 
-// Quick Add / Quick Remove Operations (Configurable Range & Single/Batch Steps)
-function addQuestionsToSheet(sessionId, sheetIndex, count = 10) {
+// Quick Add / Quick Remove Operations (Direction Choosable + Sorting)
+function addQuestionsToSheet(sessionId, sheetIndex, count = 10, position = 'end') {
   const session = state.sessions ? state.sessions.find(s => s.id === sessionId) : null;
   if (!session) return;
   const sheet = session.sheets[sheetIndex];
   if (!sheet) return;
 
-  const lastQ = sheet.questions.length > 0 ? sheet.questions[sheet.questions.length - 1].qNum : 0;
-  for (let i = 1; i <= count; i++) {
-    sheet.questions.push({
-      qNum: lastQ + i,
-      selectedOption: null,
-      deltaTimeSec: 0,
-      originalTimeSec: 0,
-      flag: null,
-      flagOverridden: false,
-      errorType: "",
-      sourceRef: null
-    });
+  let newQuestions = [];
+  if (position === 'start') {
+    const firstQ = sheet.questions.length > 0 ? sheet.questions[0].qNum : 1;
+    const startNum = Math.max(1, firstQ - count);
+    for (let i = 0; i < count; i++) {
+      newQuestions.push({
+        qNum: startNum + i,
+        selectedOption: null,
+        deltaTimeSec: 0,
+        originalTimeSec: 0,
+        flag: null,
+        flagOverridden: false,
+        errorType: "",
+        sourceRef: null
+      });
+    }
+    sheet.questions.unshift(...newQuestions);
+  } else {
+    const lastQ = sheet.questions.length > 0 ? sheet.questions[sheet.questions.length - 1].qNum : 0;
+    for (let i = 1; i <= count; i++) {
+      sheet.questions.push({
+        qNum: lastQ + i,
+        selectedOption: null,
+        deltaTimeSec: 0,
+        originalTimeSec: 0,
+        flag: null,
+        flagOverridden: false,
+        errorType: "",
+        sourceRef: null
+      });
+    }
   }
+
+  sheet.questions.sort((a, b) => a.qNum - b.qNum);
   saveAllStorage();
   renderWorkspace();
 }
 
-function addRangeQuestionsToSheet(sessionId, sheetIndex) {
+function openAddQuestionsModal(sessionId, sheetIndex) {
   const session = state.sessions ? state.sessions.find(s => s.id === sessionId) : null;
   if (!session) return;
   const sheet = session.sheets[sheetIndex];
   if (!sheet) return;
 
-  const lastQ = sheet.questions.length > 0 ? sheet.questions[sheet.questions.length - 1].qNum : 0;
-  const rangeStr = prompt("Enter Question Range to add (e.g. 31-50):", `${lastQ + 1}-${lastQ + 20}`);
-  if (!rangeStr) return;
-  const parts = rangeStr.split("-").map(x => parseInt(x.trim()));
-  if (parts.length !== 2 || isNaN(parts[0]) || isNaN(parts[1]) || parts[0] > parts[1]) {
-    alert("Invalid range format. Please enter Start-End (e.g. 31-50).");
+  const firstQ = sheet.questions.length > 0 ? sheet.questions[0].qNum : 1;
+  const lastQ = sheet.questions.length > 0 ? sheet.questions[sheet.questions.length - 1].qNum : 30;
+
+  const modalHtml = `
+    <div style="font-size:12px;">
+      <p>Add or restore questions to <strong>${sheet.name}</strong>:</p>
+
+      <div class="box" style="margin:8px 0;">
+        <div class="box-header"><span>1. QUESTION RANGE TO ADD</span></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px;">
+          <div>
+            <label>Start Question #:</label>
+            <input type="number" id="addRangeStartQ" value="${lastQ + 1}" style="width:100%;margin-top:2px;">
+          </div>
+          <div>
+            <label>End Question #:</label>
+            <input type="number" id="addRangeEndQ" value="${lastQ + 10}" style="width:100%;margin-top:2px;">
+          </div>
+        </div>
+      </div>
+
+      <div class="box" style="margin:8px 0;">
+        <div class="box-header"><span>2. INSERTION POSITION / DIRECTION</span></div>
+        <select id="addRangePosition" style="width:100%;margin-top:4px;">
+          <option value="auto_sort">Auto-Sort by Question # (Recommended — places Q1 at top, missing ranges in-between)</option>
+          <option value="end">At End / Bottom of Sheet</option>
+          <option value="start">At Start / Top of Sheet</option>
+        </select>
+      </div>
+
+      <div class="flex-row" style="justify-content:flex-end;margin-top:12px;">
+        <button onclick="closeModal()">Cancel</button>
+        <button class="active" onclick="executeAddQuestionsRange('${sessionId}', ${sheetIndex})">[Add Questions]</button>
+      </div>
+    </div>
+  `;
+  openModal("Add / Insert Questions", modalHtml);
+}
+
+function executeAddQuestionsRange(sessionId, sheetIndex) {
+  const session = state.sessions ? state.sessions.find(s => s.id === sessionId) : null;
+  if (!session) return;
+  const sheet = session.sheets[sheetIndex];
+  if (!sheet) return;
+
+  const startQ = parseInt(document.getElementById("addRangeStartQ")?.value) || 1;
+  const endQ = parseInt(document.getElementById("addRangeEndQ")?.value) || startQ;
+  const pos = document.getElementById("addRangePosition")?.value || "auto_sort";
+
+  const minQ = Math.min(startQ, endQ);
+  const maxQ = Math.max(startQ, endQ);
+
+  const newQuestions = [];
+  for (let qNum = minQ; qNum <= maxQ; qNum++) {
+    if (!sheet.questions.some(q => q.qNum === qNum)) {
+      newQuestions.push({
+        qNum: qNum,
+        selectedOption: null,
+        deltaTimeSec: 0,
+        originalTimeSec: 0,
+        flag: null,
+        flagOverridden: false,
+        errorType: "",
+        sourceRef: null
+      });
+    }
+  }
+
+  if (newQuestions.length === 0) {
+    alert("Specified question numbers already exist in this sheet.");
     return;
   }
 
-  for (let qNum = parts[0]; qNum <= parts[1]; qNum++) {
-    sheet.questions.push({
-      qNum: qNum,
-      selectedOption: null,
-      deltaTimeSec: 0,
-      originalTimeSec: 0,
-      flag: null,
-      flagOverridden: false,
-      errorType: "",
-      sourceRef: null
-    });
+  if (pos === "start") {
+    sheet.questions.unshift(...newQuestions);
+  } else if (pos === "end") {
+    sheet.questions.push(...newQuestions);
+  } else {
+    sheet.questions.push(...newQuestions);
+    sheet.questions.sort((a, b) => a.qNum - b.qNum);
   }
+
+  saveAllStorage();
+  closeModal();
+  renderWorkspace();
+}
+
+function sortSheetQuestions(sessionId, sheetIndex) {
+  const session = state.sessions ? state.sessions.find(s => s.id === sessionId) : null;
+  if (!session) return;
+  const sheet = session.sheets[sheetIndex];
+  if (!sheet) return;
+
+  sheet.questions.sort((a, b) => a.qNum - b.qNum);
   saveAllStorage();
   renderWorkspace();
 }
@@ -3774,7 +3978,7 @@ function deletePracticeSession(sessionId) {
 }
 
 function setPracticeSessionSubView(viewName) {
-  state.activeSessionSubView = viewName; // "omr", "analysis", "start", "resume", "defaults"
+  state.activeSessionSubView = viewName;
   saveAllStorage();
   renderWorkspace();
 }
@@ -3811,6 +4015,10 @@ function createPracticeSession(exam, subject, chapterId, book, level, set, secti
     thresholdSec: parseInt(thresholdSec) || state.practiceSettings.defaultThresholdSec || 90,
     enableAutoWThreshold: autoW !== false,
     activeQuestionIndex: 0,
+    questionStartSessionSec: 0,
+    nudgeDeltaSec: 0,
+    currentDeltaSec: 0,
+    currentDeltaMs: 0,
     timerMode: "stopwatch",
     ttsMode: state.practiceSettings.ttsMode || "delta",
     deltaIntervals: state.practiceSettings.deltaIntervals || "30,60,90,120",
@@ -3818,7 +4026,6 @@ function createPracticeSession(exam, subject, chapterId, book, level, set, secti
     enableBeeps: state.practiceSettings.enableBeeps !== false,
     enableSpeech: state.practiceSettings.enableSpeech !== false,
     elapsedSessionMs: 0,
-    currentDeltaMs: 0,
     isRunning: false,
     questions: questions
   };
@@ -3979,6 +4186,10 @@ function executeCreateCustomSheet(sessionId) {
     thresholdSec: threshold,
     enableAutoWThreshold: true,
     activeQuestionIndex: 0,
+    questionStartSessionSec: 0,
+    nudgeDeltaSec: 0,
+    currentDeltaSec: 0,
+    currentDeltaMs: 0,
     timerMode: "stopwatch",
     ttsMode: currentSheet.ttsMode || "delta",
     deltaIntervals: currentSheet.deltaIntervals || "30,60,90,120",
@@ -3986,7 +4197,6 @@ function executeCreateCustomSheet(sessionId) {
     enableBeeps: currentSheet.enableBeeps !== false,
     enableSpeech: currentSheet.enableSpeech !== false,
     elapsedSessionMs: 0,
-    currentDeltaMs: 0,
     isRunning: false,
     questions: questions
   };
@@ -4148,6 +4358,10 @@ function executeGenerateReviewSheet(sessionId) {
     thresholdSec: currentSheet.thresholdSec || 90,
     enableAutoWThreshold: currentSheet.enableAutoWThreshold !== false,
     activeQuestionIndex: 0,
+    questionStartSessionSec: 0,
+    nudgeDeltaSec: 0,
+    currentDeltaSec: 0,
+    currentDeltaMs: 0,
     timerMode: "stopwatch",
     ttsMode: currentSheet.ttsMode || "delta",
     deltaIntervals: currentSheet.deltaIntervals || "30,60,90,120",
@@ -4155,7 +4369,6 @@ function executeGenerateReviewSheet(sessionId) {
     enableBeeps: currentSheet.enableBeeps !== false,
     enableSpeech: currentSheet.enableSpeech !== false,
     elapsedSessionMs: 0,
-    currentDeltaMs: 0,
     isRunning: false,
     questions: reviewQuestions
   };
@@ -4289,7 +4502,6 @@ function getPracticeAnalysisHTML(session) {
     return `<p>No sheets available for analysis.</p>`;
   }
 
-  // Determine questions subset based on scope
   let scopeQuestions = [];
   let scopeTitle = "";
 
@@ -4298,7 +4510,6 @@ function getPracticeAnalysisHTML(session) {
     scopeQuestions = currentSheet.questions || [];
   } else if (scope === "upto") {
     scopeTitle = `Upto Sheet ${sheetIdx + 1}: ${currentSheet.name} (Cumulative Progression)`;
-    // Aggregate questions from sheet 0 up to sheetIdx
     for (let s = 0; s <= sheetIdx; s++) {
       if (session.sheets[s]) {
         scopeQuestions.push(...session.sheets[s].questions);
@@ -4849,7 +5060,7 @@ function getDefaultSettingsHTML() {
           const list = m[type] || [];
           const typeLabel = type.toUpperCase();
           return `
-            <div style="border:1px solid var(--border);padding:8px;background:var(--bg);">
+            <div style="border:1px solid var(--border);border-radius:4px;padding:8px;background:var(--surface-1);box-shadow:var(--shadow-sm);">
               <div class="flex-row" style="justify-content:space-between;margin-bottom:6px;">
                 <strong>${typeLabel} (${list.length})</strong>
                 <button style="padding:1px 5px;font-size:10px;" onclick="promptAddCustomMetadata('${type}')">+ Add</button>
@@ -4878,7 +5089,6 @@ function saveDefaultSettingsMenu() {
   if (!state.practiceSettings) state.practiceSettings = {};
   if (!state.timerOnly) state.timerOnly = {};
 
-  // Exam thresholds
   state.practiceSettings.examThresholds = {
     "JEE Advanced": parseInt(document.getElementById("defThreshJEEAdv")?.value) || 180,
     "JEE Main": parseInt(document.getElementById("defThreshJEEMain")?.value) || 120,
@@ -4891,7 +5101,6 @@ function saveDefaultSettingsMenu() {
   state.practiceSettings.optionStyle = document.getElementById("defOptStyle")?.value || "ABCD";
   state.practiceSettings.defaultQCount = parseInt(document.getElementById("defQCount")?.value) || 30;
 
-  // TTS settings
   state.practiceSettings.ttsMode = document.getElementById("defTTSMode")?.value || "delta";
   state.practiceSettings.deltaIntervals = document.getElementById("defDeltaIntervals")?.value || "30,60,90,120";
   state.practiceSettings.fullIntervals = document.getElementById("defFullIntervals")?.value || "300,600,900";
@@ -4900,7 +5109,6 @@ function saveDefaultSettingsMenu() {
   state.practiceSettings.speechRate = parseFloat(document.getElementById("defSpeechRate")?.value) || 1.15;
   state.practiceSettings.nudgeStepSec = parseInt(document.getElementById("defNudgeStep")?.value) || 5;
 
-  // Pomodoro
   state.practiceSettings.pomodoroWorkMin = parseInt(document.getElementById("defPomoWork")?.value) || 25;
   state.practiceSettings.useDynamicBreak = document.getElementById("defPomoMethod")?.value === "dynamic";
   state.timerOnly.targetDurationSec = parseInt(document.getElementById("defTimerTargetSec")?.value) || 3600;
@@ -4914,17 +5122,14 @@ function saveDefaultSettingsMenu() {
 function getPracticeSessionHTML() {
   const activeSession = state.sessions ? state.sessions.find(s => s.id === state.activeSessionId) : null;
 
-  // Subview: Defaults
   if (state.activeSessionSubView === "defaults") {
     return getDefaultSettingsHTML();
   }
 
-  // Subview: Analysis
   if (state.activeSessionSubView === "analysis" && activeSession) {
     return getPracticeAnalysisHTML(activeSession);
   }
 
-  // If no active session or subview is "start" or "resume": render Hub
   if (!activeSession || state.activeSessionSubView === "start" || state.activeSessionSubView === "resume") {
     const subjects = getSubjectList();
     const defaultSubj = subjects[0] || "Physics";
@@ -4949,7 +5154,7 @@ function getPracticeSessionHTML() {
       </div>
 
       <div class="split-2">
-        <!-- 1. START NEW SESSION FORM (Range-Configurable + Custom Identifiers) -->
+        <!-- 1. START NEW SESSION FORM -->
         <div class="box">
           <div class="box-header"><span>1. START NEW PRACTICE SESSION</span><span class="tag">D0 ACQUISITION</span></div>
           <p style="font-size:11.5px;color:var(--fg-muted);">Initialize a live OMR drill tied to a specific chapter, book/source, set, and exam:</p>
@@ -5052,7 +5257,7 @@ function getPracticeSessionHTML() {
           </button>
         </div>
 
-        <!-- 2. RESUME SAVED PRACTICE SESSIONS (Line 19) -->
+        <!-- 2. RESUME SAVED PRACTICE SESSIONS -->
         <div class="box">
           <div class="box-header"><span>2. RESUME SAVED PRACTICE SESSIONS (${(state.sessions || []).length})</span></div>
           <div style="max-height:420px;overflow-y:auto;">
@@ -5104,14 +5309,12 @@ function getPracticeSessionHTML() {
   const sessionElapsedMs = isTimerRunning
     ? (now - activeTimerState.startTime) + activeTimerState.accumulatedSessionMs
     : (currentSheet.elapsedSessionMs || 0);
-  const deltaElapsedMs = isTimerRunning
-    ? (now - activeTimerState.lastDeltaZeroTime) + activeTimerState.accumulatedDeltaMs
-    : (currentSheet.currentDeltaMs || 0);
+  const sessionSec = Math.floor(sessionElapsedMs / 1000);
+  const deltaSec = Math.max(0, sessionSec - (currentSheet.questionStartSessionSec || 0) + (currentSheet.nudgeDeltaSec || 0));
 
   const optLabels = (currentSheet.optionStyle === "1234") ? ["1", "2", "3", "4"] : ["A", "B", "C", "D"];
   const ttsMode = currentSheet.ttsMode || state.practiceSettings.ttsMode || "delta";
   const ch = state.chapters.find(c => c.id === activeSession.chapterId);
-  const earnedBreakSec = Math.floor((sessionElapsedMs / 1000) / 5);
 
   return `
   <div>
@@ -5135,21 +5338,17 @@ function getPracticeSessionHTML() {
       </div>
     </div>
 
-    <!-- TOP TIMER BAR (Lines 3-8, 10 & 35) -->
+    <!-- TOP TIMER BAR (Synchronized Second Phase, No Break Timer in Question Session) -->
     <div class="timer-hero" style="padding:10px 14px;margin-bottom:8px;">
       <div class="flex-row" style="justify-content:space-between;">
         <div class="flex-row" style="gap:14px;">
           <div>
             <div style="font-size:10px;font-family:var(--font-mono);color:var(--fg-muted);text-transform:uppercase;">FULL SESSION ELAPSED</div>
-            <div style="font-family:var(--font-mono);font-size:26px;font-weight:700;" id="practiceSessionTimerDisp">${formatHMS(sessionElapsedMs)}</div>
+            <div style="font-family:var(--font-mono);font-size:26px;font-weight:700;" id="practiceSessionTimerDisp">${formatHMS(sessionSec * 1000)}</div>
           </div>
           <div style="border-left:1px solid var(--border);padding-left:14px;">
             <div style="font-size:10px;font-family:var(--font-mono);color:var(--fg-muted);text-transform:uppercase;">CURRENT QUESTION DELTA (ZERO-POINT)</div>
-            <div style="font-family:var(--font-mono);font-size:26px;font-weight:700;color:var(--status-w);" id="practiceDeltaTimerDisp">${formatMS(deltaElapsedMs)}</div>
-          </div>
-          <div style="border-left:1px solid var(--border);padding-left:14px;">
-            <div style="font-size:10px;font-family:var(--font-mono);color:var(--fg-muted);text-transform:uppercase;">EARNED BREAK (STUDY / 5)</div>
-            <div style="font-family:var(--font-mono);font-size:26px;font-weight:700;color:var(--status-c);" id="practiceEarnedBreakDisp">${formatMS(earnedBreakSec * 1000)}</div>
+            <div style="font-family:var(--font-mono);font-size:26px;font-weight:700;color:var(--status-w);" id="practiceDeltaTimerDisp">${formatMS(deltaSec * 1000)}</div>
           </div>
         </div>
 
@@ -5175,7 +5374,7 @@ function getPracticeSessionHTML() {
       </div>
     </div>
 
-    <!-- SHEET TABS BAR (Line 20 & Custom Sheet Addition) -->
+    <!-- SHEET TABS BAR -->
     <div class="sheet-tabs-bar">
       ${activeSession.sheets.map((sh, idx) => `
         <button class="sheet-tab-btn ${idx === currentSheetIndex ? 'active' : ''}" onclick="switchActiveSheet('${activeSession.id}', ${idx})">
@@ -5190,27 +5389,27 @@ function getPracticeSessionHTML() {
       </button>
     </div>
 
-    <!-- QUICK ADD & QUICK REMOVE CONTROLS BAR -->
-    <div class="box" style="padding:6px 10px;margin-bottom:8px;background:var(--bg-alt);">
+    <!-- QUICK ADD & QUICK REMOVE CONTROLS BAR (Direction Choosable) -->
+    <div class="box" style="padding:6px 10px;margin-bottom:8px;background:var(--surface-2);">
       <div class="flex-row" style="justify-content:space-between;">
         <div class="flex-row" style="gap:4px;">
-          <span class="tag" style="font-size:10px;">QUICK ADD:</span>
-          <button style="padding:2px 6px;font-size:10px;" onclick="addQuestionsToSheet('${activeSession.id}', ${currentSheetIndex}, 1)">+1 Q</button>
-          <button style="padding:2px 6px;font-size:10px;" onclick="addQuestionsToSheet('${activeSession.id}', ${currentSheetIndex}, 5)">+5 Qs</button>
-          <button style="padding:2px 6px;font-size:10px;" onclick="addQuestionsToSheet('${activeSession.id}', ${currentSheetIndex}, 10)">+10 Qs</button>
-          <button style="padding:2px 6px;font-size:10px;" onclick="addRangeQuestionsToSheet('${activeSession.id}', ${currentSheetIndex})">+ Range...</button>
+          <span class="tag" style="font-size:10px;">ADD:</span>
+          <button style="padding:2px 6px;font-size:10px;" onclick="addQuestionsToSheet('${activeSession.id}', ${currentSheetIndex}, 1, 'end')">+1 End</button>
+          <button style="padding:2px 6px;font-size:10px;" onclick="addQuestionsToSheet('${activeSession.id}', ${currentSheetIndex}, 1, 'start')">+1 Top</button>
+          <button style="padding:2px 6px;font-size:10px;" onclick="openAddQuestionsModal('${activeSession.id}', ${currentSheetIndex})">[+ Add / Insert Range...]</button>
+          <button style="padding:2px 6px;font-size:10px;" onclick="sortSheetQuestions('${activeSession.id}', ${currentSheetIndex})">[Sort by Q#]</button>
         </div>
 
         <div class="flex-row" style="gap:4px;">
-          <span class="tag" style="font-size:10px;">QUICK REMOVE:</span>
-          <button style="padding:2px 6px;font-size:10px;" onclick="removeLastQuestionFromSheet('${activeSession.id}', ${currentSheetIndex})">-1 Q</button>
+          <span class="tag" style="font-size:10px;">REMOVE:</span>
+          <button style="padding:2px 6px;font-size:10px;" onclick="removeLastQuestionFromSheet('${activeSession.id}', ${currentSheetIndex})">-1 End</button>
           <button style="padding:2px 6px;font-size:10px;" onclick="removeUnansweredFromSheet('${activeSession.id}', ${currentSheetIndex})">Remove Unanswered</button>
           <button style="padding:2px 6px;font-size:10px;" onclick="removeRangeFromSheet('${activeSession.id}', ${currentSheetIndex})">Remove Range...</button>
         </div>
       </div>
     </div>
 
-    <!-- OMR SPREADSHEET TABLE (Lines 9-15) -->
+    <!-- OMR SPREADSHEET TABLE (Targeted In-Place Updates, No Scroll Jumps) -->
     <div class="omr-container">
       <table class="omr-table">
         <thead>
@@ -5227,15 +5426,15 @@ function getPracticeSessionHTML() {
           ${currentSheet.questions.map((q, idx) => {
             const isActive = idx === (currentSheet.activeQuestionIndex || 0);
             return `
-              <tr class="omr-row ${isActive ? 'active-q' : ''}">
+              <tr class="omr-row ${isActive ? 'active-q' : ''}" id="omr_row_${activeSession.id}_${currentSheetIndex}_${idx}">
                 <td>
                   <strong>Q${q.qNum}</strong>
-                  ${isActive ? '<br><span style="font-size:9px;color:var(--status-c);font-weight:700;">[ACTIVE]</span>' : ''}
+                  ${isActive ? '<br><span class="active-indicator" style="font-size:9px;color:var(--status-c);font-weight:700;">[ACTIVE]</span>' : ''}
                 </td>
                 <td>
                   <div style="display:flex;justify-content:center;align-items:center;">
                     ${optLabels.map(opt => `
-                      <button class="omr-bubble ${q.selectedOption === opt ? 'selected' : ''}" onclick="onOMRBubbleClick('${activeSession.id}', ${currentSheetIndex}, ${idx}, '${opt}')">
+                      <button class="omr-bubble ${q.selectedOption === opt ? 'selected' : ''}" data-opt="${opt}" onclick="onOMRBubbleClick('${activeSession.id}', ${currentSheetIndex}, ${idx}, '${opt}')">
                         ${opt}
                       </button>
                     `).join('')}
@@ -5244,7 +5443,7 @@ function getPracticeSessionHTML() {
                 <td>
                   <div class="delta-time-box">
                     <button class="btn-mini-step" onclick="adjustQuestionDeltaSec('${activeSession.id}', ${currentSheetIndex}, ${idx}, -5)">-5</button>
-                    <input type="number" value="${q.deltaTimeSec || 0}" onchange="onDeltaEditInput('${activeSession.id}', ${currentSheetIndex}, ${idx}, this.value)" title="Modifying delta pauses timer">
+                    <input type="number" class="delta-val-input" value="${q.deltaTimeSec || 0}" onchange="onDeltaEditInput('${activeSession.id}', ${currentSheetIndex}, ${idx}, this.value)" title="Modifying delta pauses timer">
                     <span>s</span>
                     <button class="btn-mini-step" onclick="adjustQuestionDeltaSec('${activeSession.id}', ${currentSheetIndex}, ${idx}, 5)">+5</button>
                   </div>
@@ -5279,11 +5478,11 @@ function getPracticeSessionHTML() {
     <!-- BOTTOM ROW UTILITIES -->
     <div class="flex-row" style="justify-content:space-between;margin-top:8px;">
       <div class="flex-row">
-        <button onclick="addQuestionsToSheet('${activeSession.id}', ${currentSheetIndex}, 10)">+ Add 10 More Rows</button>
+        <button onclick="addQuestionsToSheet('${activeSession.id}', ${currentSheetIndex}, 10, 'end')">+ Add 10 More Rows</button>
         <button onclick="markAllAnsweredAsC('${activeSession.id}', ${currentSheetIndex})">Auto-Flag Answered as [C]</button>
       </div>
       <div class="flex-row">
-        <span style="font-size:11px;color:var(--fg-muted);">Answered: <strong>${currentSheet.questions.filter(q => q.selectedOption !== null).length} / ${currentSheet.questions.length}</strong></span>
+        <span style="font-size:11px;color:var(--fg-muted);">Answered: <strong id="practiceAnsweredCount">${currentSheet.questions.filter(q => q.selectedOption !== null).length} / ${currentSheet.questions.length}</strong></span>
       </div>
     </div>
   </div>`;
@@ -5533,9 +5732,6 @@ function getLivePracticeDashWidgetHTML() {
     </div>
   </div>`;
 }
-
-
-
 function getTabContent(tabName) {
   switch (tabName) {
     case "dashboard": return getDashboardHTML();
@@ -5556,6 +5752,14 @@ function getTabContent(tabName) {
 function renderWorkspace() {
   const ws = document.getElementById("workspace");
   if (!ws) return;
+
+  // Preserve scroll positions of all scroll containers
+  const scrollMap = [];
+  ws.querySelectorAll(".omr-container, .pane-body").forEach(el => {
+    scrollMap.push({ top: el.scrollTop, left: el.scrollLeft });
+  });
+  const winScrollY = (typeof window !== "undefined") ? window.scrollY : 0;
+
   const count = state.paneCount || 1;
   ws.className = `workspace panes-${count}`;
   
@@ -5590,6 +5794,17 @@ function renderWorkspace() {
     `;
   }
   ws.innerHTML = html;
+
+  // Restore all scroll positions immediately
+  const newScrollables = ws.querySelectorAll(".omr-container, .pane-body");
+  newScrollables.forEach((el, idx) => {
+    if (scrollMap[idx]) {
+      el.scrollTop = scrollMap[idx].top;
+      el.scrollLeft = scrollMap[idx].left;
+    }
+  });
+  if (typeof window !== "undefined") window.scrollTo(window.scrollX, winScrollY);
+
   updateNavHighlight();
   updateStatusBar();
   bindConceptLinks();
@@ -5995,12 +6210,22 @@ function exportBackupZip() {
   const csvStr = "ID,Subject,Chapter,Type,Category,Stage,D0_Date,Accuracy,WX_Log\n" +
     state.chapters.map(c => `"${c.id}","${c.subj}","${c.name.replace(/"/g, '""')}","${c.type}","${c.cat}",${c.stage},"${c.d0}",${c.acc},"${(c.wx || "").replace(/"/g, '""')}"`).join("\n");
   
+  let sessionsCsv = "SessionID,Subject,Chapter,Exam,Book,Level,Set,Section,SheetName,SheetType,QNum,Option,DeltaSec,Flag,ErrorType\n";
+  (state.sessions || []).forEach(s => {
+    (s.sheets || []).forEach(sh => {
+      (sh.questions || []).forEach(q => {
+        sessionsCsv += `"${s.id}","${s.subject}","${s.chapterName.replace(/"/g, '""')}","${s.exam}","${s.book}","${s.level}","${s.set}","${s.section}","${sh.name.replace(/"/g, '""')}","${sh.type}",${q.qNum},"${q.selectedOption || ''}",${q.deltaTimeSec || 0},"${q.flag || ''}","${q.errorType || ''}"\n`;
+      });
+    });
+  });
+
   const manualArea = document.getElementById("manualContent");
   const manualText = manualArea ? manualArea.innerText : "STEM Study & Exam Execution Manual";
 
   const files = [
     { name: "state.json", data: enc.encode(stateJsonStr) },
     { name: "chapters.csv", data: enc.encode(csvStr) },
+    { name: "sessions.csv", data: enc.encode(sessionsCsv) },
     { name: "manual.txt", data: enc.encode(manualText) }
   ];
 
