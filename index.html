@@ -542,6 +542,204 @@ details.audit-drawer[open] summary {
 .flex-row { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
 .split-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 @media (max-width: 768px) { .split-2 { grid-template-columns: 1fr; } }
+/* Timer Only & Practice Session Styles */
+.timer-hero {
+  border: 1.5px solid var(--border-dark);
+  background: var(--bg-alt);
+  padding: 16px;
+  text-align: center;
+  margin-bottom: 12px;
+}
+.timer-big-display {
+  font-family: var(--font-mono);
+  font-size: 42px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  line-height: 1.1;
+  margin: 8px 0;
+}
+.timer-sub-display {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--fg-muted);
+}
+.timer-btn-row {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+.timer-btn-lg {
+  font-size: 13px;
+  padding: 6px 16px;
+  font-weight: 700;
+}
+.omr-container {
+  overflow-x: auto;
+  border: 1px solid var(--border-dark);
+  background: var(--bg);
+  max-height: 520px;
+  overflow-y: auto;
+}
+.omr-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+.omr-table th, .omr-table td {
+  padding: 6px 8px;
+  border: 1px solid var(--border);
+  text-align: center;
+  vertical-align: middle;
+}
+.omr-table th {
+  background: var(--bg-alt);
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  font-family: var(--font-mono);
+  font-size: 11px;
+}
+.omr-row:hover { background: var(--hl); }
+.omr-row.active-q {
+  background: var(--hl);
+  border-left: 3px solid var(--fg);
+}
+.omr-bubble {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1.5px solid var(--border-dark);
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 11px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 2px;
+  cursor: pointer;
+  transition: all 0.1s ease;
+  padding: 0;
+}
+.omr-bubble:hover {
+  transform: scale(1.08);
+  border-color: var(--fg);
+}
+.omr-bubble.selected {
+  background: var(--fg);
+  color: var(--bg);
+  box-shadow: 0 0 0 2px var(--bg), 0 0 0 3.5px var(--fg);
+}
+.omr-bubble.auto-w {
+  border-color: var(--status-w);
+}
+.delta-time-box {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  background: var(--bg-alt);
+  padding: 2px 4px;
+  border: 1px solid var(--border);
+}
+.delta-time-box input {
+  width: 52px;
+  text-align: center;
+  border: 1px solid var(--border);
+  padding: 1px 2px;
+  font-size: 11px;
+}
+.btn-mini-step {
+  padding: 1px 4px;
+  font-size: 10px;
+  line-height: 1;
+}
+.btn-flag-group {
+  display: inline-flex;
+  gap: 2px;
+}
+.btn-flag {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  cursor: pointer;
+}
+.btn-flag.active-c {
+  background: var(--status-c);
+  color: #fff;
+  border-color: var(--status-c);
+}
+.btn-flag.active-w {
+  background: var(--status-w);
+  color: #fff;
+  border-color: var(--status-w);
+}
+.btn-flag.active-x {
+  background: var(--status-x);
+  color: #fff;
+  border-color: var(--status-x);
+}
+.sheet-tabs-bar {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  padding: 6px 0;
+  border-bottom: 2px solid var(--border-dark);
+  margin-bottom: 8px;
+  overflow-x: auto;
+}
+.sheet-tab-btn {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  padding: 4px 10px;
+  border: 1px solid var(--border);
+  background: var(--bg-alt);
+  cursor: pointer;
+  white-space: nowrap;
+}
+.sheet-tab-btn.active {
+  background: var(--fg);
+  color: var(--bg);
+  border-color: var(--fg);
+  font-weight: 700;
+}
+.radar-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 12px;
+  background: var(--bg-alt);
+  border: 1px solid var(--border);
+}
+.session-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.stat-card-mini {
+  background: var(--bg-alt);
+  border: 1px solid var(--border);
+  padding: 8px;
+  text-align: center;
+}
+.stat-card-val {
+  font-family: var(--font-mono);
+  font-size: 18px;
+  font-weight: 700;
+}
+.stat-card-lbl {
+  font-size: 10px;
+  color: var(--fg-muted);
+  text-transform: uppercase;
+}
 mark { background: var(--fg); color: var(--bg); padding: 0 2px; }
 </style>
 </head>
@@ -552,6 +750,8 @@ mark { background: var(--fg); color: var(--bg); padding: 0 2px; }
     <span class="brand">ab's stem manual</span>
     <div class="nav-tabs" id="mainNav">
       <button data-tab="dashboard" class="active">Dashboard</button>
+      <button data-tab="timer">[Timer Only]</button>
+      <button data-tab="practice">[Timer &amp; Questions]</button>
       <button data-tab="manual">Full Manual</button>
       <button data-tab="flowcharts">Visual Flowcharts</button>
       <button data-tab="reference">Quick Reference</button>
@@ -918,7 +1118,62 @@ let state = {
   filterSubjTracker: "All",
   flowchartVariantIsolated: "diagram",
   flowchartVariantDashboard: "linear",
-  activeManualPhase2Tab: "logic"
+  activeManualPhase2Tab: "logic",
+  practiceSettings: {
+    exam: "NEET",
+    optionStyle: "ABCD",
+    defaultThresholdSec: 90,
+    enableAutoWThreshold: true,
+    ttsMode: "delta",
+    deltaIntervals: "30,60,90,120",
+    fullIntervals: "300,600,900",
+    enableBeeps: true,
+    enableSpeech: true,
+    speechRate: 1.15,
+    speechVoice: "",
+    nudgeStepSec: 5,
+    examThresholds: {
+      "JEE Advanced": 180,
+      "JEE Main": 120,
+      "NEET": 90,
+      "IAT / NEST": 150,
+      "Custom Drill": 120
+    },
+    pomodoroWorkMin: 25,
+    pomodoroBreakMin: 5,
+    useDynamicBreak: true
+  },
+  customMetadata: {
+    exams: ["JEE Advanced", "JEE Main", "NEET", "IAT / NEST", "Custom Drill"],
+    books: ["Coaching Module", "NCERT Textbook", "HC Verma", "Cengage", "DC Pandey", "MS Chouhan", "PYQ 37-Year", "Reference Book"],
+    levels: ["Level 1", "Level 2", "Level 3", "Olympiad", "Advanced Mastery"],
+    sets: ["Exercise Drills", "Worked Examples", "Try Yourself", "Illustrations", "Set A", "Set B", "PYQ"],
+    sections: ["Section A", "Section B", "Section C", "Section D", "Numerical"]
+  },
+  sessions: [],
+  activeSessionId: null,
+  activeSessionSubView: null,
+  practiceFilterSubj: "All",
+  analysisScope: "sheet",
+  analysisSheetIdx: 0,
+  timerOnly: {
+    mode: "stopwatch",
+    targetDurationSec: 3600,
+    ttsMode: "mixed",
+    deltaIntervals: "30,60,90,120",
+    fullIntervals: "300,600,900",
+    enableBeeps: true,
+    enableSpeech: true,
+    speechRate: 1.15,
+    speechVoice: "",
+    nudgeStepSec: 5,
+    pomodoroStudySec: 1500,
+    useDynamicBreak: true,
+    pomodoroBreakSec: 300,
+    pomodoroPhase: "study",
+    breakRemainingSec: 0,
+    laps: []
+  }
 };
 
 function triggerMathRender(el) {
@@ -1186,6 +1441,55 @@ async function loadAllStorage() {
       loaded.deletedEvents = {};
     }
     state = Object.assign({}, state, loaded);
+    state.practiceSettings = Object.assign({
+      exam: "NEET",
+      optionStyle: "ABCD",
+      defaultThresholdSec: 90,
+      enableAutoWThreshold: true,
+      ttsMode: "delta",
+      deltaIntervals: "30,60,90,120",
+      fullIntervals: "300,600,900",
+      enableBeeps: true,
+      enableSpeech: true,
+      speechRate: 1.15,
+      speechVoice: "",
+      nudgeStepSec: 5,
+      examThresholds: {
+        "JEE Advanced": 180,
+        "JEE Main": 120,
+        "NEET": 90,
+        "IAT / NEST": 150,
+        "Custom Drill": 120
+      },
+      pomodoroWorkMin: 25,
+      pomodoroBreakMin: 5,
+      useDynamicBreak: true
+    }, state.practiceSettings || {});
+    state.customMetadata = Object.assign({
+      exams: ["JEE Advanced", "JEE Main", "NEET", "IAT / NEST", "Custom Drill"],
+      books: ["Coaching Module", "NCERT Textbook", "HC Verma", "Cengage", "DC Pandey", "MS Chouhan", "PYQ 37-Year", "Reference Book"],
+      levels: ["Level 1", "Level 2", "Level 3", "Olympiad", "Advanced Mastery"],
+      sets: ["Exercise Drills", "Worked Examples", "Try Yourself", "Illustrations", "Set A", "Set B", "PYQ"],
+      sections: ["Section A", "Section B", "Section C", "Section D", "Numerical"]
+    }, state.customMetadata || {});
+    state.timerOnly = Object.assign({
+      mode: "stopwatch",
+      targetDurationSec: 3600,
+      ttsMode: "mixed",
+      deltaIntervals: "30,60,90,120",
+      fullIntervals: "300,600,900",
+      enableBeeps: true,
+      enableSpeech: true,
+      speechRate: 1.15,
+      speechVoice: "",
+      nudgeStepSec: 5,
+      pomodoroStudySec: 1500,
+      useDynamicBreak: true,
+      pomodoroBreakSec: 300,
+      pomodoroPhase: "study",
+      breakRemainingSec: 0,
+      laps: []
+    }, state.timerOnly || {});
   }
   document.documentElement.setAttribute("data-theme", state.theme);
   const paneSelect = document.getElementById("paneCountSelect");
@@ -1423,7 +1727,7 @@ function getManualHTML() {
           <li><strong>4-Symbol Margin Scalpel:</strong> When reading textbook/PDF, mark only:
             <ul>
               <li><code>[ ]</code> <strong>Box:</strong> Box the starting governing equation only (never intermediate algebra).</li>
-              <li><code>↑ ↓ → ⟹</code> <strong>Margin Shorthand:</strong> Note variable relationships in the margin ($r \downarrow \implies v \\uparrow$).</li>
+              <li><code>↑ ↓ → ⟹</code> <strong>Margin Shorthand:</strong> Note variable relationships in the margin ($r \\downarrow \\implies v \\uparrow$).</li>
               <li><code>[*]</code> <strong>Star:</strong> Mark the exact sentence where a key assumption or substitution trick is stated.</li>
               <li><strong>Wiring Arrows:</strong> Draw arrows linking a cause phrase directly to an effect phrase.</li>
             </ul>
@@ -1439,40 +1743,40 @@ function getManualHTML() {
                   <td>$$PV = nRT$$</td>
                   <td>$P$: Pa or atm, $V$: m$^3$ or L, $n$: mol, $T$: K (Kelvin strictly)</td>
                   <td>Low $P$, high $T$ (non-interacting point particles).</td>
-                  <td><strong>Trap (R Units &amp; STP):</strong> Modern IUPAC STP ($1\text{ bar}, 273.15\text{ K}$) $\implies 22.7\text{ L/mol}$; Old STP ($1\text{ atm}, 273.15\text{ K}$) $\implies 22.4\text{ L/mol}$. Use $R=8.314$ with Pa$\cdot$m$^3$; $R=0.0821$ with L$\cdot$atm.</td>
+                  <td><strong>Trap (R Units &amp; STP):</strong> Modern IUPAC STP ($1\\text{ bar}, 273.15\\text{ K}$) $\\implies 22.7\\text{ L/mol}$; Old STP ($1\\text{ atm}, 273.15\\text{ K}$) $\\implies 22.4\\text{ L/mol}$. Use $R=8.314$ with Pa$\\cdot$m$^3$; $R=0.0821$ with L$\\cdot$atm.</td>
                 </tr>
                 <tr>
                   <td><strong>Isothermal Reversible Work</strong></td>
-                  <td>$$w_{\text{rev}} = -2.303 nRT \log_{10}\left(\frac{V_2}{V_1}\right)$$</td>
+                  <td>$$w_{\\text{rev}} = -2.303 nRT \\log_{10}\\left(\\frac{V_2}{V_1}\\right)$$</td>
                   <td>$w$: Joules (J), $V_1, V_2$: same volume units, $T$: K</td>
-                  <td>Ideal gas; isothermal ($\Delta T = 0 \implies \Delta U = 0$); reversible path.</td>
-                  <td><strong>Sign Trap:</strong> In Chemistry (IUPAC), expansion ($V_2 > V_1$) is negative ($w < 0$). In Physics, expansion work is positive ($W > 0$). Free expansion in vacuum ($P_{\text{ext}} = 0 \implies w = 0$).</td>
+                  <td>Ideal gas; isothermal ($\\Delta T = 0 \\implies \\Delta U = 0$); reversible path.</td>
+                  <td><strong>Sign Trap:</strong> In Chemistry (IUPAC), expansion ($V_2 > V_1$) is negative ($w < 0$). In Physics, expansion work is positive ($W > 0$). Free expansion in vacuum ($P_{\\text{ext}} = 0 \\implies w = 0$).</td>
                 </tr>
                 <tr>
                   <td><strong>Spherical Mirror Formula</strong></td>
-                  <td>$$\frac{1}{v} + \frac{1}{u} = \frac{1}{f}$$</td>
+                  <td>$$\\frac{1}{v} + \\frac{1}{u} = \\frac{1}{f}$$</td>
                   <td>$u$: Object dist, $v$: Image dist, $f$: Focal length ($R/2$)</td>
                   <td>Paraxial rays (small aperture); measured from pole $P$.</td>
                   <td><strong>Sign Trap:</strong> Incident light direction $= +$. Real object $u < 0$. Concave mirror $f < 0$; Convex mirror $f > 0$. Never pre-insert a sign for the unknown variable being solved.</td>
                 </tr>
                 <tr>
                   <td><strong>Magnetic Lorentz Force</strong></td>
-                  <td>$$F = |q|vB \sin\theta$$</td>
-                  <td>$F$: N, $q$: C, $v$: m/s, $B$: Tesla (T), $\theta$: angle between $\vec{v}$ and $\vec{B}$</td>
-                  <td>Moving point charge in magnetic field $\vec{B}$.</td>
-                  <td><strong>Zero Limit:</strong> $F = 0$ if $v = 0$ or $\theta = 0^\circ/180^\circ$. <strong>Max Limit:</strong> $F_{\text{max}} = |q|vB$ at $\theta = 90^\circ$. <strong>Zero-Work Trap:</strong> Since $\vec{F} \perp \vec{v}$, magnetic force does zero work ($W = 0$) and cannot alter kinetic energy.</td>
+                  <td>$$F = |q|vB \\sin\\theta$$</td>
+                  <td>$F$: N, $q$: C, $v$: m/s, $B$: Tesla (T), $\\theta$: angle between $\\vec{v}$ and $\\vec{B}$</td>
+                  <td>Moving point charge in magnetic field $\\vec{B}$.</td>
+                  <td><strong>Zero Limit:</strong> $F = 0$ if $v = 0$ or $\\theta = 0^\\circ/180^\\circ$. <strong>Max Limit:</strong> $F_{\\text{max}} = |q|vB$ at $\\theta = 90^\\circ$. <strong>Zero-Work Trap:</strong> Since $\\vec{F} \\perp \\vec{v}$, magnetic force does zero work ($W = 0$) and cannot alter kinetic energy.</td>
                 </tr>
                 <tr>
                   <td><strong>Molarity ($M$)</strong></td>
-                  <td>$$M = \frac{n_{\text{solute}}}{V_{\text{solution (L)}}}$$</td>
+                  <td>$$M = \\frac{n_{\\text{solute}}}{V_{\\text{solution (L)}}}$$</td>
                   <td>$n$: mol, $V$: Liters (L) of total solution</td>
                   <td>Homogeneous solution.</td>
-                  <td><strong>Trap 1:</strong> Temperature-dependent ($V \propto T \implies M$ decreases when heated). <strong>Trap 2:</strong> Denominator is L of total solution, NOT kg of solvent (Molality $m$).</td>
+                  <td><strong>Trap 1:</strong> Temperature-dependent ($V \\propto T \\implies M$ decreases when heated). <strong>Trap 2:</strong> Denominator is L of total solution, NOT kg of solvent (Molality $m$).</td>
                 </tr>
               </tbody>
             </table>
           </li>
-          <li><strong>3 Limit &amp; Edge-Case Checks:</strong> For every formula, check: (a) What drives it to $0$? (b) What drives it to Max or $\infty$? (c) What is the proportionality scaling when constants are held?</li>
+          <li><strong>3 Limit &amp; Edge-Case Checks:</strong> For every formula, check: (a) What drives it to $0$? (b) What drives it to Max or $\\infty$? (c) What is the proportionality scaling when constants are held?</li>
         </ol>
       </div>
     </div>
@@ -1981,7 +2285,7 @@ function getReferenceHTML() {
         <div class="box-header"><span>1. THE 4 MARGIN MARKS (LOGIC TEXTBOOK READING)</span></div>
         <ul>
           <li><code>[ ]</code> <strong>Box:</strong> Starting equation only (never the algebra below it).</li>
-          <li><code>↑ ↓ → ⟹</code> <strong>Margin Shorthand:</strong> Variable relationships ($r \downarrow \implies v \\uparrow$).</li>
+          <li><code>↑ ↓ → ⟹</code> <strong>Margin Shorthand:</strong> Variable relationships ($r \\downarrow \\implies v \\uparrow$).</li>
           <li><code>[*]</code> <strong>Star:</strong> Key assumption or substitution trick.</li>
           <li><strong>Connecting Arrows:</strong> Directly links cause phrase to effect phrase.</li>
         </ul>
@@ -2278,6 +2582,8 @@ function getDashboardHTML() {
         </table>
       </div>
 
+      ${getLivePracticeDashWidgetHTML()}
+
       <div class="box">
         <div class="box-header"><span>COMPACT MONTHLY CALENDAR VIEW</span><button onclick="switchTab('calendar')">Full View</button></div>
         ${getMiniCalendarHTML(evs, todayStr)}
@@ -2320,8 +2626,8 @@ function getDashboardHTML() {
                   <strong>${subj}</strong>
                   ${state.subjectReorderMode ? `
                     <div class="flex-row" style="gap:2px;">
-                      <button style="padding:1px 5px;font-size:10px;" onclick="moveSubjectOrder('${subj}', -1)" title="Move ${subj} Up">▲</button>
-                      <button style="padding:1px 5px;font-size:10px;" onclick="moveSubjectOrder('${subj}', 1)" title="Move ${subj} Down">▼</button>
+                      <button style="padding:1px 5px;font-size:10px;" onclick="moveSubjectOrder('${subj}', -1)" title="Move ${subj} Up">[UP]</button>
+                      <button style="padding:1px 5px;font-size:10px;" onclick="moveSubjectOrder('${subj}', 1)" title="Move ${subj} Down">[DOWN]</button>
                     </div>
                   ` : ""}
                 </div>
@@ -2422,7 +2728,7 @@ tags: [chapter-reference, stem-vault]
 #### 2. Organic Reaction Lookup Table (For Organic Chapters Only)
 | Reaction Name | Starting Material | Reagent(s) & Exact Conditions | Major Product & Selectivity | Mechanism Class & Tested Exceptions |
 | :--- | :--- | :--- | :--- | :--- |
-| **Hydroboration-Oxidation** | Alkene (\\text{R-CH=CH}_2) | 1. \\text{BH}_3\\cdot\\text{THF}, 2. \\text{H}_2\\text{O}_2, \\text{OH}^- | Primary Alcohol (*Anti-Markovnikov*, Syn) | 4-center cyclic transition state => Zero rearrangement |
+| **Hydroboration-Oxidation** | Alkene ($\\text{R-CH=CH}_2$) | 1. $\\text{BH}_3\\cdot\\text{THF}$, 2. $\\text{H}_2\\text{O}_2, \\text{OH}^-$ | Primary Alcohol (*Anti-Markovnikov*, Syn) | 4-center cyclic transition state => Zero rearrangement |
 
 #### 3. Step-by-Step Problem Recipes (1-2-3 Shortcuts)
 * **[Method Name — e.g., Kirchhoff Nodal Analysis / Limiting Reagent]:**
@@ -2434,7 +2740,7 @@ tags: [chapter-reference, stem-vault]
 * **Fix: Why does HBr + Peroxide give anti-Markovnikov on alkenes, while HCl and HI give Markovnikov?**
   * **Trigger:** Hydrocarbon Module Ex 1, Q19
   * **Rule (1-3 Lines):** Peroxide initiates radical chain where Br* attacks less hindered carbon forming more stable radical. Both propagation steps exothermic only for HBr; for HCl (strong H-Cl bond) and HI (endothermic addition), radical chain fails.
-  * **Mini Example:** \\text{CH}_3\\text{-CH=CH}_2 + \\text{HBr} \\\\xrightarrow{\\text{peroxide}} \\text{CH}_3\\text{-CH}_2\\text{-CH}_2\\text{Br}
+  * **Mini Example:** $\\text{CH}_3\\text{-CH=CH}_2 + \\text{HBr} \\xrightarrow{\\text{peroxide}} \\text{CH}_3\\text{-CH}_2\\text{-CH}_2\\text{Br}$
   * **Exam Trap:** Applying peroxide effect to HCl/HI, or rearranging a free radical intermediate.
 
 #### 5. Decoupled Question Redo Queues (For Day 3 & Day 7)
@@ -2501,9 +2807,2740 @@ function getStorageHTML() {
   </div>`;
 }
 
+
+// --- AUDIO & TTS ENGINE ---
+class AudioTTSEngine {
+  constructor() {
+    this.audioCtx = null;
+    this.cachedVoices = [];
+    this.worker = null;
+    this.wakeLock = null;
+    this.bgAudio = null;
+    this.lastDispatchedDeltaSec = -1;
+    this.lastDispatchedFullSec = -1;
+    this.init();
+  }
+
+  init() {
+    // Silent MP3 loop for background audio persistence on Android/Chrome
+    const silentMp3 = 'data:audio/mpeg;base64,SUQzBAAAAAABEVRYWFgAAAAtAAADY29tbWVudABCaWdTb3VuZEJhbmsuY29tIC8gSWxhbSBNdWxhbW92//vQxAADEaD1wQkAAAA8AAAAA//uQZAUAB1WI0PZugAAAAAoQwAAAEk3nRdHqAAAAACiDgAAAAAAABCMyBQAAAAP///z1lZD///////z/8AA8AAAgAA///4A8D/w//4QA///D/wAA8AA/A==';
+    try {
+      this.bgAudio = new Audio(silentMp3);
+      this.bgAudio.loop = true;
+      this.bgAudio.volume = 0.01;
+    } catch (e) {}
+
+    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+      const updateVoices = () => { this.cachedVoices = window.speechSynthesis.getVoices(); };
+      window.speechSynthesis.onvoiceschanged = updateVoices;
+      updateVoices();
+    }
+
+    try {
+      if (typeof Worker !== 'undefined' && typeof Blob !== 'undefined' && typeof URL !== 'undefined') {
+        const workerCode = `
+          let timer;
+          self.onmessage = function(e) {
+            if (e.data === 'start') {
+              if (timer) clearInterval(timer);
+              timer = setInterval(() => self.postMessage('tick'), 50);
+            } else if (e.data === 'stop') {
+              if (timer) clearInterval(timer);
+            }
+          };
+        `;
+        const blob = new Blob([workerCode], { type: 'application/javascript' });
+        this.worker = new Worker(URL.createObjectURL(blob));
+        this.worker.onmessage = () => onGlobalTimerTick();
+      }
+    } catch (e) {
+      console.warn("Timer worker fallback:", e);
+    }
+  }
+
+  startWorker() {
+    if (this.worker) this.worker.postMessage('start');
+  }
+
+  stopWorker() {
+    if (this.worker) this.worker.postMessage('stop');
+  }
+
+  ensureAudio() {
+    try {
+      if (!this.audioCtx && typeof window !== 'undefined') {
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        if (AudioContextClass) this.audioCtx = new AudioContextClass();
+      }
+      if (this.audioCtx && this.audioCtx.state === 'suspended') {
+        this.audioCtx.resume();
+      }
+      if (this.bgAudio) {
+        this.bgAudio.play().catch(() => {});
+      }
+      if (typeof navigator !== 'undefined' && 'mediaSession' in navigator) {
+        navigator.mediaSession.playbackState = 'playing';
+      }
+      this.requestWakeLock();
+    } catch (e) {}
+  }
+
+  pauseAudio() {
+    try {
+      if (this.bgAudio) this.bgAudio.pause();
+      if (typeof navigator !== 'undefined' && 'mediaSession' in navigator) {
+        navigator.mediaSession.playbackState = 'paused';
+      }
+      this.releaseWakeLock();
+      if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+      }
+    } catch (e) {}
+  }
+
+  async requestWakeLock() {
+    if (typeof navigator !== 'undefined' && 'wakeLock' in navigator) {
+      try { this.wakeLock = await navigator.wakeLock.request('screen'); } catch (e) {}
+    }
+  }
+
+  releaseWakeLock() {
+    if (this.wakeLock) {
+      try { this.wakeLock.release(); } catch (e) {}
+      this.wakeLock = null;
+    }
+  }
+
+  playSyntheticBeep() {
+    try {
+      this.ensureAudio();
+      if (!this.audioCtx) return;
+      const osc = this.audioCtx.createOscillator();
+      const gainNode = this.audioCtx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(880, this.audioCtx.currentTime); // 880Hz (A5)
+      gainNode.gain.setValueAtTime(0, this.audioCtx.currentTime);
+      gainNode.gain.linearRampToValueAtTime(0.4, this.audioCtx.currentTime + 0.01);
+      gainNode.gain.exponentialRampToValueAtTime(0.001, this.audioCtx.currentTime + 0.15);
+      osc.connect(gainNode);
+      gainNode.connect(this.audioCtx.destination);
+      osc.start(this.audioCtx.currentTime);
+      osc.stop(this.audioCtx.currentTime + 0.15);
+    } catch (e) {}
+  }
+
+  playTripleBeep() {
+    this.playSyntheticBeep();
+    setTimeout(() => this.playSyntheticBeep(), 200);
+    setTimeout(() => this.playSyntheticBeep(), 400);
+  }
+
+  speak(text, rate = 1.15, voiceURI = "") {
+    if (typeof window === 'undefined' || !('speechSynthesis' in window)) return;
+    try {
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.rate = rate || 1.15;
+      if (this.cachedVoices.length > 0) {
+        if (voiceURI) {
+          const v = this.cachedVoices.find(x => x.voiceURI === voiceURI);
+          if (v) utterance.voice = v;
+        }
+        if (!utterance.voice) {
+          utterance.voice = this.cachedVoices.find(v => v.lang.includes('en')) || this.cachedVoices[0];
+        }
+      }
+      window.speechSynthesis.speak(utterance);
+    } catch (e) {}
+  }
+
+  formatSpokenTime(totalSec) {
+    totalSec = Math.round(totalSec);
+    if (totalSec < 60) return `${totalSec} seconds`;
+    const mins = Math.floor(totalSec / 60);
+    const secs = totalSec % 60;
+    if (secs === 0) return `${mins} ${mins === 1 ? 'minute' : 'minutes'}`;
+    return `${mins} ${mins === 1 ? 'minute' : 'minutes'} ${secs}`;
+  }
+}
+
+const appAudioTTS = new AudioTTSEngine();
+
+// Formatting helpers
+function formatHMS(ms) {
+  if (ms < 0) ms = 0;
+  const totalSec = Math.floor(ms / 1000);
+  const h = Math.floor(totalSec / 3600);
+  const m = Math.floor((totalSec % 3600) / 60);
+  const s = totalSec % 60;
+  const pad = n => n.toString().padStart(2, '0');
+  return `${pad(h)}:${pad(m)}:${pad(s)}`;
+}
+
+function formatMS(ms) {
+  if (ms < 0) ms = 0;
+  const totalSec = Math.floor(ms / 1000);
+  const m = Math.floor(totalSec / 60);
+  const s = totalSec % 60;
+  const pad = n => n.toString().padStart(2, '0');
+  return `${pad(m)}:${pad(s)}`;
+}
+
+function parseIntervalsStr(str) {
+  if (!str) return [];
+  return str.split(',')
+    .map(x => parseInt(x.trim()))
+    .filter(n => !isNaN(n) && n > 0);
+}
+
+// --- TIMER ACTIVE RUNTIME STATE ---
+let activeTimerState = {
+  type: null, // "practice" or "timer_only"
+  sessionId: null,
+  sheetIndex: 0,
+  startTime: 0,
+  lastDeltaZeroTime: 0,
+  accumulatedSessionMs: 0,
+  accumulatedDeltaMs: 0,
+  isRunning: false,
+  timerOnlyStart: 0,
+  timerOnlyAccumulated: 0,
+  timerOnlyLastLap: 0,
+  timerOnlyLapAccumulated: 0,
+  timerOnlyRunning: false,
+  timerOnlyCompleted: false,
+  // Pomodoro runtime
+  pomodoroPhase: "study", // "study" or "break"
+  breakStartTime: 0,
+  breakDurationMs: 0,
+  breakAccumulatedMs: 0,
+  breakRunning: false
+};
+
+function onGlobalTimerTick() {
+  const now = Date.now();
+
+  // 1. Practice Session Timer Tick
+  if (activeTimerState.isRunning && activeTimerState.type === "practice") {
+    const session = state.sessions ? state.sessions.find(s => s.id === activeTimerState.sessionId) : null;
+    if (!session) return;
+    const sheet = session.sheets[activeTimerState.sheetIndex];
+    if (!sheet) return;
+
+    const sessionElapsed = (now - activeTimerState.startTime) + activeTimerState.accumulatedSessionMs;
+    const deltaElapsed = (now - activeTimerState.lastDeltaZeroTime) + activeTimerState.accumulatedDeltaMs;
+
+    sheet.elapsedSessionMs = sessionElapsed;
+    sheet.currentDeltaMs = deltaElapsed;
+
+    // High performance DOM update
+    const sessDisp = document.getElementById("practiceSessionTimerDisp");
+    if (sessDisp) sessDisp.textContent = formatHMS(sessionElapsed);
+    const deltaDisp = document.getElementById("practiceDeltaTimerDisp");
+    if (deltaDisp) deltaDisp.textContent = formatMS(deltaElapsed);
+
+    // Live earned break calculation: break = study / 5
+    const earnedBreakSec = Math.floor((sessionElapsed / 1000) / 5);
+    const earnedBreakDisp = document.getElementById("practiceEarnedBreakDisp");
+    if (earnedBreakDisp) earnedBreakDisp.textContent = formatMS(earnedBreakSec * 1000);
+
+    const deltaSec = Math.floor(deltaElapsed / 1000);
+    const sessionSec = Math.floor(sessionElapsed / 1000);
+
+    // Delta TTS & Beeps
+    const ttsMode = sheet.ttsMode || state.practiceSettings.ttsMode || "delta";
+    const deltaIntervals = parseIntervalsStr(sheet.deltaIntervals || state.practiceSettings.deltaIntervals);
+    if ((ttsMode === "delta" || ttsMode === "mixed") && deltaIntervals.includes(deltaSec)) {
+      if (appAudioTTS.lastDispatchedDeltaSec !== deltaSec) {
+        appAudioTTS.lastDispatchedDeltaSec = deltaSec;
+        if (sheet.enableBeeps !== false) appAudioTTS.playSyntheticBeep();
+        if (sheet.enableSpeech !== false) {
+          appAudioTTS.speak(appAudioTTS.formatSpokenTime(deltaSec), state.practiceSettings.speechRate, state.practiceSettings.speechVoice);
+        }
+      }
+    }
+
+    // Full Session TTS
+    const fullIntervals = parseIntervalsStr(sheet.fullIntervals || state.practiceSettings.fullIntervals);
+    if ((ttsMode === "full" || ttsMode === "mixed") && fullIntervals.includes(sessionSec)) {
+      if (appAudioTTS.lastDispatchedFullSec !== sessionSec) {
+        appAudioTTS.lastDispatchedFullSec = sessionSec;
+        if (sheet.enableSpeech !== false) {
+          appAudioTTS.speak(`Session ${appAudioTTS.formatSpokenTime(sessionSec)}`, state.practiceSettings.speechRate, state.practiceSettings.speechVoice);
+        }
+      }
+    }
+
+    // Auto-[W] Threshold Detection (Line 34)
+    const thresholdSec = sheet.thresholdSec || state.practiceSettings.defaultThresholdSec || 90;
+    if (sheet.enableAutoWThreshold !== false && deltaSec >= thresholdSec) {
+      const activeQ = sheet.questions[sheet.activeQuestionIndex || 0];
+      if (activeQ && !activeQ.flag && !activeQ.flagOverridden) {
+        activeQ.flag = "W";
+        const flagBadge = document.getElementById(`flag_badge_${activeQ.qNum}`);
+        if (flagBadge) {
+          flagBadge.innerHTML = `<span class="tag" style="background:var(--status-w);color:#fff;">[W] AUTO</span>`;
+        }
+      }
+    }
+  }
+
+  // 2. Timer Only Tick
+  const tState = state.timerOnly || {};
+  const timerMode = tState.mode || "stopwatch";
+
+  // Pomodoro Break countdown running
+  if (activeTimerState.breakRunning) {
+    const breakElapsed = (now - activeTimerState.breakStartTime) + activeTimerState.breakAccumulatedMs;
+    const remainingMs = Math.max(0, activeTimerState.breakDurationMs - breakElapsed);
+
+    const bigDisp = document.getElementById("timerOnlyBigDisp");
+    if (bigDisp) bigDisp.textContent = formatMS(remainingMs);
+    const lapDisp = document.getElementById("timerOnlyLapDisp");
+    if (lapDisp) lapDisp.textContent = `Break Countdown (Remaining: ${formatMS(remainingMs)})`;
+
+    if (remainingMs === 0 && !activeTimerState.timerOnlyCompleted) {
+      activeTimerState.timerOnlyCompleted = true;
+      activeTimerState.breakRunning = false;
+      appAudioTTS.playTripleBeep();
+      appAudioTTS.speak("Break time is over! Resume your study session.", tState.speechRate, tState.speechVoice);
+      renderWorkspace();
+    }
+    return;
+  }
+
+  if (activeTimerState.timerOnlyRunning) {
+    const elapsed = (now - activeTimerState.timerOnlyStart) + activeTimerState.timerOnlyAccumulated;
+    const lapElapsed = (now - activeTimerState.timerOnlyLastLap) + activeTimerState.timerOnlyLapAccumulated;
+
+    let dispMs = elapsed;
+    if (timerMode === "timer") {
+      const targetMs = (tState.targetDurationSec || 3600) * 1000;
+      dispMs = Math.max(0, targetMs - elapsed);
+      if (dispMs === 0 && !activeTimerState.timerOnlyCompleted) {
+        activeTimerState.timerOnlyCompleted = true;
+        appAudioTTS.playTripleBeep();
+        appAudioTTS.speak("Countdown timer finished! Session complete.", tState.speechRate, tState.speechVoice);
+      }
+    } else if (timerMode === "pomodoro") {
+      const pomodoroStudyMs = (tState.pomodoroStudySec || 1500) * 1000;
+      if (elapsed >= pomodoroStudyMs && !activeTimerState.timerOnlyCompleted) {
+        activeTimerState.timerOnlyCompleted = true;
+        appAudioTTS.playTripleBeep();
+        const earnedSec = Math.floor((elapsed / 1000) / 5);
+        appAudioTTS.speak(`Pomodoro study cycle completed! You earned ${appAudioTTS.formatSpokenTime(earnedSec)} of break.`, tState.speechRate, tState.speechVoice);
+      }
+    }
+
+    const bigDisp = document.getElementById("timerOnlyBigDisp");
+    if (bigDisp) bigDisp.textContent = formatHMS(dispMs);
+    const lapDisp = document.getElementById("timerOnlyLapDisp");
+    if (lapDisp) {
+      if (timerMode === "pomodoro") {
+        const earnedSec = Math.floor((elapsed / 1000) / 5);
+        lapDisp.textContent = `Earned Break (Study / 5): ${formatMS(earnedSec * 1000)} | Lap: ${formatMS(lapElapsed)}`;
+      } else {
+        lapDisp.textContent = `Lap / Delta: ${formatMS(lapElapsed)}`;
+      }
+    }
+
+    const lapSec = Math.floor(lapElapsed / 1000);
+    const sessionSec = Math.floor(elapsed / 1000);
+
+    const ttsMode = tState.ttsMode || "mixed";
+    const deltaIntervals = parseIntervalsStr(tState.deltaIntervals || "30,60,90,120");
+    if ((ttsMode === "delta" || ttsMode === "mixed") && deltaIntervals.includes(lapSec)) {
+      if (appAudioTTS.lastDispatchedDeltaSec !== lapSec) {
+        appAudioTTS.lastDispatchedDeltaSec = lapSec;
+        if (tState.enableBeeps !== false) appAudioTTS.playSyntheticBeep();
+        if (tState.enableSpeech !== false) {
+          appAudioTTS.speak(appAudioTTS.formatSpokenTime(lapSec), tState.speechRate, tState.speechVoice);
+        }
+      }
+    }
+
+    const fullIntervals = parseIntervalsStr(tState.fullIntervals || "300,600,900");
+    if ((ttsMode === "full" || ttsMode === "mixed") && fullIntervals.includes(sessionSec)) {
+      if (appAudioTTS.lastDispatchedFullSec !== sessionSec) {
+        appAudioTTS.lastDispatchedFullSec = sessionSec;
+        if (tState.enableSpeech !== false) {
+          appAudioTTS.speak(`Elapsed ${appAudioTTS.formatSpokenTime(sessionSec)}`, tState.speechRate, tState.speechVoice);
+        }
+      }
+    }
+  }
+}
+
+// --- TIMER ONLY CONTROLLERS ---
+function toggleTimerOnly() {
+  appAudioTTS.ensureAudio();
+  if (activeTimerState.breakRunning) {
+    // Pause break
+    activeTimerState.breakRunning = false;
+    activeTimerState.breakAccumulatedMs += Date.now() - activeTimerState.breakStartTime;
+    appAudioTTS.stopWorker();
+    appAudioTTS.pauseAudio();
+    renderWorkspace();
+    return;
+  }
+
+  if (activeTimerState.timerOnlyRunning) {
+    // Pause study timer
+    activeTimerState.timerOnlyRunning = false;
+    activeTimerState.timerOnlyAccumulated += Date.now() - activeTimerState.timerOnlyStart;
+    activeTimerState.timerOnlyLapAccumulated += Date.now() - activeTimerState.timerOnlyLastLap;
+    appAudioTTS.stopWorker();
+    appAudioTTS.pauseAudio();
+  } else {
+    // Start / Resume study timer
+    activeTimerState.timerOnlyRunning = true;
+    activeTimerState.timerOnlyStart = Date.now();
+    activeTimerState.timerOnlyLastLap = Date.now();
+    activeTimerState.timerOnlyCompleted = false;
+    appAudioTTS.startWorker();
+  }
+  renderWorkspace();
+}
+
+function resetTimerOnly() {
+  activeTimerState.timerOnlyRunning = false;
+  activeTimerState.timerOnlyStart = 0;
+  activeTimerState.timerOnlyLastLap = 0;
+  activeTimerState.timerOnlyAccumulated = 0;
+  activeTimerState.timerOnlyLapAccumulated = 0;
+  activeTimerState.timerOnlyCompleted = false;
+  activeTimerState.breakRunning = false;
+  activeTimerState.breakStartTime = 0;
+  activeTimerState.breakAccumulatedMs = 0;
+  activeTimerState.breakDurationMs = 0;
+  appAudioTTS.stopWorker();
+  appAudioTTS.pauseAudio();
+  renderWorkspace();
+}
+
+function lapTimerOnly() {
+  if (!activeTimerState.timerOnlyRunning) return;
+  const now = Date.now();
+  const lapElapsed = (now - activeTimerState.timerOnlyLastLap) + activeTimerState.timerOnlyLapAccumulated;
+  const totalElapsed = (now - activeTimerState.timerOnlyStart) + activeTimerState.timerOnlyAccumulated;
+
+  if (!state.timerOnly) state.timerOnly = {};
+  if (!state.timerOnly.laps) state.timerOnly.laps = [];
+
+  state.timerOnly.laps.unshift({
+    lapNum: state.timerOnly.laps.length + 1,
+    deltaSec: Math.floor(lapElapsed / 1000),
+    totalSec: Math.floor(totalElapsed / 1000),
+    timestamp: new Date().toLocaleTimeString()
+  });
+
+  activeTimerState.timerOnlyLastLap = now;
+  activeTimerState.timerOnlyLapAccumulated = 0;
+  appAudioTTS.lastDispatchedDeltaSec = -1;
+  appAudioTTS.playSyntheticBeep();
+
+  saveAllStorage();
+  renderWorkspace();
+}
+
+function nudgeTimerOnly(deltaSec) {
+  if (activeTimerState.timerOnlyRunning) {
+    activeTimerState.timerOnlyAccumulated += deltaSec * 1000;
+  } else {
+    activeTimerState.timerOnlyAccumulated = Math.max(0, activeTimerState.timerOnlyAccumulated + deltaSec * 1000);
+  }
+  renderWorkspace();
+}
+
+function setTimerOnlyMode(mode) {
+  if (!state.timerOnly) state.timerOnly = {};
+  state.timerOnly.mode = mode;
+  resetTimerOnly();
+  saveAllStorage();
+  renderWorkspace();
+}
+
+function setTimerOnlyTTSMode(ttsMode) {
+  if (!state.timerOnly) state.timerOnly = {};
+  state.timerOnly.ttsMode = ttsMode;
+  saveAllStorage();
+  renderWorkspace();
+}
+
+function startPomodoroBreak() {
+  appAudioTTS.ensureAudio();
+  // Pause study timer if running
+  if (activeTimerState.timerOnlyRunning) {
+    activeTimerState.timerOnlyRunning = false;
+    activeTimerState.timerOnlyAccumulated += Date.now() - activeTimerState.timerOnlyStart;
+    activeTimerState.timerOnlyLapAccumulated += Date.now() - activeTimerState.timerOnlyLastLap;
+  }
+
+  const studySec = Math.floor(activeTimerState.timerOnlyAccumulated / 1000);
+  const earnedSec = Math.max(60, Math.floor(studySec / 5)); // Dynamic break: study / 5 (minimum 1m)
+
+  activeTimerState.breakRunning = true;
+  activeTimerState.breakStartTime = Date.now();
+  activeTimerState.breakDurationMs = earnedSec * 1000;
+  activeTimerState.breakAccumulatedMs = 0;
+  activeTimerState.timerOnlyCompleted = false;
+
+  appAudioTTS.startWorker();
+  appAudioTTS.speak(`Starting earned break of ${appAudioTTS.formatSpokenTime(earnedSec)}. Step away from the desk.`, state.timerOnly?.speechRate || 1.15, state.timerOnly?.speechVoice || "");
+
+  renderWorkspace();
+}
+
+function endPomodoroBreak() {
+  activeTimerState.breakRunning = false;
+  activeTimerState.breakStartTime = 0;
+  activeTimerState.breakAccumulatedMs = 0;
+  activeTimerState.breakDurationMs = 0;
+  activeTimerState.timerOnlyCompleted = false;
+  appAudioTTS.stopWorker();
+  appAudioTTS.pauseAudio();
+  appAudioTTS.speak("Break ended. Resuming study countdown.", state.timerOnly?.speechRate || 1.15, state.timerOnly?.speechVoice || "");
+  renderWorkspace();
+}
+
+// --- TIMER ONLY HTML RENDERER ---
+function getTimerOnlyHTML() {
+  const t = state.timerOnly || {
+    mode: "stopwatch",
+    targetDurationSec: 3600,
+    ttsMode: "mixed",
+    deltaIntervals: "30,60,90,120",
+    fullIntervals: "300,600,900",
+    enableBeeps: true,
+    enableSpeech: true,
+    speechRate: 1.15,
+    speechVoice: "",
+    nudgeStepSec: 5,
+    pomodoroStudySec: 1500,
+    laps: []
+  };
+
+  const isRunning = activeTimerState.timerOnlyRunning;
+  const isBreak = activeTimerState.breakRunning;
+  const now = Date.now();
+
+  let dispMs = activeTimerState.timerOnlyAccumulated;
+  let lapElapsed = activeTimerState.timerOnlyLapAccumulated;
+
+  if (isBreak) {
+    const bElapsed = (now - activeTimerState.breakStartTime) + activeTimerState.breakAccumulatedMs;
+    dispMs = Math.max(0, activeTimerState.breakDurationMs - bElapsed);
+  } else if (isRunning) {
+    dispMs = (now - activeTimerState.timerOnlyStart) + activeTimerState.timerOnlyAccumulated;
+    lapElapsed = (now - activeTimerState.timerOnlyLastLap) + activeTimerState.timerOnlyLapAccumulated;
+  }
+
+  if (!isBreak && t.mode === "timer") {
+    dispMs = Math.max(0, (t.targetDurationSec || 3600) * 1000 - (isRunning ? (now - activeTimerState.timerOnlyStart) + activeTimerState.timerOnlyAccumulated : activeTimerState.timerOnlyAccumulated));
+  }
+
+  const studySec = isBreak ? Math.floor(activeTimerState.timerOnlyAccumulated / 1000) : (isRunning ? Math.floor(((now - activeTimerState.timerOnlyStart) + activeTimerState.timerOnlyAccumulated) / 1000) : Math.floor(activeTimerState.timerOnlyAccumulated / 1000));
+  const earnedBreakSec = Math.floor(studySec / 5);
+
+  return `
+  <div>
+    <div class="flex-row" style="justify-content:space-between;margin-bottom:10px;">
+      <h1>[Timer Only] Audio/TTS Precision Timer &amp; Stopwatch</h1>
+      <div class="flex-row">
+        <button onclick="openTimerSettingsModal()">[Settings]</button>
+        <button onclick="switchTab('practice')">[Switch to Timer &amp; OMR]</button>
+      </div>
+    </div>
+
+    <div class="timer-hero">
+      <div class="flex-row" style="justify-content:center;gap:6px;margin-bottom:8px;">
+        <span class="tag" style="font-size:11px;">MODE:</span>
+        <button class="${t.mode === 'stopwatch' ? 'active' : ''}" onclick="setTimerOnlyMode('stopwatch')">Stopwatch</button>
+        <button class="${t.mode === 'timer' ? 'active' : ''}" onclick="setTimerOnlyMode('timer')">Countdown</button>
+        <button class="${t.mode === 'pomodoro' ? 'active' : ''}" onclick="setTimerOnlyMode('pomodoro')">Pomodoro &amp; Dynamic Break</button>
+        <span class="tag" style="font-size:11px;margin-left:8px;">TTS:</span>
+        <button class="${t.ttsMode === 'delta' ? 'active' : ''}" onclick="setTimerOnlyTTSMode('delta')">Delta TTS</button>
+        <button class="${t.ttsMode === 'full' ? 'active' : ''}" onclick="setTimerOnlyTTSMode('full')">Full TTS</button>
+        <button class="${t.ttsMode === 'mixed' ? 'active' : ''}" onclick="setTimerOnlyTTSMode('mixed')">Mixed TTS</button>
+        <button class="${t.ttsMode === 'off' ? 'active' : ''}" onclick="setTimerOnlyTTSMode('off')">Mute</button>
+      </div>
+
+      ${isBreak ? `
+        <div style="background:var(--status-c);color:#fff;padding:6px 12px;font-weight:700;margin-bottom:8px;font-family:var(--font-mono);border-radius:3px;">
+          [ACTIVE BREAK PHASE] Step away and rest! Dynamic formula: Study / 5
+        </div>
+      ` : (t.mode === 'pomodoro' ? `
+        <div style="background:var(--bg-alt);border:1px solid var(--border);padding:4px 8px;font-size:11px;font-family:var(--font-mono);margin-bottom:6px;">
+          Dynamic Earned Break: <strong>${formatMS(earnedBreakSec * 1000)}</strong> (Study Time: ${formatHMS(studySec * 1000)})
+        </div>
+      ` : '')}
+
+      <div class="timer-big-display" id="timerOnlyBigDisp">${isBreak ? formatMS(dispMs) : formatHMS(dispMs)}</div>
+      <div class="timer-sub-display" id="timerOnlyLapDisp">
+        ${isBreak ? `Break Remaining: ${formatMS(dispMs)}` : (t.mode === 'pomodoro' ? `Earned Break (Study/5): ${formatMS(earnedBreakSec * 1000)} | Lap: ${formatMS(lapElapsed)}` : `Lap / Question Delta: ${formatMS(lapElapsed)}`)}
+      </div>
+
+      <div class="timer-btn-row">
+        ${isBreak ? `
+          <button class="timer-btn-lg" style="background:var(--status-x);color:#fff;" onclick="endPomodoroBreak()">[END BREAK / RESUME STUDY]</button>
+        ` : `
+          <button class="timer-btn-lg ${isRunning ? '' : 'active'}" style="${isRunning ? 'background:var(--status-x);color:#fff;border-color:var(--status-x);' : 'background:var(--status-c);color:#fff;border-color:var(--status-c);'}" onclick="toggleTimerOnly()">
+            ${isRunning ? '[PAUSE]' : '[START]'}
+          </button>
+          <button class="timer-btn-lg" onclick="lapTimerOnly()">[NEXT Q / LAP (ZERO DELTA)]</button>
+          <button class="timer-btn-lg" onclick="nudgeTimerOnly(-${t.nudgeStepSec || 5})">-${t.nudgeStepSec || 5}s</button>
+          <button class="timer-btn-lg" onclick="nudgeTimerOnly(${t.nudgeStepSec || 5})">+${t.nudgeStepSec || 5}s</button>
+          ${t.mode === 'pomodoro' ? `<button class="timer-btn-lg" style="background:var(--status-c);color:#fff;" onclick="startPomodoroBreak()">[TAKE EARNED BREAK (${formatMS(earnedBreakSec * 1000)})]</button>` : ''}
+          <button class="timer-btn-lg" onclick="resetTimerOnly()">[RESET]</button>
+        `}
+      </div>
+    </div>
+
+    <div class="split-2">
+      <div class="box">
+        <div class="box-header"><span>ACTIVE INTERVAL CONFIGURATION</span></div>
+        <p style="font-size:11.5px;color:var(--fg-muted);">Configured intervals trigger an acoustic 880Hz beep and/or spoken voice announcement from the respective reference zero-point:</p>
+        <ul style="font-size:12px;margin:6px 0 10px 18px;">
+          <li><strong>Delta TTS Zero-Point:</strong> Last clicked question / lap button. Current Intervals: <code>${t.deltaIntervals || "30,60,90,120"}s</code></li>
+          <li><strong>Full TTS Zero-Point:</strong> Beginning of study session. Current Intervals: <code>${t.fullIntervals || "300,600,900"}s</code></li>
+          <li><strong>Break Formula:</strong> Dynamic $\\text{Break Time} = \\lfloor \\text{Study Time} / 5 \\rfloor$ (e.g. 25m study = 5m break; 50m study = 10m break).</li>
+          <li><strong>Acoustic Beep:</strong> ${t.enableBeeps !== false ? '[Enabled (880Hz Sine)]' : '[Disabled]'}</li>
+          <li><strong>Speech Synthesis:</strong> ${t.enableSpeech !== false ? `[Enabled (${t.speechRate || 1.15}x Speed)]` : '[Disabled]'}</li>
+        </ul>
+        <button onclick="openTimerSettingsModal()">[Edit Timer &amp; TTS Intervals]</button>
+      </div>
+
+      <div class="box">
+        <div class="box-header"><span>LAP &amp; DELTA HISTORY (${(t.laps || []).length})</span></div>
+        <div style="max-height:220px;overflow-y:auto;">
+          ${(!t.laps || t.laps.length === 0) ? '<p style="color:var(--fg-muted);font-size:11.5px;">No laps recorded yet. Click "[NEXT Q / LAP]" to record split times.</p>' : `
+            <table>
+              <thead><tr><th>Lap #</th><th>Delta Time</th><th>Total Elapsed</th><th>Time</th></tr></thead>
+              <tbody>
+                ${t.laps.map(l => `
+                  <tr>
+                    <td><strong>#${l.lapNum}</strong></td>
+                    <td><code>${l.deltaSec}s</code> (${formatMS(l.deltaSec * 1000)})</td>
+                    <td><code>${formatHMS(l.totalSec * 1000)}</code></td>
+                    <td style="color:var(--fg-muted);font-size:10px;">${l.timestamp}</td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          `}
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+// --- CUSTOM IDENTIFIERS MANAGEMENT (Line 14) ---
+function promptAddCustomMetadata(type) {
+  if (!state.customMetadata) state.customMetadata = {};
+  const currentList = state.customMetadata[type] || [];
+  const typeLabel = type === 'exams' ? 'Exam' : type === 'books' ? 'Book / Source' : type === 'levels' ? 'Difficulty Level' : type === 'sets' ? 'Problem Set' : 'Section';
+
+  const val = prompt(`Add New Custom ${typeLabel}:`);
+  if (!val || !val.trim()) return;
+  const cleanVal = val.trim();
+  if (!currentList.includes(cleanVal)) {
+    currentList.push(cleanVal);
+    state.customMetadata[type] = currentList;
+    saveAllStorage();
+    renderWorkspace();
+  }
+}
+
+function removeCustomMetadata(type, index) {
+  if (!state.customMetadata || !state.customMetadata[type]) return;
+  state.customMetadata[type].splice(index, 1);
+  saveAllStorage();
+  renderWorkspace();
+}
+
+// --- PRACTICE SESSION & OMR CONTROLLERS ---
+function startPracticeSessionTimer(sessionId, sheetIndex) {
+  appAudioTTS.ensureAudio();
+  const session = state.sessions ? state.sessions.find(s => s.id === sessionId) : null;
+  if (!session) return;
+  const sheet = session.sheets[sheetIndex];
+  if (!sheet) return;
+
+  activeTimerState.type = "practice";
+  activeTimerState.sessionId = sessionId;
+  activeTimerState.sheetIndex = sheetIndex;
+  activeTimerState.startTime = Date.now();
+  activeTimerState.lastDeltaZeroTime = Date.now();
+  activeTimerState.accumulatedSessionMs = sheet.elapsedSessionMs || 0;
+  activeTimerState.accumulatedDeltaMs = sheet.currentDeltaMs || 0;
+  activeTimerState.isRunning = true;
+  sheet.isRunning = true;
+
+  appAudioTTS.startWorker();
+  renderWorkspace();
+}
+
+function pausePracticeSessionTimer(sessionId, sheetIndex) {
+  const session = state.sessions ? state.sessions.find(s => s.id === sessionId) : null;
+  if (session && session.sheets[sheetIndex]) {
+    session.sheets[sheetIndex].isRunning = false;
+  }
+  if (activeTimerState.isRunning && activeTimerState.type === "practice") {
+    const now = Date.now();
+    activeTimerState.accumulatedSessionMs += (now - activeTimerState.startTime);
+    activeTimerState.accumulatedDeltaMs += (now - activeTimerState.lastDeltaZeroTime);
+    activeTimerState.isRunning = false;
+    appAudioTTS.stopWorker();
+    appAudioTTS.pauseAudio();
+  }
+  saveAllStorage();
+  renderWorkspace();
+}
+
+function resetPracticeSessionTimer(sessionId, sheetIndex) {
+  pausePracticeSessionTimer(sessionId, sheetIndex);
+  const session = state.sessions ? state.sessions.find(s => s.id === sessionId) : null;
+  if (session && session.sheets[sheetIndex]) {
+    session.sheets[sheetIndex].elapsedSessionMs = 0;
+    session.sheets[sheetIndex].currentDeltaMs = 0;
+  }
+  activeTimerState.accumulatedSessionMs = 0;
+  activeTimerState.accumulatedDeltaMs = 0;
+  saveAllStorage();
+  renderWorkspace();
+}
+
+function nudgePracticeDelta(sessionId, sheetIndex, deltaSec) {
+  pausePracticeSessionTimer(sessionId, sheetIndex); // Delta modification pauses timer (Line 13)
+  const session = state.sessions ? state.sessions.find(s => s.id === sessionId) : null;
+  if (!session) return;
+  const sheet = session.sheets[sheetIndex];
+  if (!sheet) return;
+
+  sheet.currentDeltaMs = Math.max(0, (sheet.currentDeltaMs || 0) + deltaSec * 1000);
+  activeTimerState.accumulatedDeltaMs = sheet.currentDeltaMs;
+  saveAllStorage();
+  renderWorkspace();
+}
+
+function onOMRBubbleClick(sessionId, sheetIndex, qIndex, optionVal) {
+  const session = state.sessions ? state.sessions.find(s => s.id === sessionId) : null;
+  if (!session) return;
+  const sheet = session.sheets[sheetIndex];
+  if (!sheet) return;
+  const q = sheet.questions[qIndex];
+  if (!q) return;
+
+  const now = Date.now();
+  const currentDeltaMs = activeTimerState.isRunning
+    ? (now - activeTimerState.lastDeltaZeroTime) + activeTimerState.accumulatedDeltaMs
+    : (sheet.currentDeltaMs || 0);
+
+  const deltaSec = Math.round(currentDeltaMs / 1000);
+
+  // Line 15: If an old choice on the OMR is modified, the delta since the past question should get added to that question
+  const isOldChoice = (sheet.activeQuestionIndex !== undefined && qIndex < sheet.activeQuestionIndex && q.selectedOption !== null);
+
+  if (isOldChoice) {
+    q.selectedOption = optionVal;
+    q.deltaTimeSec = (q.deltaTimeSec || 0) + deltaSec;
+  } else {
+    // Current active question answered
+    q.selectedOption = optionVal;
+    if (q.deltaTimeSec === 0 || !q.deltaTimeSec) {
+      q.deltaTimeSec = deltaSec;
+      q.originalTimeSec = deltaSec;
+    }
+
+    // Auto-[W] Threshold rule (Line 34)
+    const thresholdSec = sheet.thresholdSec || state.practiceSettings.defaultThresholdSec || 90;
+    if (sheet.enableAutoWThreshold !== false && q.deltaTimeSec >= thresholdSec && !q.flag && !q.flagOverridden) {
+      q.flag = "W";
+    }
+
+    // Advance active question pointer to next unanswered question
+    sheet.activeQuestionIndex = qIndex + 1;
+  }
+
+  // Zero-point reset for Delta TTS
+  activeTimerState.lastDeltaZeroTime = now;
+  activeTimerState.accumulatedDeltaMs = 0;
+  sheet.currentDeltaMs = 0;
+  appAudioTTS.lastDispatchedDeltaSec = -1;
+
+  if (sheet.enableBeeps !== false) appAudioTTS.playSyntheticBeep();
+
+  saveAllStorage();
+  renderWorkspace();
+}
+
+function onDeltaEditInput(sessionId, sheetIndex, qIndex, valStr) {
+  pausePracticeSessionTimer(sessionId, sheetIndex); // Delta modification pauses timer (Line 13)
+  const session = state.sessions ? state.sessions.find(s => s.id === sessionId) : null;
+  if (!session) return;
+  const sheet = session.sheets[sheetIndex];
+  if (!sheet || !sheet.questions[qIndex]) return;
+
+  const sec = Math.max(0, parseInt(valStr) || 0);
+  sheet.questions[qIndex].deltaTimeSec = sec;
+  saveAllStorage();
+}
+
+function adjustQuestionDeltaSec(sessionId, sheetIndex, qIndex, deltaSec) {
+  pausePracticeSessionTimer(sessionId, sheetIndex); // Delta modification pauses timer (Line 13)
+  const session = state.sessions ? state.sessions.find(s => s.id === sessionId) : null;
+  if (!session) return;
+  const sheet = session.sheets[sheetIndex];
+  if (!sheet || !sheet.questions[qIndex]) return;
+
+  const q = sheet.questions[qIndex];
+  q.deltaTimeSec = Math.max(0, (q.deltaTimeSec || 0) + deltaSec);
+  saveAllStorage();
+  renderWorkspace();
+}
+
+function toggleQuestionFlag(sessionId, sheetIndex, qIndex, flagVal) {
+  const session = state.sessions ? state.sessions.find(s => s.id === sessionId) : null;
+  if (!session) return;
+  const sheet = session.sheets[sheetIndex];
+  if (!sheet || !sheet.questions[qIndex]) return;
+
+  const q = sheet.questions[qIndex];
+  q.flag = (q.flag === flagVal) ? null : flagVal;
+  q.flagOverridden = true;
+  saveAllStorage();
+  renderWorkspace();
+}
+
+function selectQuestionErrorType(sessionId, sheetIndex, qIndex, errType) {
+  const session = state.sessions ? state.sessions.find(s => s.id === sessionId) : null;
+  if (!session) return;
+  const sheet = session.sheets[sheetIndex];
+  if (!sheet || !sheet.questions[qIndex]) return;
+
+  const q = sheet.questions[qIndex];
+  q.errorType = errType;
+  if (errType === "speed" && !q.flag) q.flag = "W";
+  else if ((errType === "memory" || errType === "concept" || errType === "reading") && !q.flag) q.flag = "X";
+  q.flagOverridden = true;
+  saveAllStorage();
+  renderWorkspace();
+}
+
+// Quick Add / Quick Remove Operations (Configurable Range & Single/Batch Steps)
+function addQuestionsToSheet(sessionId, sheetIndex, count = 10) {
+  const session = state.sessions ? state.sessions.find(s => s.id === sessionId) : null;
+  if (!session) return;
+  const sheet = session.sheets[sheetIndex];
+  if (!sheet) return;
+
+  const lastQ = sheet.questions.length > 0 ? sheet.questions[sheet.questions.length - 1].qNum : 0;
+  for (let i = 1; i <= count; i++) {
+    sheet.questions.push({
+      qNum: lastQ + i,
+      selectedOption: null,
+      deltaTimeSec: 0,
+      originalTimeSec: 0,
+      flag: null,
+      flagOverridden: false,
+      errorType: "",
+      sourceRef: null
+    });
+  }
+  saveAllStorage();
+  renderWorkspace();
+}
+
+function addRangeQuestionsToSheet(sessionId, sheetIndex) {
+  const session = state.sessions ? state.sessions.find(s => s.id === sessionId) : null;
+  if (!session) return;
+  const sheet = session.sheets[sheetIndex];
+  if (!sheet) return;
+
+  const lastQ = sheet.questions.length > 0 ? sheet.questions[sheet.questions.length - 1].qNum : 0;
+  const rangeStr = prompt("Enter Question Range to add (e.g. 31-50):", `${lastQ + 1}-${lastQ + 20}`);
+  if (!rangeStr) return;
+  const parts = rangeStr.split("-").map(x => parseInt(x.trim()));
+  if (parts.length !== 2 || isNaN(parts[0]) || isNaN(parts[1]) || parts[0] > parts[1]) {
+    alert("Invalid range format. Please enter Start-End (e.g. 31-50).");
+    return;
+  }
+
+  for (let qNum = parts[0]; qNum <= parts[1]; qNum++) {
+    sheet.questions.push({
+      qNum: qNum,
+      selectedOption: null,
+      deltaTimeSec: 0,
+      originalTimeSec: 0,
+      flag: null,
+      flagOverridden: false,
+      errorType: "",
+      sourceRef: null
+    });
+  }
+  saveAllStorage();
+  renderWorkspace();
+}
+
+function removeLastQuestionFromSheet(sessionId, sheetIndex) {
+  const session = state.sessions ? state.sessions.find(s => s.id === sessionId) : null;
+  if (!session) return;
+  const sheet = session.sheets[sheetIndex];
+  if (!sheet || sheet.questions.length === 0) return;
+
+  sheet.questions.pop();
+  saveAllStorage();
+  renderWorkspace();
+}
+
+function removeUnansweredFromSheet(sessionId, sheetIndex) {
+  const session = state.sessions ? state.sessions.find(s => s.id === sessionId) : null;
+  if (!session) return;
+  const sheet = session.sheets[sheetIndex];
+  if (!sheet) return;
+
+  const beforeCount = sheet.questions.length;
+  sheet.questions = sheet.questions.filter(q => q.selectedOption !== null || q.deltaTimeSec > 0 || q.flag !== null);
+  const removed = beforeCount - sheet.questions.length;
+  saveAllStorage();
+  renderWorkspace();
+  alert(`Removed ${removed} unanswered question rows.`);
+}
+
+function removeRangeFromSheet(sessionId, sheetIndex) {
+  const session = state.sessions ? state.sessions.find(s => s.id === sessionId) : null;
+  if (!session) return;
+  const sheet = session.sheets[sheetIndex];
+  if (!sheet) return;
+
+  const rangeStr = prompt("Enter Question Number Range to delete (e.g. 21-30):");
+  if (!rangeStr) return;
+  const parts = rangeStr.split("-").map(x => parseInt(x.trim()));
+  if (parts.length !== 2 || isNaN(parts[0]) || isNaN(parts[1])) {
+    alert("Invalid range format.");
+    return;
+  }
+
+  sheet.questions = sheet.questions.filter(q => q.qNum < parts[0] || q.qNum > parts[1]);
+  saveAllStorage();
+  renderWorkspace();
+}
+
+function deleteQuestionRow(sessionId, sheetIndex, qIndex) {
+  const session = state.sessions ? state.sessions.find(s => s.id === sessionId) : null;
+  if (!session) return;
+  const sheet = session.sheets[sheetIndex];
+  if (!sheet) return;
+
+  sheet.questions.splice(qIndex, 1);
+  saveAllStorage();
+  renderWorkspace();
+}
+
+function switchActiveSheet(sessionId, sheetIndex) {
+  const session = state.sessions ? state.sessions.find(s => s.id === sessionId) : null;
+  if (!session) return;
+  pausePracticeSessionTimer(sessionId, session.activeSheetIndex || 0);
+  session.activeSheetIndex = sheetIndex;
+  saveAllStorage();
+  renderWorkspace();
+}
+
+function exitPracticeSession() {
+  if (activeTimerState.sessionId) {
+    pausePracticeSessionTimer(activeTimerState.sessionId, activeTimerState.sheetIndex || 0);
+  }
+  state.activeSessionId = null;
+  state.activeSessionSubView = null;
+  saveAllStorage();
+  renderWorkspace();
+}
+
+function resumePracticeSession(sessionId) {
+  state.activeSessionId = sessionId;
+  state.activeSessionSubView = "omr";
+  saveAllStorage();
+  renderWorkspace();
+}
+
+function deletePracticeSession(sessionId) {
+  if (!confirm("Are you sure you want to delete this practice session?")) return;
+  if (state.activeSessionId === sessionId) {
+    exitPracticeSession();
+  }
+  state.sessions = (state.sessions || []).filter(s => s.id !== sessionId);
+  saveAllStorage();
+  renderWorkspace();
+}
+
+function setPracticeSessionSubView(viewName) {
+  state.activeSessionSubView = viewName; // "omr", "analysis", "start", "resume", "defaults"
+  saveAllStorage();
+  renderWorkspace();
+}
+
+// --- SESSION CREATION (Range-Configurable) ---
+function createPracticeSession(exam, subject, chapterId, book, level, set, section, startQ, endQ, optionStyle, thresholdSec, autoW) {
+  const ch = state.chapters.find(c => c.id === chapterId) || state.chapters[0];
+  const newSessionId = `sess_${Date.now()}`;
+  const questions = [];
+
+  const qStart = parseInt(startQ) || 1;
+  const qEnd = Math.max(qStart, parseInt(endQ) || (qStart + 29));
+
+  for (let i = qStart; i <= qEnd; i++) {
+    questions.push({
+      qNum: i,
+      selectedOption: null,
+      deltaTimeSec: 0,
+      originalTimeSec: 0,
+      flag: null,
+      flagOverridden: false,
+      errorType: "",
+      sourceRef: null
+    });
+  }
+
+  const initialSheet = {
+    id: `sheet_${Date.now()}`,
+    name: "Sheet 1: D0 Initial Drill",
+    type: "d0",
+    startQ: qStart,
+    endQ: qEnd,
+    optionStyle: optionStyle || state.practiceSettings.optionStyle || "ABCD",
+    thresholdSec: parseInt(thresholdSec) || state.practiceSettings.defaultThresholdSec || 90,
+    enableAutoWThreshold: autoW !== false,
+    activeQuestionIndex: 0,
+    timerMode: "stopwatch",
+    ttsMode: state.practiceSettings.ttsMode || "delta",
+    deltaIntervals: state.practiceSettings.deltaIntervals || "30,60,90,120",
+    fullIntervals: state.practiceSettings.fullIntervals || "300,600,900",
+    enableBeeps: state.practiceSettings.enableBeeps !== false,
+    enableSpeech: state.practiceSettings.enableSpeech !== false,
+    elapsedSessionMs: 0,
+    currentDeltaMs: 0,
+    isRunning: false,
+    questions: questions
+  };
+
+  const session = {
+    id: newSessionId,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    exam: exam || "NEET",
+    subject: subject || ch.subj,
+    chapterId: ch.id,
+    chapterName: ch.name,
+    book: book || "Coaching Module",
+    level: level || "Level 1",
+    set: set || "Exercise Drills",
+    section: section || "Section A",
+    activeSheetIndex: 0,
+    sheets: [initialSheet]
+  };
+
+  if (!state.sessions) state.sessions = [];
+  state.sessions.unshift(session);
+  state.activeSessionId = newSessionId;
+  state.activeSessionSubView = "omr";
+  saveAllStorage();
+  renderWorkspace();
+}
+
+// --- CUSTOM SHEET OF SESSION (Feature) ---
+function openCustomSheetModal(sessionId) {
+  const session = state.sessions ? state.sessions.find(s => s.id === sessionId) : null;
+  if (!session) return;
+  const currentSheet = session.sheets[session.activeSheetIndex || 0] || session.sheets[0];
+  const lastQ = currentSheet && currentSheet.questions.length > 0
+    ? currentSheet.questions[currentSheet.questions.length - 1].qNum
+    : 30;
+
+  const modalHtml = `
+    <div style="font-size:12px;">
+      <p>Add a new custom sheet tab to the active session <strong>${session.chapterName}</strong>:</p>
+
+      <div class="box" style="margin:8px 0;">
+        <div class="box-header"><span>1. CUSTOM SHEET CONFIGURATION</span></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px;">
+          <div>
+            <label>Sheet Title / Identifier:</label>
+            <input type="text" id="custSheetTitle" value="Custom Drill ${session.sheets.length + 1}" style="width:100%;margin-top:2px;">
+          </div>
+          <div>
+            <label>Option Style:</label>
+            <select id="custSheetOptStyle" style="width:100%;margin-top:2px;">
+              <option value="ABCD" ${currentSheet.optionStyle === 'ABCD' ? 'selected' : ''}>A, B, C, D</option>
+              <option value="1234" ${currentSheet.optionStyle === '1234' ? 'selected' : ''}>1, 2, 3, 4</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px;">
+          <div>
+            <label>Start Question #:</label>
+            <input type="number" id="custSheetStartQ" value="${lastQ + 1}" style="width:100%;margin-top:2px;">
+          </div>
+          <div>
+            <label>End Question #:</label>
+            <input type="number" id="custSheetEndQ" value="${lastQ + 30}" style="width:100%;margin-top:2px;">
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px;">
+          <div>
+            <label>Threshold Time (Seconds):</label>
+            <input type="number" id="custSheetThreshold" value="${currentSheet.thresholdSec || 90}" style="width:100%;margin-top:2px;">
+          </div>
+          <div>
+            <label>Seed Source:</label>
+            <select id="custSheetSeed" style="width:100%;margin-top:2px;">
+              <option value="blank">Fresh Blank Questions</option>
+              <option value="clone_w">Clone Weak [W] from active sheet</option>
+              <option value="clone_x">Clone Blocked [X] from active sheet</option>
+              <option value="clone_wx">Clone [W] and [X] from active sheet</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex-row" style="justify-content:flex-end;margin-top:12px;">
+        <button onclick="closeModal()">Cancel</button>
+        <button class="active" onclick="executeCreateCustomSheet('${sessionId}')">[Add Custom Sheet]</button>
+      </div>
+    </div>
+  `;
+  openModal("Add Custom Sheet to Session", modalHtml);
+}
+
+function executeCreateCustomSheet(sessionId) {
+  const session = state.sessions ? state.sessions.find(s => s.id === sessionId) : null;
+  if (!session) return;
+  const currentSheet = session.sheets[session.activeSheetIndex || 0] || session.sheets[0];
+
+  const title = document.getElementById("custSheetTitle")?.value.trim() || `Custom Sheet ${session.sheets.length + 1}`;
+  const optStyle = document.getElementById("custSheetOptStyle")?.value || "ABCD";
+  const startQ = parseInt(document.getElementById("custSheetStartQ")?.value) || 1;
+  const endQ = Math.max(startQ, parseInt(document.getElementById("custSheetEndQ")?.value) || (startQ + 29));
+  const threshold = parseInt(document.getElementById("custSheetThreshold")?.value) || 90;
+  const seedMode = document.getElementById("custSheetSeed")?.value || "blank";
+
+  let questions = [];
+  if (seedMode.startsWith("clone_") && currentSheet) {
+    currentSheet.questions.forEach(q => {
+      let include = false;
+      if (seedMode === "clone_w" && q.flag === "W") include = true;
+      else if (seedMode === "clone_x" && q.flag === "X") include = true;
+      else if (seedMode === "clone_wx" && (q.flag === "W" || q.flag === "X")) include = true;
+
+      if (include) {
+        questions.push({
+          qNum: questions.length + 1,
+          selectedOption: null,
+          deltaTimeSec: 0,
+          originalTimeSec: 0,
+          flag: null,
+          flagOverridden: false,
+          errorType: q.errorType || "",
+          sourceRef: {
+            sheetId: currentSheet.id,
+            sheetName: currentSheet.name,
+            origQNum: q.qNum,
+            origFlag: q.flag,
+            origDeltaSec: q.deltaTimeSec
+          }
+        });
+      }
+    });
+  }
+
+  if (questions.length === 0) {
+    for (let i = startQ; i <= endQ; i++) {
+      questions.push({
+        qNum: i,
+        selectedOption: null,
+        deltaTimeSec: 0,
+        originalTimeSec: 0,
+        flag: null,
+        flagOverridden: false,
+        errorType: "",
+        sourceRef: null
+      });
+    }
+  }
+
+  const newSheet = {
+    id: `sheet_${Date.now()}`,
+    name: `Sheet ${session.sheets.length + 1}: ${title}`,
+    type: "custom",
+    startQ: startQ,
+    endQ: endQ,
+    optionStyle: optStyle,
+    thresholdSec: threshold,
+    enableAutoWThreshold: true,
+    activeQuestionIndex: 0,
+    timerMode: "stopwatch",
+    ttsMode: currentSheet.ttsMode || "delta",
+    deltaIntervals: currentSheet.deltaIntervals || "30,60,90,120",
+    fullIntervals: currentSheet.fullIntervals || "300,600,900",
+    enableBeeps: currentSheet.enableBeeps !== false,
+    enableSpeech: currentSheet.enableSpeech !== false,
+    elapsedSessionMs: 0,
+    currentDeltaMs: 0,
+    isRunning: false,
+    questions: questions
+  };
+
+  session.sheets.push(newSheet);
+  session.activeSheetIndex = session.sheets.length - 1;
+  saveAllStorage();
+  closeModal();
+  renderWorkspace();
+}
+
+// --- REVIEW GENERATOR MODAL (Range-Configurable) ---
+function openReviewGeneratorModal(sessionId) {
+  const session = state.sessions ? state.sessions.find(s => s.id === sessionId) : null;
+  if (!session) return;
+  const currentSheet = session.sheets[session.activeSheetIndex || 0];
+  if (!currentSheet) return;
+
+  const wCount = currentSheet.questions.filter(q => q.flag === 'W').length;
+  const xCount = currentSheet.questions.filter(q => q.flag === 'X').length;
+  const cCount = currentSheet.questions.filter(q => q.flag === 'C').length;
+
+  const firstQ = currentSheet.questions.length > 0 ? currentSheet.questions[0].qNum : 1;
+  const lastQ = currentSheet.questions.length > 0 ? currentSheet.questions[currentSheet.questions.length - 1].qNum : 30;
+
+  const modalHtml = `
+    <div style="font-size:12px;">
+      <p>Generate a decoupled Review Spreadsheet tab tied to <strong>${session.chapterName}</strong> (${currentSheet.name}).</p>
+
+      <div class="box" style="margin:8px 0;">
+        <div class="box-header"><span>1. CHOOSE QUESTIONS BY FLAG COMBINATION</span></div>
+        <div style="display:flex;gap:12px;flex-wrap:wrap;margin:6px 0;">
+          <label><input type="checkbox" id="revFlagW" checked> <strong>[W] Speed-Drill Queue</strong> (${wCount} Qs)</label>
+          <label><input type="checkbox" id="revFlagX" checked> <strong>[X] Penalty Queue</strong> (${xCount} Qs)</label>
+          <label><input type="checkbox" id="revFlagC"> <strong>[C] Confirmed</strong> (${cCount} Qs)</label>
+        </div>
+      </div>
+
+      <div class="box" style="margin:8px 0;">
+        <div class="box-header"><span>2. QUESTION RANGE FILTER</span></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px;">
+          <div>
+            <label>From Question #:</label>
+            <input type="number" id="revStartQ" value="${firstQ}" style="width:100%;margin-top:2px;">
+          </div>
+          <div>
+            <label>To Question #:</label>
+            <input type="number" id="revEndQ" value="${lastQ}" style="width:100%;margin-top:2px;">
+          </div>
+        </div>
+      </div>
+
+      <div class="box" style="margin:8px 0;">
+        <div class="box-header"><span>3. SELECT REVIEW DAY TARGET</span></div>
+        <select id="revDayTarget" style="width:100%;margin-top:4px;">
+          <option value="d3_review">Day 3 (D3 Review: [W] Stopwatch Re-Test &amp; [X] 1st Cold Test)</option>
+          <option value="d3_unseen">Day 3 (D3 Unseen PYQ Reserve — Fresh Questions)</option>
+          <option value="d7_review">Day 7 (D7 Review: Mandatory 2nd Cold [X] Verification)</option>
+          <option value="d21_mock">Day 21 (D21 Mixed Multi-Chapter Mock)</option>
+          <option value="custom">Custom Review Tab</option>
+        </select>
+        <div id="revUnseenExtraRow" style="margin-top:8px;display:none;">
+          <label>Add Fresh Unseen PYQs Count: </label>
+          <input type="number" id="revUnseenCount" value="20" style="width:60px;">
+        </div>
+      </div>
+
+      <div class="flex-row" style="justify-content:flex-end;margin-top:14px;">
+        <button onclick="closeModal()">Cancel</button>
+        <button class="active" onclick="executeGenerateReviewSheet('${sessionId}')">[Generate Review Sheet Tab]</button>
+      </div>
+    </div>
+  `;
+
+  openModal("Generate Spaced Review OMR Tab", modalHtml);
+
+  const sel = document.getElementById("revDayTarget");
+  if (sel) {
+    sel.onchange = () => {
+      const extraRow = document.getElementById("revUnseenExtraRow");
+      if (extraRow) extraRow.style.display = sel.value === "d3_unseen" ? "block" : "none";
+    };
+  }
+}
+
+function executeGenerateReviewSheet(sessionId) {
+  const session = state.sessions ? state.sessions.find(s => s.id === sessionId) : null;
+  if (!session) return;
+  const currentSheet = session.sheets[session.activeSheetIndex || 0];
+  if (!currentSheet) return;
+
+  const incW = document.getElementById("revFlagW")?.checked;
+  const incX = document.getElementById("revFlagX")?.checked;
+  const incC = document.getElementById("revFlagC")?.checked;
+  const targetType = document.getElementById("revDayTarget")?.value || "d3_review";
+  const startQ = parseInt(document.getElementById("revStartQ")?.value) || 1;
+  const endQ = parseInt(document.getElementById("revEndQ")?.value) || 9999;
+
+  let selectedFlags = [];
+  if (incW) selectedFlags.push("W");
+  if (incX) selectedFlags.push("X");
+  if (incC) selectedFlags.push("C");
+
+  let reviewQuestions = [];
+  currentSheet.questions.forEach(q => {
+    if (q.qNum >= startQ && q.qNum <= endQ && selectedFlags.includes(q.flag)) {
+      reviewQuestions.push({
+        qNum: reviewQuestions.length + 1,
+        selectedOption: null,
+        deltaTimeSec: 0,
+        originalTimeSec: 0,
+        flag: null,
+        flagOverridden: false,
+        errorType: q.errorType || "",
+        sourceRef: {
+          sheetId: currentSheet.id,
+          sheetName: currentSheet.name,
+          origQNum: q.qNum,
+          origFlag: q.flag,
+          origDeltaSec: q.deltaTimeSec
+        }
+      });
+    }
+  });
+
+  if (targetType === "d3_unseen") {
+    const extraCount = parseInt(document.getElementById("revUnseenCount")?.value) || 20;
+    const startNum = reviewQuestions.length + 1;
+    for (let i = 0; i < extraCount; i++) {
+      reviewQuestions.push({
+        qNum: startNum + i,
+        selectedOption: null,
+        deltaTimeSec: 0,
+        originalTimeSec: 0,
+        flag: null,
+        flagOverridden: false,
+        errorType: "",
+        sourceRef: null
+      });
+    }
+  }
+
+  if (reviewQuestions.length === 0) {
+    alert("No questions matched the selected flags and range to carry into review.");
+    return;
+  }
+
+  let sheetTitle = "D3 Review";
+  if (targetType === "d3_unseen") sheetTitle = "D3 Unseen PYQs";
+  else if (targetType === "d7_review") sheetTitle = "D7 Cold Review";
+  else if (targetType === "d21_mock") sheetTitle = "D21 Mock";
+  else if (targetType === "custom") sheetTitle = "Custom Review";
+
+  const newSheet = {
+    id: `sheet_${Date.now()}`,
+    name: `Sheet ${session.sheets.length + 1}: ${sheetTitle} (${reviewQuestions.length} Qs)`,
+    type: targetType,
+    optionStyle: currentSheet.optionStyle || "ABCD",
+    thresholdSec: currentSheet.thresholdSec || 90,
+    enableAutoWThreshold: currentSheet.enableAutoWThreshold !== false,
+    activeQuestionIndex: 0,
+    timerMode: "stopwatch",
+    ttsMode: currentSheet.ttsMode || "delta",
+    deltaIntervals: currentSheet.deltaIntervals || "30,60,90,120",
+    fullIntervals: currentSheet.fullIntervals || "300,600,900",
+    enableBeeps: currentSheet.enableBeeps !== false,
+    enableSpeech: currentSheet.enableSpeech !== false,
+    elapsedSessionMs: 0,
+    currentDeltaMs: 0,
+    isRunning: false,
+    questions: reviewQuestions
+  };
+
+  session.sheets.push(newSheet);
+  session.activeSheetIndex = session.sheets.length - 1;
+  saveAllStorage();
+  closeModal();
+  renderWorkspace();
+}
+
+// --- CHAPTER GPS SYNC & GRADUATION MECHANIC (Line 33) ---
+function syncSessionToChapterGPS(sessionId) {
+  const session = state.sessions ? state.sessions.find(s => s.id === sessionId) : null;
+  if (!session) return;
+  const ch = state.chapters.find(c => c.id === session.chapterId);
+  if (!ch) return;
+
+  const currentSheet = session.sheets[session.activeSheetIndex || 0];
+  const attempted = currentSheet.questions.filter(q => q.selectedOption !== null);
+  const correct = currentSheet.questions.filter(q => q.flag === 'C');
+  const acc = attempted.length > 0 ? Math.round((correct.length / attempted.length) * 100) : 0;
+
+  let msg = `<strong>${ch.name}</strong> is currently at <strong>${GPS_STAGES[ch.stage].name}</strong>.<br>`;
+  msg += `Active Sheet Accuracy: <strong>${acc}%</strong> (${correct.length}/${attempted.length} confirmed).<br><br>`;
+
+  let actionsHtml = "";
+
+  if (ch.stage < 4 && acc >= 75) {
+    actionsHtml += `<button class="active" onclick="executeGPSStageAdvance('${ch.id}', 4, ${acc})">[Pass Exit Gate &rarr; Mark Stage 4 (D0_DONE) &amp; Start Calendar Clock]</button><br><br>`;
+  } else if (ch.stage < 4) {
+    actionsHtml += `<p style="color:var(--status-w);">Exit gate requires &ge;75-80% accuracy. Current accuracy is ${acc}%. Continue drilling older PYQs before advancing.</p>`;
+    actionsHtml += `<button onclick="executeGPSStageAdvance('${ch.id}', 4, ${acc})">[Override &amp; Mark Stage 4 (D0_DONE)]</button><br><br>`;
+  }
+
+  if (currentSheet.type === "d3_review" || currentSheet.type === "d3_unseen") {
+    actionsHtml += `<button onclick="executeGPSStageAdvance('${ch.id}', 6, ${acc})">[Advance to Stage 6 (Phase 4 — D3 Completed)]</button><br><br>`;
+  } else if (currentSheet.type === "d7_review") {
+    actionsHtml += `<button onclick="executeGPSStageAdvance('${ch.id}', 7, ${acc})">[Advance to Stage 7 (Phase 4 — D7 Completed)]</button><br><br>`;
+  } else if (currentSheet.type === "d21_mock") {
+    if (acc < 70) {
+      actionsHtml += `<button style="background:var(--status-x);color:#fff;" onclick="executeGPSStageAdvance('${ch.id}', 9, ${acc})">[Trigger Stage 9 (&gt;30% Mock Error Reset Loop)]</button><br><br>`;
+    } else {
+      actionsHtml += `<button class="active" onclick="executeGPSStageAdvance('${ch.id}', 8, ${acc})">[Graduate to Stage 8 (Phase 4 — D21 Passed)]</button><br><br>`;
+    }
+  }
+
+  actionsHtml += `<button onclick="closeModal()">Close</button>`;
+
+  openModal(`Chapter GPS Status: ${ch.name}`, msg + actionsHtml);
+}
+
+function executeGPSStageAdvance(chId, targetStage, acc) {
+  const ch = state.chapters.find(c => c.id === chId);
+  if (!ch) return;
+
+  ch.stage = targetStage;
+  ch.acc = acc;
+  if (targetStage === 4 && !ch.d0) {
+    ch.d0 = offsetDate(0);
+  }
+  saveAllStorage();
+  closeModal();
+  renderWorkspace();
+}
+
+// --- RADAR CHART SVG GENERATOR (Line 26) ---
+function generateRadarSVG(scores, size = 260) {
+  const cx = size / 2;
+  const cy = size / 2;
+  const r = size * 0.36;
+
+  const axes = [
+    { key: "memory", label: "Memory (Facts)", x: cx, y: cy - r, lx: cx, ly: cy - r - 10, align: "middle" },
+    { key: "concept", label: "Concept & Rules", x: cx + r, y: cy, lx: cx + r + 8, ly: cy + 4, align: "start" },
+    { key: "reading", label: "Exam Technique", x: cx, y: cy + r, lx: cx, ly: cy + r + 16, align: "middle" },
+    { key: "speed", label: "Speed & Method", x: cx - r, y: cy, lx: cx - r - 8, ly: cy + 4, align: "end" }
+  ];
+
+  const gridCircles = [0.25, 0.5, 0.75, 1.0].map(scale => {
+    return `<polygon points="${cx},${cy - r * scale} ${cx + r * scale},${cy} ${cx},${cy + r * scale} ${cx - r * scale},${cy}" fill="none" stroke="var(--border)" stroke-width="1" stroke-dasharray="2,2"/>`;
+  }).join("");
+
+  const axisLines = axes.map(a => `<line x1="${cx}" y1="${cy}" x2="${a.x}" y2="${a.y}" stroke="var(--border)" stroke-width="1"/>`).join("");
+
+  const mVal = Math.min(100, Math.max(0, scores.memory !== undefined ? scores.memory : 100));
+  const cVal = Math.min(100, Math.max(0, scores.concept !== undefined ? scores.concept : 100));
+  const rVal = Math.min(100, Math.max(0, scores.reading !== undefined ? scores.reading : 100));
+  const sVal = Math.min(100, Math.max(0, scores.speed !== undefined ? scores.speed : 100));
+
+  const pPoints = [
+    `${cx},${cy - r * (mVal / 100)}`,
+    `${cx + r * (cVal / 100)},${cy}`,
+    `${cx},${cy + r * (rVal / 100)}`,
+    `${cx - r * (sVal / 100)},${cy}`
+  ].join(" ");
+
+  const labels = axes.map(a => {
+    const val = a.key === 'memory' ? mVal : a.key === 'concept' ? cVal : a.key === 'reading' ? rVal : sVal;
+    return `<text x="${a.lx}" y="${a.ly}" text-anchor="${a.align}" font-family="var(--font-mono)" font-size="10px" font-weight="700" fill="var(--fg)">${a.label}: ${Math.round(val)}%</text>`;
+  }).join("");
+
+  return `
+    <svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" style="max-width:100%;height:auto;">
+      ${gridCircles}
+      ${axisLines}
+      <polygon points="${pPoints}" fill="rgba(16, 185, 129, 0.35)" stroke="#10b981" stroke-width="2"/>
+      <circle cx="${cx}" cy="${cy - r * (mVal / 100)}" r="3.5" fill="#10b981"/>
+      <circle cx="${cx + r * (cVal / 100)}" cy="${cy}" r="3.5" fill="#10b981"/>
+      <circle cx="${cx}" cy="${cy + r * (rVal / 100)}" r="3.5" fill="#10b981"/>
+      <circle cx="${cx - r * (sVal / 100)}" cy="${cy}" r="3.5" fill="#10b981"/>
+      ${labels}
+    </svg>
+  `;
+}
+
+// --- MULTI-LEVEL STATISTICS & SESSION ANALYSIS (Lines 22-28) ---
+function setAnalysisScope(scope, sheetIdx = 0) {
+  state.analysisScope = scope; // "sheet", "upto", "session", "lifetime"
+  state.analysisSheetIdx = sheetIdx;
+  saveAllStorage();
+  renderWorkspace();
+}
+
+function getPracticeAnalysisHTML(session) {
+  const scope = state.analysisScope || "sheet";
+  const sheetIdx = state.analysisSheetIdx !== undefined ? state.analysisSheetIdx : (session.activeSheetIndex || 0);
+  const currentSheet = session.sheets[sheetIdx] || session.sheets[0];
+
+  if (!currentSheet && scope !== "lifetime") {
+    return `<p>No sheets available for analysis.</p>`;
+  }
+
+  // Determine questions subset based on scope
+  let scopeQuestions = [];
+  let scopeTitle = "";
+
+  if (scope === "sheet") {
+    scopeTitle = `Per Sheet: ${currentSheet.name}`;
+    scopeQuestions = currentSheet.questions || [];
+  } else if (scope === "upto") {
+    scopeTitle = `Upto Sheet ${sheetIdx + 1}: ${currentSheet.name} (Cumulative Progression)`;
+    // Aggregate questions from sheet 0 up to sheetIdx
+    for (let s = 0; s <= sheetIdx; s++) {
+      if (session.sheets[s]) {
+        scopeQuestions.push(...session.sheets[s].questions);
+      }
+    }
+  } else if (scope === "session") {
+    scopeTitle = `Entire Session (${session.sheets.length} Sheets Combined)`;
+    session.sheets.forEach(sh => {
+      scopeQuestions.push(...sh.questions);
+    });
+  }
+
+  // Active range: from first answered question to last answered question (Line 23)
+  let firstIdx = -1;
+  let lastIdx = -1;
+  scopeQuestions.forEach((q, idx) => {
+    if (q.selectedOption !== null || q.deltaTimeSec > 0 || q.flag !== null) {
+      if (firstIdx === -1) firstIdx = idx;
+      lastIdx = idx;
+    }
+  });
+
+  const filledQuestions = (firstIdx !== -1 && lastIdx !== -1)
+    ? scopeQuestions.slice(firstIdx, lastIdx + 1)
+    : [];
+
+  const totalAttempted = filledQuestions.filter(q => q.selectedOption !== null).length;
+  const cCount = filledQuestions.filter(q => q.flag === 'C').length;
+  const wCount = filledQuestions.filter(q => q.flag === 'W').length;
+  const xCount = filledQuestions.filter(q => q.flag === 'X').length;
+  const accuracy = totalAttempted > 0 ? Math.round((cCount / totalAttempted) * 100) : 0;
+
+  const answeredWithTime = filledQuestions.filter(q => q.deltaTimeSec > 0);
+  const avgDelta = answeredWithTime.length > 0
+    ? Math.round(answeredWithTime.reduce((a, b) => a + b.deltaTimeSec, 0) / answeredWithTime.length)
+    : 0;
+  const maxDelta = answeredWithTime.length > 0 ? Math.max(...answeredWithTime.map(q => q.deltaTimeSec)) : 0;
+  const minDelta = answeredWithTime.length > 0 ? Math.min(...answeredWithTime.map(q => q.deltaTimeSec)) : 0;
+
+  // Error Diagnosis Matrix Breakdown
+  let memErr = 0, concErr = 0, readErr = 0, spdErr = 0;
+  filledQuestions.forEach(q => {
+    if (q.errorType === 'memory') memErr++;
+    else if (q.errorType === 'concept') concErr++;
+    else if (q.errorType === 'reading') readErr++;
+    else if (q.errorType === 'speed') spdErr++;
+  });
+  const totalErrors = memErr + concErr + readErr + spdErr;
+
+  const denom = Math.max(1, totalAttempted);
+  const radarScores = {
+    memory: Math.max(20, 100 - Math.round((memErr / denom) * 150)),
+    concept: Math.max(20, 100 - Math.round((concErr / denom) * 150)),
+    reading: Math.max(20, 100 - Math.round((readErr / denom) * 150)),
+    speed: Math.max(20, 100 - Math.round((spdErr / denom) * 150))
+  };
+
+  let primaryWeakness = "None! Clean execution.";
+  let recAction = "Maintain daily Anki review and scheduled spaced tests.";
+  const maxErrVal = Math.max(memErr, concErr, readErr, spdErr);
+  if (maxErrVal > 0) {
+    if (maxErrVal === memErr) {
+      primaryWeakness = "1. Memory / Fact Failure [X]";
+      recAction = "Create atomic Anki cards for forgotten facts/reagents today; re-test on D3.";
+    } else if (maxErrVal === concErr) {
+      primaryWeakness = "2. Concept / Constraint Failure [X]";
+      recAction = "Write a 5-Line Logic Fix in Obsidian; identify invalid physical assumptions.";
+    } else if (maxErrVal === readErr) {
+      primaryWeakness = "3. Repeated Reading / Careless Error [X]";
+      recAction = "Add a mandatory Pre-Solve habit rule to Section 0 of your Obsidian note.";
+    } else if (maxErrVal === spdErr) {
+      primaryWeakness = "4. Speed / Method Bottleneck [W]";
+      recAction = "Extract a 1-2-3 Problem Recipe in Obsidian; re-test under stopwatch on D3.";
+    }
+  }
+
+  // Rules-based graduation analysis across sheets (Line 25)
+  const graduationRows = [];
+  filledQuestions.forEach(q => {
+    if (q.sourceRef) {
+      const origFlag = q.sourceRef.origFlag;
+      const currentFlag = q.flag;
+      let statusText = "";
+      let statusClass = "";
+
+      if (origFlag === "W" && currentFlag === "C") {
+        statusText = "[PASSED TO C] Clean D3 Stopwatch Pass";
+        statusClass = "color:var(--status-c);font-weight:700;";
+      } else if (origFlag === "W" && (currentFlag === "W" || currentFlag === "X")) {
+        statusText = "[STRIKE 2 -> X] Mutated into [X] (Slow/Wrong on D3)";
+        statusClass = "color:var(--status-x);font-weight:700;";
+      } else if (origFlag === "X" && currentFlag === "C" && currentSheet.type === "d7_review") {
+        statusText = "[DOUBLE COLD PASS -> C] Fully Cleared to [C]";
+        statusClass = "color:var(--status-c);font-weight:700;";
+      } else if (origFlag === "X" && currentFlag === "C") {
+        statusText = "[1/2 COLD PASS] D3 Passed (Retained for D7 2nd Test)";
+        statusClass = "color:var(--status-w);font-weight:700;";
+      } else if (origFlag === "X" && currentFlag !== "C") {
+        statusText = "[LOCKED IN X] Penalty Queue (Rewrite 5-Line Fix)";
+        statusClass = "color:var(--status-x);font-weight:700;";
+      } else {
+        statusText = `Retained as [${currentFlag || 'Unflagged'}]`;
+      }
+
+      graduationRows.push({
+        qNum: q.qNum,
+        origSheet: q.sourceRef.sheetName,
+        origQ: q.sourceRef.origQNum,
+        origFlag: origFlag,
+        currentFlag: currentFlag,
+        statusText: statusText,
+        statusClass: statusClass
+      });
+    }
+  });
+
+  return `
+  <div>
+    <div class="flex-row" style="justify-content:space-between;margin-bottom:10px;">
+      <div>
+        <h2>[Session Performance &amp; Manual Rules Analysis]</h2>
+        <div style="font-size:11px;color:var(--fg-muted);">
+          Chapter: <strong>${session.chapterName}</strong> | Exam: <strong>${session.exam}</strong> | Scope: <strong>${scopeTitle}</strong>
+        </div>
+      </div>
+      <div class="flex-row">
+        <button onclick="setPracticeSessionSubView('omr')">[Return to Active OMR]</button>
+        <button onclick="syncSessionToChapterGPS('${session.id}')">[Sync Chapter GPS]</button>
+      </div>
+    </div>
+
+    <!-- Scope Filtering Controls (Line 25) -->
+    <div class="box" style="margin-bottom:10px;padding:8px 12px;">
+      <div class="flex-row" style="justify-content:space-between;">
+        <div class="flex-row" style="gap:6px;">
+          <span class="tag" style="font-size:11px;">ANALYSIS SCOPE:</span>
+          <button class="${scope === 'sheet' ? 'active' : ''}" onclick="setAnalysisScope('sheet', ${sheetIdx})">Per Sheet</button>
+          <button class="${scope === 'upto' ? 'active' : ''}" onclick="setAnalysisScope('upto', ${sheetIdx})">Upto Sheet</button>
+          <button class="${scope === 'session' ? 'active' : ''}" onclick="setAnalysisScope('session', ${sheetIdx})">Entire Session</button>
+          <button class="${scope === 'lifetime' ? 'active' : ''}" onclick="setAnalysisScope('lifetime', ${sheetIdx})">Lifetime All Sessions</button>
+        </div>
+        ${(scope === 'sheet' || scope === 'upto') ? `
+          <div class="flex-row">
+            <label style="font-size:11px;font-weight:700;">Select Target Sheet:</label>
+            <select onchange="setAnalysisScope('${scope}', parseInt(this.value))">
+              ${session.sheets.map((sh, idx) => `
+                <option value="${idx}" ${idx === sheetIdx ? 'selected' : ''}>${sh.name}</option>
+              `).join('')}
+            </select>
+          </div>
+        ` : ''}
+      </div>
+    </div>
+
+    ${scope === 'lifetime' ? getCumulativeStatsHTML(state.practiceFilterSubj || "All") : `
+      <!-- Sheet Tabs for Analysis Navigation -->
+      <div class="sheet-tabs-bar">
+        ${session.sheets.map((sh, idx) => `
+          <button class="sheet-tab-btn ${idx === sheetIdx ? 'active' : ''}" onclick="setAnalysisScope('${scope}', ${idx})">
+            ${sh.name}
+          </button>
+        `).join('')}
+      </div>
+
+      <!-- 1. Key Metric Cards -->
+      <div class="session-summary-grid">
+        <div class="stat-card-mini">
+          <div class="stat-card-val" style="color:var(--status-c);">${accuracy}%</div>
+          <div class="stat-card-lbl">Accuracy (${cCount}/${totalAttempted})</div>
+        </div>
+        <div class="stat-card-mini">
+          <div class="stat-card-val">${avgDelta}s</div>
+          <div class="stat-card-lbl">Avg Time / Question</div>
+        </div>
+        <div class="stat-card-mini">
+          <div class="stat-card-val" style="color:var(--status-w);">${wCount}</div>
+          <div class="stat-card-lbl">[W] Speed Bottlenecks</div>
+        </div>
+        <div class="stat-card-mini">
+          <div class="stat-card-val" style="color:var(--status-x);">${xCount}</div>
+          <div class="stat-card-lbl">[X] Blocked Errors</div>
+        </div>
+        <div class="stat-card-mini">
+          <div class="stat-card-val">${minDelta}s / ${maxDelta}s</div>
+          <div class="stat-card-lbl">Min / Max Question Time</div>
+        </div>
+      </div>
+
+      <div class="split-2">
+        <!-- 2. RPG-Style Multi-Axis Polygon Radar Chart -->
+        <div class="box">
+          <div class="box-header">
+            <span>ERROR DIAGNOSIS RADAR (RPG MULTI-AXIS POLYGON)</span>
+            <span class="tag">MASTERY BALANCE</span>
+          </div>
+          <div class="radar-box">
+            ${generateRadarSVG(radarScores, 260)}
+            <div style="font-size:11px;margin-top:8px;text-align:center;">
+              <strong>Primary Bottleneck:</strong> <span style="color:var(--status-x);">${primaryWeakness}</span><br>
+              <span style="color:var(--fg-muted);">${recAction}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. Error Breakdown Matrix -->
+        <div class="box">
+          <div class="box-header"><span>POST-PRACTICE ERROR MATRIX AUDIT</span></div>
+          <table>
+            <thead><tr><th>Error Category</th><th>Occurrences</th><th>% Share</th><th>Manual Action</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><strong>1. Memory / Fact [X]</strong></td>
+                <td>${memErr}</td>
+                <td>${totalErrors > 0 ? Math.round((memErr / totalErrors) * 100) : 0}%</td>
+                <td>Create atomic Anki card today</td>
+              </tr>
+              <tr>
+                <td><strong>2. Concept / Constraint [X]</strong></td>
+                <td>${concErr}</td>
+                <td>${totalErrors > 0 ? Math.round((concErr / totalErrors) * 100) : 0}%</td>
+                <td>Obsidian 5-Line Logic Fix</td>
+              </tr>
+              <tr>
+                <td><strong>3. Careless / Reading [X]</strong></td>
+                <td>${readErr}</td>
+                <td>${totalErrors > 0 ? Math.round((readErr / totalErrors) * 100) : 0}%</td>
+                <td>Pre-Solve checklist in Obsidian</td>
+              </tr>
+              <tr>
+                <td><strong>4. Speed Bottleneck [W]</strong></td>
+                <td>${spdErr}</td>
+                <td>${totalErrors > 0 ? Math.round((spdErr / totalErrors) * 100) : 0}%</td>
+                <td>1-2-3 Recipe + D3 stopwatch test</td>
+              </tr>
+            </tbody>
+          </table>
+
+          ${graduationRows.length > 0 ? `
+            <div style="margin-top:14px;">
+              <div class="box-header"><span>DECOUPLED [W]/[X] GRADUATION PIPELINE (MANUAL RULES)</span></div>
+              <table>
+                <thead><tr><th>Q#</th><th>Origin</th><th>D0 Flag</th><th>Current</th><th>Rules Status</th></tr></thead>
+                <tbody>
+                  ${graduationRows.map(r => `
+                    <tr>
+                      <td><strong>Q${r.qNum}</strong></td>
+                      <td style="font-size:10.5px;">${r.origSheet} (Q${r.origQ})</td>
+                      <td><span class="tag">${r.origFlag}</span></td>
+                      <td><span class="tag">${r.currentFlag || 'None'}</span></td>
+                      <td style="${r.statusClass}">${r.statusText}</td>
+                    </tr>
+                  `).join('')}
+                </tbody>
+              </table>
+            </div>
+          ` : ''}
+        </div>
+      </div>
+
+      <!-- 4. Active Span OMR Sheet (Line 23) -->
+      <div class="box" style="margin-top:12px;">
+        <div class="box-header">
+          <span>ACTIVE ATTEMPT SPAN (FIRST ENTERED Q${firstIdx + 1 || 1} &rarr; LAST ENTERED Q${lastIdx + 1 || 1})</span>
+          <span class="tag">${filledQuestions.length} QUESTIONS IN RANGE</span>
+        </div>
+        <div class="omr-container">
+          <table class="omr-table">
+            <thead>
+              <tr>
+                <th>Q#</th>
+                <th>Selected</th>
+                <th>Delta Time</th>
+                <th>Outcome Flag</th>
+                <th>Error Diagnosis Type</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${filledQuestions.length === 0 ? `<tr><td colspan="5" style="color:var(--fg-muted);">No questions answered in this scope yet.</td></tr>` :
+                filledQuestions.map(q => `
+                  <tr>
+                    <td><strong>${q.qNum}</strong></td>
+                    <td><span class="omr-bubble selected">${q.selectedOption || '-'}</span></td>
+                    <td><code>${q.deltaTimeSec || 0}s</code> (${formatMS((q.deltaTimeSec || 0) * 1000)})</td>
+                    <td>
+                      ${q.flag === 'C' ? '<span class="tag" style="background:var(--status-c);color:#fff;">[C] Confirmed</span>' :
+                        q.flag === 'W' ? '<span class="tag" style="background:var(--status-w);color:#fff;">[W] Weak</span>' :
+                        q.flag === 'X' ? '<span class="tag" style="background:var(--status-x);color:#fff;">[X] Blocked</span>' :
+                        '<span class="tag">None</span>'}
+                    </td>
+                    <td style="font-size:11px;color:var(--fg-muted);">
+                      ${q.errorType ? q.errorType.toUpperCase() : 'None'}
+                    </td>
+                  </tr>
+                `).join('')}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    `}
+  </div>`;
+}
+
+// --- CUMULATIVE STATS RENDERER (Line 27) ---
+function getCumulativeStatsHTML(filterSubj = "All") {
+  const sessions = state.sessions || [];
+  const filtered = filterSubj === "All"
+    ? sessions
+    : sessions.filter(s => s.subject === filterSubj);
+
+  let totalQuestionsAttempted = 0;
+  let totalConfirmed = 0;
+  let totalDeltaSec = 0;
+  let timedQuestionsCount = 0;
+  let totalMem = 0, totalConc = 0, totalRead = 0, totalSpd = 0;
+
+  filtered.forEach(s => {
+    (s.sheets || []).forEach(sh => {
+      (sh.questions || []).forEach(q => {
+        if (q.selectedOption !== null) {
+          totalQuestionsAttempted++;
+          if (q.flag === 'C') totalConfirmed++;
+          if (q.deltaTimeSec > 0) {
+            totalDeltaSec += q.deltaTimeSec;
+            timedQuestionsCount++;
+          }
+          if (q.errorType === 'memory') totalMem++;
+          else if (q.errorType === 'concept') totalConc++;
+          else if (q.errorType === 'reading') totalRead++;
+          else if (q.errorType === 'speed') totalSpd++;
+        }
+      });
+    });
+  });
+
+  const lifetimeAcc = totalQuestionsAttempted > 0
+    ? Math.round((totalConfirmed / totalQuestionsAttempted) * 100)
+    : 0;
+  const lifetimeAvgSpeed = timedQuestionsCount > 0
+    ? Math.round(totalDeltaSec / timedQuestionsCount)
+    : 0;
+
+  const denom = Math.max(1, totalQuestionsAttempted);
+  const cumulativeRadar = {
+    memory: Math.max(20, 100 - Math.round((totalMem / denom) * 150)),
+    concept: Math.max(20, 100 - Math.round((totalConc / denom) * 150)),
+    reading: Math.max(20, 100 - Math.round((totalRead / denom) * 150)),
+    speed: Math.max(20, 100 - Math.round((totalSpd / denom) * 150))
+  };
+
+  const subjects = ["All", ...getSubjectList()];
+
+  return `
+  <div class="box" style="margin-top:14px;">
+    <div class="box-header">
+      <span>CUMULATIVE DRILL METRICS &amp; MULTI-AXIS RADAR (LIFETIME / ALL SESSIONS)</span>
+      <div class="flex-row">
+        ${subjects.map(subj => `
+          <button class="${filterSubj === subj ? 'active' : ''}" style="font-size:10px;padding:2px 6px;" onclick="setPracticeFilterSubj('${subj}')">
+            ${subj}
+          </button>
+        `).join('')}
+      </div>
+    </div>
+
+    <div class="split-2" style="margin-top:8px;">
+      <div>
+        <div class="session-summary-grid">
+          <div class="stat-card-mini">
+            <div class="stat-card-val">${filtered.length}</div>
+            <div class="stat-card-lbl">Total Sessions</div>
+          </div>
+          <div class="stat-card-mini">
+            <div class="stat-card-val">${totalQuestionsAttempted}</div>
+            <div class="stat-card-lbl">Questions Solved</div>
+          </div>
+          <div class="stat-card-mini">
+            <div class="stat-card-val" style="color:var(--status-c);">${lifetimeAcc}%</div>
+            <div class="stat-card-lbl">Lifetime Accuracy</div>
+          </div>
+          <div class="stat-card-mini">
+            <div class="stat-card-val">${lifetimeAvgSpeed}s</div>
+            <div class="stat-card-lbl">Avg Delta / Q</div>
+          </div>
+        </div>
+
+        <table>
+          <thead><tr><th>Error Category</th><th>Total Recorded</th><th>% of Attempted</th></tr></thead>
+          <tbody>
+            <tr><td><strong>1. Memory / Fact [X]</strong></td><td>${totalMem}</td><td>${totalQuestionsAttempted > 0 ? Math.round((totalMem / totalQuestionsAttempted) * 100) : 0}%</td></tr>
+            <tr><td><strong>2. Concept / Constraint [X]</strong></td><td>${totalConc}</td><td>${totalQuestionsAttempted > 0 ? Math.round((totalConc / totalQuestionsAttempted) * 100) : 0}%</td></tr>
+            <tr><td><strong>3. Careless / Reading [X]</strong></td><td>${totalRead}</td><td>${totalQuestionsAttempted > 0 ? Math.round((totalRead / totalQuestionsAttempted) * 100) : 0}%</td></tr>
+            <tr><td><strong>4. Speed Bottleneck [W]</strong></td><td>${totalSpd}</td><td>${totalQuestionsAttempted > 0 ? Math.round((totalSpd / totalQuestionsAttempted) * 100) : 0}%</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="radar-box">
+        <span style="font-family:var(--font-mono);font-size:11px;font-weight:700;margin-bottom:4px;">CUMULATIVE ERROR DIAGNOSIS PROFILE</span>
+        ${generateRadarSVG(cumulativeRadar, 230)}
+      </div>
+    </div>
+  </div>`;
+}
+
+function setPracticeFilterSubj(subj) {
+  state.practiceFilterSubj = subj;
+  saveAllStorage();
+  renderWorkspace();
+}
+
+// --- DEFAULT SETTINGS MENU VIEW (Lines 30 & 34) ---
+function getDefaultSettingsHTML() {
+  const s = state.practiceSettings || {};
+  const m = state.customMetadata || {
+    exams: ["JEE Advanced", "JEE Main", "NEET", "IAT / NEST", "Custom Drill"],
+    books: ["Coaching Module", "NCERT Textbook", "HC Verma", "Cengage", "DC Pandey", "MS Chouhan", "PYQ 37-Year", "Reference Book"],
+    levels: ["Level 1", "Level 2", "Level 3", "Olympiad", "Advanced Mastery"],
+    sets: ["Exercise Drills", "Worked Examples", "Try Yourself", "Illustrations", "Set A", "Set B", "PYQ"],
+    sections: ["Section A", "Section B", "Section C", "Section D", "Numerical"]
+  };
+  const t = state.timerOnly || {};
+
+  return `
+  <div>
+    <div class="flex-row" style="justify-content:space-between;margin-bottom:10px;">
+      <h2>[Default Settings &amp; Exam Configuration Menu]</h2>
+      <button class="active" onclick="setPracticeSessionSubView('start')">[Return to Session Start]</button>
+    </div>
+
+    <div class="split-2">
+      <!-- 1. Universal Exam & Threshold Defaults -->
+      <div class="box">
+        <div class="box-header"><span>1. EXAM THRESHOLDS &amp; AUTO-[W] DEFAULTS (Line 34)</span></div>
+        <p style="font-size:11.5px;color:var(--fg-muted);">Configure default speed caps. Questions exceeding threshold qualify automatically as [W]:</p>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px;">
+          <div>
+            <label>JEE Advanced Threshold (s):</label>
+            <input type="number" id="defThreshJEEAdv" value="${s.examThresholds?.['JEE Advanced'] || 180}" style="width:100%;margin-top:2px;">
+          </div>
+          <div>
+            <label>JEE Main Threshold (s):</label>
+            <input type="number" id="defThreshJEEMain" value="${s.examThresholds?.['JEE Main'] || 120}" style="width:100%;margin-top:2px;">
+          </div>
+          <div>
+            <label>NEET Threshold (s):</label>
+            <input type="number" id="defThreshNEET" value="${s.examThresholds?.['NEET'] || 90}" style="width:100%;margin-top:2px;">
+          </div>
+          <div>
+            <label>IAT / NEST Threshold (s):</label>
+            <input type="number" id="defThreshIAT" value="${s.examThresholds?.['IAT / NEST'] || 150}" style="width:100%;margin-top:2px;">
+          </div>
+        </div>
+
+        <div style="margin-top:10px;">
+          <label><input type="checkbox" id="defAutoWToggle" ${s.enableAutoWThreshold !== false ? 'checked' : ''}> Automatically qualify question as [W] when time threshold is exceeded</label>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px;">
+          <div>
+            <label>Default Option Style:</label>
+            <select id="defOptStyle" style="width:100%;margin-top:2px;">
+              <option value="ABCD" ${s.optionStyle === 'ABCD' ? 'selected' : ''}>A, B, C, D</option>
+              <option value="1234" ${s.optionStyle === '1234' ? 'selected' : ''}>1, 2, 3, 4</option>
+            </select>
+          </div>
+          <div>
+            <label>Default Question Range Count:</label>
+            <input type="number" id="defQCount" value="${s.defaultQCount || 30}" style="width:100%;margin-top:2px;">
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. Audio & TTS Settings -->
+      <div class="box">
+        <div class="box-header"><span>2. AUDIO TTS &amp; SYNTHETIC OSCILLATOR SETTINGS</span></div>
+        <p style="font-size:11.5px;color:var(--fg-muted);">Precision timing intervals, voice rates, and 880Hz acoustic beeps:</p>
+
+        <div style="margin-top:6px;">
+          <label>Default TTS Mode:</label>
+          <select id="defTTSMode" style="width:100%;margin-top:2px;">
+            <option value="delta" ${s.ttsMode === 'delta' ? 'selected' : ''}>Delta TTS (Intervals from last question tick)</option>
+            <option value="full" ${s.ttsMode === 'full' ? 'selected' : ''}>Full TTS (Intervals from session beginning)</option>
+            <option value="mixed" ${s.ttsMode === 'mixed' ? 'selected' : ''}>Mixed TTS (Both delta and full session)</option>
+            <option value="off" ${s.ttsMode === 'off' ? 'selected' : ''}>Off (Mute)</option>
+          </select>
+        </div>
+
+        <div style="margin-top:8px;">
+          <label>Delta Intervals (Seconds, comma-separated):</label>
+          <input type="text" id="defDeltaIntervals" value="${s.deltaIntervals || "30,60,90,120"}" style="width:100%;margin-top:2px;">
+        </div>
+
+        <div style="margin-top:8px;">
+          <label>Full Session Intervals (Seconds, comma-separated):</label>
+          <input type="text" id="defFullIntervals" value="${s.fullIntervals || "300,600,900"}" style="width:100%;margin-top:2px;">
+        </div>
+
+        <div style="display:flex;gap:12px;margin-top:8px;">
+          <label><input type="checkbox" id="defBeeps" ${s.enableBeeps !== false ? 'checked' : ''}> Acoustic 880Hz Beeps</label>
+          <label><input type="checkbox" id="defSpeech" ${s.enableSpeech !== false ? 'checked' : ''}> TTS Speech Voice</label>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px;">
+          <div>
+            <label>Speech Rate (${s.speechRate || 1.15}x):</label>
+            <input type="number" step="0.05" id="defSpeechRate" value="${s.speechRate || 1.15}" style="width:100%;margin-top:2px;">
+          </div>
+          <div>
+            <label>Quick Nudge Step (s):</label>
+            <input type="number" id="defNudgeStep" value="${s.nudgeStepSec || 5}" style="width:100%;margin-top:2px;">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. Pomodoro & Dynamic Break Configuration -->
+    <div class="box" style="margin-top:12px;">
+      <div class="box-header"><span>3. STUDY TIMER &amp; POMODORO CONFIGURATION (Line 35)</span></div>
+      <p style="font-size:11.5px;color:var(--fg-muted);">Configures the study timer break calculator $\\text{Break Time} = \\lfloor \\text{Study Time} / 5 \\rfloor$:</p>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:8px;">
+        <div>
+          <label>Pomodoro Study Work Duration (Minutes):</label>
+          <input type="number" id="defPomoWork" value="${s.pomodoroWorkMin || 25}" style="width:100%;margin-top:2px;">
+        </div>
+        <div>
+          <label>Break Calculation Method:</label>
+          <select id="defPomoMethod" style="width:100%;margin-top:2px;">
+            <option value="dynamic" ${s.useDynamicBreak !== false ? 'selected' : ''}>Dynamic Formula: Study / 5</option>
+            <option value="fixed" ${s.useDynamicBreak === false ? 'selected' : ''}>Fixed Duration (5 Minutes)</option>
+          </select>
+        </div>
+        <div>
+          <label>Target Countdown Duration (Seconds):</label>
+          <input type="number" id="defTimerTargetSec" value="${t.targetDurationSec || 3600}" style="width:100%;margin-top:2px;">
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. Custom Identifiers Library Management -->
+    <div class="box" style="margin-top:12px;">
+      <div class="box-header"><span>4. CUSTOM IDENTIFIERS MANAGEMENT (Line 14)</span></div>
+      <p style="font-size:11.5px;color:var(--fg-muted);">Manage dynamic metadata options (Exams, Books, Levels, Sets, Sections):</p>
+
+      <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));gap:10px;margin-top:8px;">
+        ${['exams', 'books', 'levels', 'sets', 'sections'].map(type => {
+          const list = m[type] || [];
+          const typeLabel = type.toUpperCase();
+          return `
+            <div style="border:1px solid var(--border);padding:8px;background:var(--bg);">
+              <div class="flex-row" style="justify-content:space-between;margin-bottom:6px;">
+                <strong>${typeLabel} (${list.length})</strong>
+                <button style="padding:1px 5px;font-size:10px;" onclick="promptAddCustomMetadata('${type}')">+ Add</button>
+              </div>
+              <div style="max-height:120px;overflow-y:auto;font-size:11px;">
+                ${list.map((item, idx) => `
+                  <div style="display:flex;justify-content:space-between;padding:2px 0;border-bottom:1px dotted var(--border);">
+                    <span>${item}</span>
+                    <button style="padding:0 3px;font-size:9px;color:var(--status-x);" onclick="removeCustomMetadata('${type}', ${idx})">[x]</button>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+          `;
+        }).join('')}
+      </div>
+    </div>
+
+    <div class="flex-row" style="justify-content:flex-end;margin-top:14px;gap:8px;">
+      <button class="active" style="padding:8px 18px;" onclick="saveDefaultSettingsMenu()">[SAVE ALL GLOBAL DEFAULTS]</button>
+    </div>
+  </div>`;
+}
+
+function saveDefaultSettingsMenu() {
+  if (!state.practiceSettings) state.practiceSettings = {};
+  if (!state.timerOnly) state.timerOnly = {};
+
+  // Exam thresholds
+  state.practiceSettings.examThresholds = {
+    "JEE Advanced": parseInt(document.getElementById("defThreshJEEAdv")?.value) || 180,
+    "JEE Main": parseInt(document.getElementById("defThreshJEEMain")?.value) || 120,
+    "NEET": parseInt(document.getElementById("defThreshNEET")?.value) || 90,
+    "IAT / NEST": parseInt(document.getElementById("defThreshIAT")?.value) || 150,
+    "Custom Drill": 120
+  };
+
+  state.practiceSettings.enableAutoWThreshold = document.getElementById("defAutoWToggle")?.checked;
+  state.practiceSettings.optionStyle = document.getElementById("defOptStyle")?.value || "ABCD";
+  state.practiceSettings.defaultQCount = parseInt(document.getElementById("defQCount")?.value) || 30;
+
+  // TTS settings
+  state.practiceSettings.ttsMode = document.getElementById("defTTSMode")?.value || "delta";
+  state.practiceSettings.deltaIntervals = document.getElementById("defDeltaIntervals")?.value || "30,60,90,120";
+  state.practiceSettings.fullIntervals = document.getElementById("defFullIntervals")?.value || "300,600,900";
+  state.practiceSettings.enableBeeps = document.getElementById("defBeeps")?.checked;
+  state.practiceSettings.enableSpeech = document.getElementById("defSpeech")?.checked;
+  state.practiceSettings.speechRate = parseFloat(document.getElementById("defSpeechRate")?.value) || 1.15;
+  state.practiceSettings.nudgeStepSec = parseInt(document.getElementById("defNudgeStep")?.value) || 5;
+
+  // Pomodoro
+  state.practiceSettings.pomodoroWorkMin = parseInt(document.getElementById("defPomoWork")?.value) || 25;
+  state.practiceSettings.useDynamicBreak = document.getElementById("defPomoMethod")?.value === "dynamic";
+  state.timerOnly.targetDurationSec = parseInt(document.getElementById("defTimerTargetSec")?.value) || 3600;
+
+  saveAllStorage();
+  alert("Global Default Settings saved successfully!");
+  renderWorkspace();
+}
+
+// --- MASTER PRACTICE SESSION HTML RENDERER ---
+function getPracticeSessionHTML() {
+  const activeSession = state.sessions ? state.sessions.find(s => s.id === state.activeSessionId) : null;
+
+  // Subview: Defaults
+  if (state.activeSessionSubView === "defaults") {
+    return getDefaultSettingsHTML();
+  }
+
+  // Subview: Analysis
+  if (state.activeSessionSubView === "analysis" && activeSession) {
+    return getPracticeAnalysisHTML(activeSession);
+  }
+
+  // If no active session or subview is "start" or "resume": render Hub
+  if (!activeSession || state.activeSessionSubView === "start" || state.activeSessionSubView === "resume") {
+    const subjects = getSubjectList();
+    const defaultSubj = subjects[0] || "Physics";
+    const chapters = state.chapters.filter(c => c.subj === defaultSubj);
+
+    const m = state.customMetadata || {
+      exams: ["JEE Advanced", "JEE Main", "NEET", "IAT / NEST", "Custom Drill"],
+      books: ["Coaching Module", "NCERT Textbook", "HC Verma", "Cengage", "DC Pandey", "MS Chouhan", "PYQ 37-Year", "Reference Book"],
+      levels: ["Level 1", "Level 2", "Level 3", "Olympiad", "Advanced Mastery"],
+      sets: ["Exercise Drills", "Worked Examples", "Try Yourself", "Illustrations", "Set A", "Set B", "PYQ"],
+      sections: ["Section A", "Section B", "Section C", "Section D", "Numerical"]
+    };
+
+    return `
+    <div>
+      <div class="flex-row" style="justify-content:space-between;margin-bottom:10px;">
+        <h1>[Timer &amp; Questions] OMR Practice Hub</h1>
+        <div class="flex-row">
+          <button onclick="setPracticeSessionSubView('defaults')">[Default Settings Menu]</button>
+          <button onclick="switchTab('timer')">[Switch to Timer Only]</button>
+        </div>
+      </div>
+
+      <div class="split-2">
+        <!-- 1. START NEW SESSION FORM (Range-Configurable + Custom Identifiers) -->
+        <div class="box">
+          <div class="box-header"><span>1. START NEW PRACTICE SESSION</span><span class="tag">D0 ACQUISITION</span></div>
+          <p style="font-size:11.5px;color:var(--fg-muted);">Initialize a live OMR drill tied to a specific chapter, book/source, set, and exam:</p>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px;">
+            <div>
+              <div class="flex-row" style="justify-content:space-between;">
+                <label style="font-size:11px;font-weight:700;">Target Exam:</label>
+                <button style="padding:0 4px;font-size:9px;" onclick="promptAddCustomMetadata('exams')">+ Custom</button>
+              </div>
+              <select id="newSessExam" style="width:100%;margin-top:2px;" onchange="onExamPresetSelect(this.value)">
+                ${(m.exams || []).map(e => `<option value="${e}">${e}</option>`).join('')}
+              </select>
+            </div>
+
+            <div>
+              <label style="font-size:11px;font-weight:700;">Subject:</label>
+              <select id="newSessSubject" style="width:100%;margin-top:2px;" onchange="onNewSessSubjectChange(this.value)">
+                ${subjects.map(s => `<option value="${s}">${s}</option>`).join('')}
+              </select>
+            </div>
+          </div>
+
+          <div style="margin-top:8px;">
+            <label style="font-size:11px;font-weight:700;">Chapter:</label>
+            <select id="newSessChapter" style="width:100%;margin-top:2px;">
+              ${chapters.map(c => `<option value="${c.id}">[${c.type}] ${c.name} (${GPS_STAGES[c.stage].code})</option>`).join('')}
+            </select>
+          </div>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px;">
+            <div>
+              <div class="flex-row" style="justify-content:space-between;">
+                <label style="font-size:11px;font-weight:700;">Book / Source (Line 14):</label>
+                <button style="padding:0 4px;font-size:9px;" onclick="promptAddCustomMetadata('books')">+ Custom</button>
+              </div>
+              <select id="newSessBook" style="width:100%;margin-top:2px;">
+                ${(m.books || []).map(b => `<option value="${b}">${b}</option>`).join('')}
+              </select>
+            </div>
+
+            <div>
+              <div class="flex-row" style="justify-content:space-between;">
+                <label style="font-size:11px;font-weight:700;">Level (Line 14):</label>
+                <button style="padding:0 4px;font-size:9px;" onclick="promptAddCustomMetadata('levels')">+ Custom</button>
+              </div>
+              <select id="newSessLevel" style="width:100%;margin-top:2px;">
+                ${(m.levels || []).map(l => `<option value="${l}">${l}</option>`).join('')}
+              </select>
+            </div>
+          </div>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px;">
+            <div>
+              <div class="flex-row" style="justify-content:space-between;">
+                <label style="font-size:11px;font-weight:700;">Problem Set (Line 14):</label>
+                <button style="padding:0 4px;font-size:9px;" onclick="promptAddCustomMetadata('sets')">+ Custom</button>
+              </div>
+              <select id="newSessSet" style="width:100%;margin-top:2px;">
+                ${(m.sets || []).map(st => `<option value="${st}">${st}</option>`).join('')}
+              </select>
+            </div>
+
+            <div>
+              <div class="flex-row" style="justify-content:space-between;">
+                <label style="font-size:11px;font-weight:700;">Section (Line 14):</label>
+                <button style="padding:0 4px;font-size:9px;" onclick="promptAddCustomMetadata('sections')">+ Custom</button>
+              </div>
+              <select id="newSessSection" style="width:100%;margin-top:2px;">
+                ${(m.sections || []).map(sec => `<option value="${sec}">${sec}</option>`).join('')}
+              </select>
+            </div>
+          </div>
+
+          <!-- Question Range Configuration -->
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:6px;margin-top:8px;">
+            <div>
+              <label style="font-size:11px;font-weight:700;">Start Q#:</label>
+              <input type="number" id="newSessStartQ" value="1" style="width:100%;margin-top:2px;" onchange="updateNewSessCountDisplay()">
+            </div>
+            <div>
+              <label style="font-size:11px;font-weight:700;">End Q#:</label>
+              <input type="number" id="newSessEndQ" value="30" style="width:100%;margin-top:2px;" onchange="updateNewSessCountDisplay()">
+            </div>
+            <div>
+              <label style="font-size:11px;font-weight:700;">Options Style:</label>
+              <select id="newSessOptStyle" style="width:100%;margin-top:2px;">
+                <option value="ABCD">A, B, C, D</option>
+                <option value="1234">1, 2, 3, 4</option>
+              </select>
+            </div>
+            <div>
+              <label style="font-size:11px;font-weight:700;">Auto-[W] (s):</label>
+              <input type="number" id="newSessThreshold" value="${state.practiceSettings.defaultThresholdSec || 90}" style="width:100%;margin-top:2px;">
+            </div>
+          </div>
+
+          <button class="active" style="width:100%;margin-top:12px;padding:8px;" onclick="onStartNewSessionSubmit()">
+            [START PRACTICE SESSION]
+          </button>
+        </div>
+
+        <!-- 2. RESUME SAVED PRACTICE SESSIONS (Line 19) -->
+        <div class="box">
+          <div class="box-header"><span>2. RESUME SAVED PRACTICE SESSIONS (${(state.sessions || []).length})</span></div>
+          <div style="max-height:420px;overflow-y:auto;">
+            ${(!state.sessions || state.sessions.length === 0) ? `
+              <p style="color:var(--fg-muted);font-size:11.5px;padding:12px 0;">No active or past sessions saved yet. Create a session on the left to start practice.</p>
+            ` : `
+              <table>
+                <thead><tr><th>Chapter &amp; Source</th><th>Sheets</th><th>Attempted</th><th>Actions</th></tr></thead>
+                <tbody>
+                  ${state.sessions.map(s => {
+                    const sh = s.sheets || [];
+                    const qCount = sh.reduce((acc, x) => acc + (x.questions ? x.questions.filter(q => q.selectedOption !== null).length : 0), 0);
+                    const cCount = sh.reduce((acc, x) => acc + (x.questions ? x.questions.filter(q => q.flag === 'C').length : 0), 0);
+                    const acc = qCount > 0 ? Math.round((cCount / qCount) * 100) : 0;
+                    return `
+                      <tr>
+                        <td>
+                          <strong>${s.chapterName}</strong><br>
+                          <span style="font-size:10px;color:var(--fg-muted);">${s.exam} | ${s.book} (${s.set})</span>
+                        </td>
+                        <td><span class="tag">${sh.length} sheet${sh.length > 1 ? 's' : ''}</span></td>
+                        <td>${qCount} Qs (${acc}%)</td>
+                        <td style="white-space:nowrap;">
+                          <button class="active" style="padding:2px 6px;font-size:10px;" onclick="resumePracticeSession('${s.id}')">Resume</button>
+                          <button style="padding:2px 6px;font-size:10px;" onclick="viewSessionAnalysis('${s.id}')">Analysis</button>
+                          <button style="padding:2px 6px;font-size:10px;color:var(--status-x);" onclick="deletePracticeSession('${s.id}')">Del</button>
+                        </td>
+                      </tr>
+                    `;
+                  }).join('')}
+                </tbody>
+              </table>
+            `}
+          </div>
+        </div>
+      </div>
+
+      <!-- CUMULATIVE METRICS (Line 27) -->
+      ${getCumulativeStatsHTML(state.practiceFilterSubj || "All")}
+    </div>`;
+  }
+
+  // Active OMR Spreadsheet Interface
+  const currentSheetIndex = activeSession.activeSheetIndex || 0;
+  const currentSheet = activeSession.sheets[currentSheetIndex] || activeSession.sheets[0];
+  const isTimerRunning = activeTimerState.isRunning && activeTimerState.sessionId === activeSession.id;
+
+  const now = Date.now();
+  const sessionElapsedMs = isTimerRunning
+    ? (now - activeTimerState.startTime) + activeTimerState.accumulatedSessionMs
+    : (currentSheet.elapsedSessionMs || 0);
+  const deltaElapsedMs = isTimerRunning
+    ? (now - activeTimerState.lastDeltaZeroTime) + activeTimerState.accumulatedDeltaMs
+    : (currentSheet.currentDeltaMs || 0);
+
+  const optLabels = (currentSheet.optionStyle === "1234") ? ["1", "2", "3", "4"] : ["A", "B", "C", "D"];
+  const ttsMode = currentSheet.ttsMode || state.practiceSettings.ttsMode || "delta";
+  const ch = state.chapters.find(c => c.id === activeSession.chapterId);
+  const earnedBreakSec = Math.floor((sessionElapsedMs / 1000) / 5);
+
+  return `
+  <div>
+    <!-- SESSION HEADER & METADATA -->
+    <div class="flex-row" style="justify-content:space-between;margin-bottom:8px;">
+      <div>
+        <div style="font-size:16px;font-weight:700;">
+          [Session: ${activeSession.chapterName}] <span class="tag">${activeSession.exam}</span>
+          ${ch ? `<span class="tag" style="background:var(--fg);color:var(--bg);">${GPS_STAGES[ch.stage].code}</span>` : ''}
+        </div>
+        <div style="font-size:11px;color:var(--fg-muted);">
+          Source: <strong>${activeSession.book}</strong> | Level: <strong>${activeSession.level}</strong> | Set: <strong>${activeSession.set}</strong> | Section: <strong>${activeSession.section}</strong>
+        </div>
+      </div>
+      <div class="flex-row">
+        <button onclick="setPracticeSessionSubView('analysis')">[Session Analysis]</button>
+        <button onclick="openCustomSheetModal('${activeSession.id}')">[+ Add Custom Sheet]</button>
+        <button onclick="openReviewGeneratorModal('${activeSession.id}')">[Generate Review Sheet]</button>
+        <button onclick="syncSessionToChapterGPS('${activeSession.id}')">[Chapter GPS]</button>
+        <button onclick="exitPracticeSession()">[Close Session]</button>
+      </div>
+    </div>
+
+    <!-- TOP TIMER BAR (Lines 3-8, 10 & 35) -->
+    <div class="timer-hero" style="padding:10px 14px;margin-bottom:8px;">
+      <div class="flex-row" style="justify-content:space-between;">
+        <div class="flex-row" style="gap:14px;">
+          <div>
+            <div style="font-size:10px;font-family:var(--font-mono);color:var(--fg-muted);text-transform:uppercase;">FULL SESSION ELAPSED</div>
+            <div style="font-family:var(--font-mono);font-size:26px;font-weight:700;" id="practiceSessionTimerDisp">${formatHMS(sessionElapsedMs)}</div>
+          </div>
+          <div style="border-left:1px solid var(--border);padding-left:14px;">
+            <div style="font-size:10px;font-family:var(--font-mono);color:var(--fg-muted);text-transform:uppercase;">CURRENT QUESTION DELTA (ZERO-POINT)</div>
+            <div style="font-family:var(--font-mono);font-size:26px;font-weight:700;color:var(--status-w);" id="practiceDeltaTimerDisp">${formatMS(deltaElapsedMs)}</div>
+          </div>
+          <div style="border-left:1px solid var(--border);padding-left:14px;">
+            <div style="font-size:10px;font-family:var(--font-mono);color:var(--fg-muted);text-transform:uppercase;">EARNED BREAK (STUDY / 5)</div>
+            <div style="font-family:var(--font-mono);font-size:26px;font-weight:700;color:var(--status-c);" id="practiceEarnedBreakDisp">${formatMS(earnedBreakSec * 1000)}</div>
+          </div>
+        </div>
+
+        <!-- Timer Controls -->
+        <div class="flex-row" style="gap:6px;">
+          <button class="timer-btn-lg ${isTimerRunning ? '' : 'active'}" style="${isTimerRunning ? 'background:var(--status-x);color:#fff;border-color:var(--status-x);' : 'background:var(--status-c);color:#fff;border-color:var(--status-c);'}" onclick="${isTimerRunning ? `pausePracticeSessionTimer('${activeSession.id}', ${currentSheetIndex})` : `startPracticeSessionTimer('${activeSession.id}', ${currentSheetIndex})`}">
+            ${isTimerRunning ? '[PAUSE]' : '[START]'}
+          </button>
+          <button class="timer-btn-lg" onclick="nudgePracticeDelta('${activeSession.id}', ${currentSheetIndex}, -${state.practiceSettings.nudgeStepSec || 5})">-${state.practiceSettings.nudgeStepSec || 5}s</button>
+          <button class="timer-btn-lg" onclick="nudgePracticeDelta('${activeSession.id}', ${currentSheetIndex}, ${state.practiceSettings.nudgeStepSec || 5})">+${state.practiceSettings.nudgeStepSec || 5}s</button>
+          <button class="timer-btn-lg" onclick="resetPracticeSessionTimer('${activeSession.id}', ${currentSheetIndex})">[RESET]</button>
+        </div>
+      </div>
+
+      <!-- TTS Mode Selectors & Speed Threshold -->
+      <div class="flex-row" style="margin-top:6px;gap:6px;font-size:11px;">
+        <span class="tag">TTS MODE:</span>
+        <button class="${ttsMode === 'delta' ? 'active' : ''}" style="padding:1px 6px;font-size:10px;" onclick="setSheetTTSMode('${activeSession.id}', ${currentSheetIndex}, 'delta')">Delta TTS</button>
+        <button class="${ttsMode === 'full' ? 'active' : ''}" style="padding:1px 6px;font-size:10px;" onclick="setSheetTTSMode('${activeSession.id}', ${currentSheetIndex}, 'full')">Full TTS</button>
+        <button class="${ttsMode === 'mixed' ? 'active' : ''}" style="padding:1px 6px;font-size:10px;" onclick="setSheetTTSMode('${activeSession.id}', ${currentSheetIndex}, 'mixed')">Mixed TTS</button>
+        <button class="${ttsMode === 'off' ? 'active' : ''}" style="padding:1px 6px;font-size:10px;" onclick="setSheetTTSMode('${activeSession.id}', ${currentSheetIndex}, 'off')">Off</button>
+        <span style="color:var(--fg-muted);margin-left:8px;">Auto-[W] Threshold: <strong>${currentSheet.thresholdSec || 90}s</strong></span>
+      </div>
+    </div>
+
+    <!-- SHEET TABS BAR (Line 20 & Custom Sheet Addition) -->
+    <div class="sheet-tabs-bar">
+      ${activeSession.sheets.map((sh, idx) => `
+        <button class="sheet-tab-btn ${idx === currentSheetIndex ? 'active' : ''}" onclick="switchActiveSheet('${activeSession.id}', ${idx})">
+          ${sh.name}
+        </button>
+      `).join('')}
+      <button class="sheet-tab-btn" style="border-style:dashed;" onclick="openCustomSheetModal('${activeSession.id}')">
+        [+ Custom Sheet]
+      </button>
+      <button class="sheet-tab-btn" style="border-style:dashed;" onclick="openReviewGeneratorModal('${activeSession.id}')">
+        [+ Spaced Review Sheet]
+      </button>
+    </div>
+
+    <!-- QUICK ADD & QUICK REMOVE CONTROLS BAR -->
+    <div class="box" style="padding:6px 10px;margin-bottom:8px;background:var(--bg-alt);">
+      <div class="flex-row" style="justify-content:space-between;">
+        <div class="flex-row" style="gap:4px;">
+          <span class="tag" style="font-size:10px;">QUICK ADD:</span>
+          <button style="padding:2px 6px;font-size:10px;" onclick="addQuestionsToSheet('${activeSession.id}', ${currentSheetIndex}, 1)">+1 Q</button>
+          <button style="padding:2px 6px;font-size:10px;" onclick="addQuestionsToSheet('${activeSession.id}', ${currentSheetIndex}, 5)">+5 Qs</button>
+          <button style="padding:2px 6px;font-size:10px;" onclick="addQuestionsToSheet('${activeSession.id}', ${currentSheetIndex}, 10)">+10 Qs</button>
+          <button style="padding:2px 6px;font-size:10px;" onclick="addRangeQuestionsToSheet('${activeSession.id}', ${currentSheetIndex})">+ Range...</button>
+        </div>
+
+        <div class="flex-row" style="gap:4px;">
+          <span class="tag" style="font-size:10px;">QUICK REMOVE:</span>
+          <button style="padding:2px 6px;font-size:10px;" onclick="removeLastQuestionFromSheet('${activeSession.id}', ${currentSheetIndex})">-1 Q</button>
+          <button style="padding:2px 6px;font-size:10px;" onclick="removeUnansweredFromSheet('${activeSession.id}', ${currentSheetIndex})">Remove Unanswered</button>
+          <button style="padding:2px 6px;font-size:10px;" onclick="removeRangeFromSheet('${activeSession.id}', ${currentSheetIndex})">Remove Range...</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- OMR SPREADSHEET TABLE (Lines 9-15) -->
+    <div class="omr-container">
+      <table class="omr-table">
+        <thead>
+          <tr>
+            <th style="width:40px;">Q#</th>
+            <th style="width:160px;">Options (${currentSheet.optionStyle})</th>
+            <th style="width:120px;">Delta Time</th>
+            <th style="width:170px;">Outcome Flag</th>
+            <th>Error Diagnosis Matrix Flag</th>
+            <th style="width:50px;">Act</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${currentSheet.questions.map((q, idx) => {
+            const isActive = idx === (currentSheet.activeQuestionIndex || 0);
+            return `
+              <tr class="omr-row ${isActive ? 'active-q' : ''}">
+                <td>
+                  <strong>Q${q.qNum}</strong>
+                  ${isActive ? '<br><span style="font-size:9px;color:var(--status-c);font-weight:700;">[ACTIVE]</span>' : ''}
+                </td>
+                <td>
+                  <div style="display:flex;justify-content:center;align-items:center;">
+                    ${optLabels.map(opt => `
+                      <button class="omr-bubble ${q.selectedOption === opt ? 'selected' : ''}" onclick="onOMRBubbleClick('${activeSession.id}', ${currentSheetIndex}, ${idx}, '${opt}')">
+                        ${opt}
+                      </button>
+                    `).join('')}
+                  </div>
+                </td>
+                <td>
+                  <div class="delta-time-box">
+                    <button class="btn-mini-step" onclick="adjustQuestionDeltaSec('${activeSession.id}', ${currentSheetIndex}, ${idx}, -5)">-5</button>
+                    <input type="number" value="${q.deltaTimeSec || 0}" onchange="onDeltaEditInput('${activeSession.id}', ${currentSheetIndex}, ${idx}, this.value)" title="Modifying delta pauses timer">
+                    <span>s</span>
+                    <button class="btn-mini-step" onclick="adjustQuestionDeltaSec('${activeSession.id}', ${currentSheetIndex}, ${idx}, 5)">+5</button>
+                  </div>
+                </td>
+                <td>
+                  <div class="btn-flag-group">
+                    <button class="btn-flag ${q.flag === 'C' ? 'active-c' : ''}" onclick="toggleQuestionFlag('${activeSession.id}', ${currentSheetIndex}, ${idx}, 'C')">[C]</button>
+                    <button class="btn-flag ${q.flag === 'W' ? 'active-w' : ''}" onclick="toggleQuestionFlag('${activeSession.id}', ${currentSheetIndex}, ${idx}, 'W')">[W]</button>
+                    <button class="btn-flag ${q.flag === 'X' ? 'active-x' : ''}" onclick="toggleQuestionFlag('${activeSession.id}', ${currentSheetIndex}, ${idx}, 'X')">[X]</button>
+                  </div>
+                  <span id="flag_badge_${q.qNum}"></span>
+                </td>
+                <td>
+                  <select style="width:100%;font-size:11px;" onchange="selectQuestionErrorType('${activeSession.id}', ${currentSheetIndex}, ${idx}, this.value)">
+                    <option value="" ${!q.errorType ? 'selected' : ''}>-- No Error Flag --</option>
+                    <option value="memory" ${q.errorType === 'memory' ? 'selected' : ''}>1. Memory / Fact Failure [X]</option>
+                    <option value="concept" ${q.errorType === 'concept' ? 'selected' : ''}>2. Concept / Constraint Failure [X]</option>
+                    <option value="reading" ${q.errorType === 'reading' ? 'selected' : ''}>3. Repeated Reading / Careless Error [X]</option>
+                    <option value="speed" ${q.errorType === 'speed' ? 'selected' : ''}>4. Speed / Method Bottleneck [W]</option>
+                  </select>
+                </td>
+                <td>
+                  <button style="padding:1px 4px;font-size:10px;color:var(--status-x);" onclick="deleteQuestionRow('${activeSession.id}', ${currentSheetIndex}, ${idx})">[Del]</button>
+                </td>
+              </tr>
+            `;
+          }).join('')}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- BOTTOM ROW UTILITIES -->
+    <div class="flex-row" style="justify-content:space-between;margin-top:8px;">
+      <div class="flex-row">
+        <button onclick="addQuestionsToSheet('${activeSession.id}', ${currentSheetIndex}, 10)">+ Add 10 More Rows</button>
+        <button onclick="markAllAnsweredAsC('${activeSession.id}', ${currentSheetIndex})">Auto-Flag Answered as [C]</button>
+      </div>
+      <div class="flex-row">
+        <span style="font-size:11px;color:var(--fg-muted);">Answered: <strong>${currentSheet.questions.filter(q => q.selectedOption !== null).length} / ${currentSheet.questions.length}</strong></span>
+      </div>
+    </div>
+  </div>`;
+}
+
+function setSheetTTSMode(sessionId, sheetIndex, ttsMode) {
+  const session = state.sessions ? state.sessions.find(s => s.id === sessionId) : null;
+  if (!session || !session.sheets[sheetIndex]) return;
+  session.sheets[sheetIndex].ttsMode = ttsMode;
+  saveAllStorage();
+  renderWorkspace();
+}
+
+function markAllAnsweredAsC(sessionId, sheetIndex) {
+  const session = state.sessions ? state.sessions.find(s => s.id === sessionId) : null;
+  if (!session || !session.sheets[sheetIndex]) return;
+  session.sheets[sheetIndex].questions.forEach(q => {
+    if (q.selectedOption !== null && !q.flag) {
+      q.flag = "C";
+      q.flagOverridden = true;
+    }
+  });
+  saveAllStorage();
+  renderWorkspace();
+}
+
+function viewSessionAnalysis(sessionId) {
+  state.activeSessionId = sessionId;
+  state.activeSessionSubView = "analysis";
+  saveAllStorage();
+  renderWorkspace();
+}
+
+function onNewSessSubjectChange(subj) {
+  const chSel = document.getElementById("newSessChapter");
+  if (!chSel) return;
+  const filtered = state.chapters.filter(c => c.subj === subj);
+  chSel.innerHTML = filtered.map(c => `<option value="${c.id}">[${c.type}] ${c.name} (${GPS_STAGES[c.stage].code})</option>`).join('');
+}
+
+function onExamPresetSelect(examName) {
+  const startQInp = document.getElementById("newSessStartQ");
+  const endQInp = document.getElementById("newSessEndQ");
+  const optStyleSel = document.getElementById("newSessOptStyle");
+  const threshInput = document.getElementById("newSessThreshold");
+
+  const thresholds = state.practiceSettings?.examThresholds || {
+    "JEE Advanced": 180,
+    "JEE Main": 120,
+    "NEET": 90,
+    "IAT / NEST": 150,
+    "Custom Drill": 120
+  };
+
+  if (threshInput) {
+    threshInput.value = thresholds[examName] || 90;
+  }
+
+  if (examName === "NEET") {
+    if (startQInp) startQInp.value = 1;
+    if (endQInp) endQInp.value = 45;
+    if (optStyleSel) optStyleSel.value = "ABCD";
+  } else if (examName === "JEE Main") {
+    if (startQInp) startQInp.value = 1;
+    if (endQInp) endQInp.value = 30;
+    if (optStyleSel) optStyleSel.value = "1234";
+  } else if (examName === "JEE Advanced") {
+    if (startQInp) startQInp.value = 1;
+    if (endQInp) endQInp.value = 18;
+    if (optStyleSel) optStyleSel.value = "ABCD";
+  } else if (examName === "IAT / NEST") {
+    if (startQInp) startQInp.value = 1;
+    if (endQInp) endQInp.value = 15;
+    if (optStyleSel) optStyleSel.value = "ABCD";
+  }
+}
+
+function updateNewSessCountDisplay() {
+  const start = parseInt(document.getElementById("newSessStartQ")?.value) || 1;
+  const end = parseInt(document.getElementById("newSessEndQ")?.value) || 30;
+  const cnt = Math.max(0, end - start + 1);
+  const lbl = document.getElementById("newSessCountCalc");
+  if (lbl) lbl.textContent = `(${cnt} Questions)`;
+}
+
+function onStartNewSessionSubmit() {
+  const exam = document.getElementById("newSessExam")?.value || "NEET";
+  const subject = document.getElementById("newSessSubject")?.value || "Physics";
+  const chapterId = document.getElementById("newSessChapter")?.value || state.chapters[0].id;
+  const book = document.getElementById("newSessBook")?.value || "Coaching Module";
+  const level = document.getElementById("newSessLevel")?.value || "Level 1";
+  const set = document.getElementById("newSessSet")?.value || "Exercise Drills";
+  const section = document.getElementById("newSessSection")?.value || "Section A";
+  const startQ = parseInt(document.getElementById("newSessStartQ")?.value) || 1;
+  const endQ = parseInt(document.getElementById("newSessEndQ")?.value) || (startQ + 29);
+  const optStyle = document.getElementById("newSessOptStyle")?.value || "ABCD";
+  const thresh = parseInt(document.getElementById("newSessThreshold")?.value) || 90;
+
+  createPracticeSession(exam, subject, chapterId, book, level, set, section, startQ, endQ, optStyle, thresh, true);
+}
+
+// --- SETTINGS MODALS (Lines 30 & 34) ---
+function openPracticeSettingsModal() {
+  setPracticeSessionSubView("defaults");
+}
+
+function openTimerSettingsModal() {
+  const t = state.timerOnly || {};
+  const html = `
+    <div style="font-size:12px;">
+      <p>Configure dedicated audio timer intervals, countdown duration, and TTS:</p>
+
+      <div class="box" style="margin:8px 0;">
+        <div class="box-header"><span>1. INTERVALS &amp; COUNTDOWN</span></div>
+        <div style="margin-top:6px;">
+          <label>Target Countdown Duration (Seconds, e.g. 3600 for 1h):</label>
+          <input type="number" id="cfgTimerTarget" value="${t.targetDurationSec || 3600}" style="width:100%;margin-top:2px;">
+        </div>
+        <div style="margin-top:6px;">
+          <label>Pomodoro Study Interval (Seconds, e.g. 1500 for 25m):</label>
+          <input type="number" id="cfgTimerPomoSec" value="${t.pomodoroStudySec || 1500}" style="width:100%;margin-top:2px;">
+        </div>
+        <div style="margin-top:6px;">
+          <label>Lap / Delta Intervals (Seconds, comma-separated):</label>
+          <input type="text" id="cfgTimerDeltaInt" value="${t.deltaIntervals || "30,60,90,120"}" style="width:100%;margin-top:2px;">
+        </div>
+        <div style="margin-top:6px;">
+          <label>Session Intervals (Seconds, comma-separated):</label>
+          <input type="text" id="cfgTimerFullInt" value="${t.fullIntervals || "300,600,900"}" style="width:100%;margin-top:2px;">
+        </div>
+        <div style="display:flex;gap:12px;margin-top:6px;">
+          <label><input type="checkbox" id="cfgTimerBeeps" ${t.enableBeeps !== false ? 'checked' : ''}> Acoustic Beep at Boundaries</label>
+          <label><input type="checkbox" id="cfgTimerSpeech" ${t.enableSpeech !== false ? 'checked' : ''}> Speak Time via TTS</label>
+        </div>
+      </div>
+
+      <div class="flex-row" style="justify-content:flex-end;margin-top:12px;">
+        <button onclick="closeModal()">Cancel</button>
+        <button class="active" onclick="saveTimerSettings()">Save Settings</button>
+      </div>
+    </div>
+  `;
+  openModal("Timer Only Configuration", html);
+}
+
+function saveTimerSettings() {
+  if (!state.timerOnly) state.timerOnly = {};
+  state.timerOnly.targetDurationSec = parseInt(document.getElementById("cfgTimerTarget")?.value) || 3600;
+  state.timerOnly.pomodoroStudySec = parseInt(document.getElementById("cfgTimerPomoSec")?.value) || 1500;
+  state.timerOnly.deltaIntervals = document.getElementById("cfgTimerDeltaInt")?.value || "30,60,90,120";
+  state.timerOnly.fullIntervals = document.getElementById("cfgTimerFullInt")?.value || "300,600,900";
+  state.timerOnly.enableBeeps = document.getElementById("cfgTimerBeeps")?.checked;
+  state.timerOnly.enableSpeech = document.getElementById("cfgTimerSpeech")?.checked;
+
+  saveAllStorage();
+  closeModal();
+  renderWorkspace();
+}
+
+// --- DASHBOARD LIVE PRACTICE WIDGET (Line 28) ---
+function getLivePracticeDashWidgetHTML() {
+  const sessions = state.sessions || [];
+  let totalQs = 0;
+  let totalC = 0;
+  let totalDeltaSec = 0;
+  let timedQs = 0;
+  let mem = 0, conc = 0, read = 0, spd = 0;
+
+  sessions.forEach(s => {
+    (s.sheets || []).forEach(sh => {
+      (sh.questions || []).forEach(q => {
+        if (q.selectedOption !== null) {
+          totalQs++;
+          if (q.flag === 'C') totalC++;
+          if (q.deltaTimeSec > 0) {
+            totalDeltaSec += q.deltaTimeSec;
+            timedQs++;
+          }
+          if (q.errorType === 'memory') mem++;
+          else if (q.errorType === 'concept') conc++;
+          else if (q.errorType === 'reading') read++;
+          else if (q.errorType === 'speed') spd++;
+        }
+      });
+    });
+  });
+
+  const acc = totalQs > 0 ? Math.round((totalC / totalQs) * 100) : 0;
+  const avgSpeed = timedQs > 0 ? Math.round(totalDeltaSec / timedQs) : 0;
+  const denom = Math.max(1, totalQs);
+  const radar = {
+    memory: Math.max(20, 100 - Math.round((mem / denom) * 150)),
+    concept: Math.max(20, 100 - Math.round((conc / denom) * 150)),
+    reading: Math.max(20, 100 - Math.round((read / denom) * 150)),
+    speed: Math.max(20, 100 - Math.round((spd / denom) * 150))
+  };
+
+  const lastSess = sessions.length > 0 ? sessions[0] : null;
+
+  return `
+  <div class="box">
+    <div class="box-header">
+      <span>[LIVE PRACTICE &amp; ACCURACY HUB]</span>
+      <button style="font-size:10px;padding:2px 6px;" onclick="switchTab('practice')">[Open Hub]</button>
+    </div>
+    <div class="split-2" style="margin-top:6px;">
+      <div>
+        <div class="session-summary-grid" style="grid-template-columns:1fr 1fr;gap:6px;">
+          <div class="stat-card-mini">
+            <div class="stat-card-val">${totalQs}</div>
+            <div class="stat-card-lbl">Questions Solved</div>
+          </div>
+          <div class="stat-card-mini">
+            <div class="stat-card-val" style="color:var(--status-c);">${acc}%</div>
+            <div class="stat-card-lbl">Lifetime Acc</div>
+          </div>
+          <div class="stat-card-mini">
+            <div class="stat-card-val">${avgSpeed}s</div>
+            <div class="stat-card-lbl">Avg Delta / Q</div>
+          </div>
+          <div class="stat-card-mini">
+            <div class="stat-card-val">${sessions.length}</div>
+            <div class="stat-card-lbl">Sessions</div>
+          </div>
+        </div>
+
+        <div style="margin-top:8px;">
+          ${lastSess ? `
+            <div style="font-size:11px;margin-bottom:6px;">
+              Recent: <strong>${lastSess.chapterName}</strong> (${lastSess.exam})
+            </div>
+            <button class="active" style="width:100%;padding:4px;" onclick="resumePracticeSession('${lastSess.id}')">
+              [Resume Recent Session]
+            </button>
+          ` : `
+            <button class="active" style="width:100%;padding:4px;" onclick="switchTab('practice')">
+              [Start 1st Practice Session]
+            </button>
+          `}
+        </div>
+      </div>
+
+      <div class="radar-box" style="padding:4px;">
+        <span style="font-family:var(--font-mono);font-size:9.5px;font-weight:700;">MASTERY RADAR PROFILE</span>
+        ${generateRadarSVG(radar, 150)}
+      </div>
+    </div>
+  </div>`;
+}
+
+
+
 function getTabContent(tabName) {
   switch (tabName) {
     case "dashboard": return getDashboardHTML();
+    case "timer": return getTimerOnlyHTML();
+    case "practice": return getPracticeSessionHTML();
     case "manual": return getManualHTML();
     case "flowcharts": return getFlowchartsHTML();
     case "reference": return getReferenceHTML();
@@ -2532,6 +5569,8 @@ function renderWorkspace() {
             <span style="font-weight:700;">PANE ${i + 1}:</span>
             <select onchange="changePaneTab(${i}, this.value)">
               <option value="dashboard" ${currentTab === "dashboard" ? "selected" : ""}>Dashboard</option>
+              <option value="timer" ${currentTab === "timer" ? "selected" : ""}>[Timer Only]</option>
+              <option value="practice" ${currentTab === "practice" ? "selected" : ""}>[Timer &amp; Questions]</option>
               <option value="manual" ${currentTab === "manual" ? "selected" : ""}>Full Manual</option>
               <option value="flowcharts" ${currentTab === "flowcharts" ? "selected" : ""}>Visual Flowcharts</option>
               <option value="reference" ${currentTab === "reference" ? "selected" : ""}>Quick Reference</option>
@@ -2762,6 +5801,15 @@ function openConceptModal(key) {
       <button onclick="closeModal()">Close</button>
     </div>`;
   document.getElementById("conceptModal").style.display = "flex";
+}
+
+function openModal(title, bodyHtml) {
+  const t = document.getElementById("modalTitle");
+  const b = document.getElementById("modalBody");
+  const m = document.getElementById("conceptModal");
+  if (t) t.innerHTML = title;
+  if (b) b.innerHTML = bodyHtml;
+  if (m) m.style.display = "flex";
 }
 
 function closeModal() {
