@@ -3575,6 +3575,14 @@ function onOMRBubbleClick(sessionId, sheetIndex, qIndex, optionVal) {
   const q = sheet.questions[qIndex];
   if (!q) return;
 
+  // Clicking an already selected option triggers Undo / Blank confirmation workflow
+  if (q.selectedOption === optionVal) {
+    promptBlankOrUndoQuestion(sessionId, sheetIndex, qIndex, 'undo');
+    return;
+  }
+
+  q.isBlanked = false;
+
   const sessionElapsed = activeTimerState.isRunning
     ? (Date.now() - activeTimerState.startTime) + activeTimerState.accumulatedSessionMs
     : (sheet.elapsedSessionMs || 0);
@@ -3602,7 +3610,13 @@ function onOMRBubbleClick(sessionId, sheetIndex, qIndex, optionVal) {
     }
 
     // Advance active question pointer to next unanswered question
-    sheet.activeQuestionIndex = qIndex + 1;
+    let nextIdx = qIndex + 1;
+    while (nextIdx < sheet.questions.length && sheet.questions[nextIdx].selectedOption !== null) {
+      nextIdx++;
+    }
+    if (nextIdx < sheet.questions.length) {
+      sheet.activeQuestionIndex = nextIdx;
+    }
   }
 
   // Zero-point reset synchronized with current sessionSec
@@ -3625,23 +3639,12 @@ function onOMRBubbleClick(sessionId, sheetIndex, qIndex, optionVal) {
     const deltaInp = rowEl.querySelector('.delta-val-input');
     if (deltaInp) deltaInp.value = q.deltaTimeSec || 0;
 
-    const oldActiveRow = document.querySelector('.omr-row.active-q');
-    if (oldActiveRow && oldActiveRow !== rowEl) {
-      oldActiveRow.classList.remove('active-q');
-      const tag = oldActiveRow.querySelector('.active-indicator');
-      if (tag) tag.remove();
-    }
-    const nextRow = document.getElementById(`omr_row_${sessionId}_${sheetIndex}_${sheet.activeQuestionIndex}`);
-    if (nextRow) {
-      nextRow.classList.add('active-q');
-      const numTd = nextRow.querySelector('td:first-child');
-      if (numTd && !numTd.querySelector('.active-indicator')) {
-        numTd.insertAdjacentHTML('beforeend', '<br><span class="active-indicator" style="font-size:9px;color:var(--status-c);font-weight:700;">[ACTIVE]</span>');
-      }
-    }
+    // Clean active row update without element leakage or height expansion
+    updateActiveQuestionDOM(sessionId, sheetIndex, sheet.activeQuestionIndex);
+
     const ansCountEl = document.getElementById('practiceAnsweredCount');
     if (ansCountEl) {
-      ansCountEl.textContent = `${sheet.questions.filter(x => x.selectedOption !== null).length} / ${sheet.questions.length}`;
+      ansCountEl.textContent = `${sheet.questions.filter(x => x.selectedOption !== null && !x.isBlanked).length} / ${sheet.questions.length}`;
     }
     const deltaDisp = document.getElementById("practiceDeltaTimerDisp");
     if (deltaDisp) deltaDisp.textContent = "00:00";
@@ -3934,6 +3937,403 @@ function deleteQuestionRow(sessionId, sheetIndex, qIndex) {
   if (!sheet) return;
 
   sheet.questions.splice(qIndex, 1);
+  saveAllStorage();
+  renderWorkspace();
+}
+
+// --- ACTIVE QUESTION SWITCHER & STABLE DOM INDICATOR ---
+function updateActiveQuestionDOM(sessionId, sheetIndex, activeIdx) {
+  const ws = document.getElementById("workspace");
+  if (!ws) return;
+
+  // Clean all previous active states across all rows
+  ws.querySelectorAll('.omr-row.active-q').forEach(r => r.classList.remove('active-q'));
+  ws.querySelectorAll('.active-badge-container').forEach(c => { c.innerHTML = ''; });
+
+  const targetRow = document.getElementById(`omr_row_${sessionId}_${sheetIndex}_${activeIdx}`);
+  if (targetRow) {
+    targetRow.classList.add('active-q');
+    const badge = document.getElementById(`active_badge_${sessionId}_${sheetIndex}_${activeIdx}`);
+    if (badge) {
+      badge.innerHTML = '<span class="active-indicator" style="font-size:9px;color:var(--status-c);font-weight:700;">[ACTIVE]</span>';
+    }
+  }
+}
+
+function setActiveQuestion(sessionId, sheetIndex, targetIdx) {
+  const session = state.sessions ? state.sessions.find(s => s.id === sessionId) : null;
+  if (!session) return;
+  const sheet = session.sheets[sheetIndex];
+  if (!sheet || !sheet.questions[targetIdx]) return;
+
+  if (sheet.activeQuestionIndex === targetIdx) return;
+
+  sheet.activeQuestionIndex = targetIdx;
+
+  // Switching active question does NOT reset or touch the time on the old question
+  const sessionElapsed = activeTimerState.isRunning
+    ? (Date.now() - activeTimerState.startTime) + activeTimerState.accumulatedSessionMs
+    : (sheet.elapsedSessionMs || 0);
+  const sessionSec = Math.floor(sessionElapsed / 1000);
+
+  // Synchronize new question delta zero-point
+  sheet.questionStartSessionSec = sessionSec;
+  sheet.nudgeDeltaSec = 0;
+  sheet.currentDeltaSec = 0;
+  sheet.currentDeltaMs = 0;
+  appAudioTTS.lastDispatchedDeltaSec = -1;
+
+  const deltaDisp = document.getElementById("practiceDeltaTimerDisp");
+  if (deltaDisp) deltaDisp.textContent = "00:00";
+
+  updateActiveQuestionDOM(sessionId, sheetIndex, targetIdx);
+  saveAllStorage();
+}
+
+// --- BLANK & UNDO QUESTION WORKFLOW (WITH BACKUP PRESERVATION) ---
+function promptBlankOrUndoQuestion(sessionId, sheetIndex, qIndex, mode = 'blank') {
+  const session = state.sessions ? state.sessions.find(s => s.id === sessionId) : null;
+  if (!session) return;
+  const sheet = session.sheets[sheetIndex];
+  if (!sheet || !sheet.questions[qIndex]) return;
+
+  const q = sheet.questions[qIndex];
+  const sessionElapsed = activeTimerState.isRunning
+    ? (Date.now() - activeTimerState.startTime) + activeTimerState.accumulatedSessionMs
+    : (sheet.elapsedSessionMs || 0);
+  const sessionSec = Math.floor(sessionElapsed / 1000);
+  const currentDeltaSec = Math.max(0, sessionSec - (sheet.questionStartSessionSec || 0) + (sheet.nudgeDeltaSec || 0));
+
+  const isUndo = (mode === 'undo');
+  const modalHtml = `
+    <div style="font-size:12px;">
+      <p style="font-weight:700;font-size:13px;margin-bottom:8px;">
+        ${isUndo ? `Undo / Deselect Option for Q${q.qNum}` : `Blank Question Q${q.qNum}`}
+      </p>
+      <div class="box" style="margin-bottom:10px;background:var(--surface-2);">
+        <div>Current Recorded Time on Q${q.qNum}: <strong>${q.deltaTimeSec || 0}s</strong></div>
+        <div>Current Delta in Progress: <strong>${currentDeltaSec}s</strong></div>
+        <div style="font-size:11px;color:var(--fg-muted);margin-top:6px;">
+          Blanking or undoing will remove this question from attempted statistics and subtract its recorded time (<strong>${q.deltaTimeSec || 0}s</strong>) from the main session timer.
+        </div>
+      </div>
+
+      <div class="box" style="margin-bottom:12px;">
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+          <input type="checkbox" id="blankAddCurrentDelta" ${currentDeltaSec > 0 ? 'checked' : ''}>
+          <span>Add in-progress delta (<strong>+${currentDeltaSec}s</strong>) to the backup time saved for Q${q.qNum} (Total backup: <strong>${(q.deltaTimeSec || 0) + currentDeltaSec}s</strong>)</span>
+        </label>
+      </div>
+
+      <div class="flex-row" style="justify-content:flex-end;gap:8px;">
+        <button onclick="closeModal()">[Cancel / Keep Answer]</button>
+        <button class="active" style="background:var(--status-w);color:#fff;" onclick="executeBlankQuestion('${sessionId}', ${sheetIndex}, ${qIndex}, '${mode}')">
+          [Confirm ${isUndo ? 'Undo & Blank' : 'Blank Question'}]
+        </button>
+      </div>
+    </div>
+  `;
+  openModal(isUndo ? `Undo Q${q.qNum}` : `Blank Q${q.qNum}`, modalHtml);
+}
+
+function executeBlankQuestion(sessionId, sheetIndex, qIndex, mode) {
+  const session = state.sessions ? state.sessions.find(s => s.id === sessionId) : null;
+  if (!session) return;
+  const sheet = session.sheets[sheetIndex];
+  if (!sheet || !sheet.questions[qIndex]) return;
+
+  const q = sheet.questions[qIndex];
+  const addCurrentDelta = document.getElementById("blankAddCurrentDelta")?.checked ?? false;
+
+  const sessionElapsed = activeTimerState.isRunning
+    ? (Date.now() - activeTimerState.startTime) + activeTimerState.accumulatedSessionMs
+    : (sheet.elapsedSessionMs || 0);
+  const sessionSec = Math.floor(sessionElapsed / 1000);
+  const currentDeltaSec = Math.max(0, sessionSec - (sheet.questionStartSessionSec || 0) + (sheet.nudgeDeltaSec || 0));
+
+  const prevRecordedTime = q.deltaTimeSec || 0;
+  const backupTime = addCurrentDelta ? (prevRecordedTime + currentDeltaSec) : prevRecordedTime;
+
+  // 1. Save backup data safely in question object and history log
+  q.backupDeltaTimeSec = backupTime;
+  q.backupOption = q.selectedOption;
+  q.backupFlag = q.flag;
+  q.backupErrorType = q.errorType;
+  if (!q.timeHistory) q.timeHistory = [];
+  q.timeHistory.push({
+    action: mode,
+    timestamp: Date.now(),
+    prevTime: prevRecordedTime,
+    addedDelta: addCurrentDelta ? currentDeltaSec : 0,
+    savedBackup: backupTime,
+    option: q.selectedOption,
+    flag: q.flag
+  });
+
+  // 2. Subtract previous recorded time from main session timers
+  sheet.elapsedSessionMs = Math.max(0, (sheet.elapsedSessionMs || 0) - (prevRecordedTime * 1000));
+  if (activeTimerState.isRunning && activeTimerState.type === "practice") {
+    activeTimerState.accumulatedSessionMs = sheet.elapsedSessionMs;
+    activeTimerState.startTime = Date.now();
+  }
+
+  // 3. Mark blanked and reset live answer fields
+  q.selectedOption = null;
+  q.deltaTimeSec = 0;
+  q.flag = null;
+  q.isBlanked = true;
+
+  // 4. Synchronize delta zero-point
+  const newSessionSec = Math.floor((sheet.elapsedSessionMs || 0) / 1000);
+  sheet.questionStartSessionSec = newSessionSec;
+  sheet.nudgeDeltaSec = 0;
+  sheet.currentDeltaSec = 0;
+  sheet.currentDeltaMs = 0;
+  appAudioTTS.lastDispatchedDeltaSec = -1;
+
+  closeModal();
+  saveAllStorage();
+  renderWorkspace();
+}
+
+function restoreQuestionBackup(sessionId, sheetIndex, qIndex) {
+  const session = state.sessions ? state.sessions.find(s => s.id === sessionId) : null;
+  if (!session) return;
+  const sheet = session.sheets[sheetIndex];
+  if (!sheet || !sheet.questions[qIndex]) return;
+
+  const q = sheet.questions[qIndex];
+  const restoreSec = q.backupDeltaTimeSec || 0;
+
+  q.deltaTimeSec = restoreSec;
+  if (q.backupOption) q.selectedOption = q.backupOption;
+  if (q.backupFlag) q.flag = q.backupFlag;
+  if (q.backupErrorType) q.errorType = q.backupErrorType;
+  q.isBlanked = false;
+
+  // Add restoreSec back to main session timers
+  sheet.elapsedSessionMs = (sheet.elapsedSessionMs || 0) + (restoreSec * 1000);
+  if (activeTimerState.isRunning && activeTimerState.type === "practice") {
+    activeTimerState.accumulatedSessionMs = sheet.elapsedSessionMs;
+    activeTimerState.startTime = Date.now();
+  }
+
+  saveAllStorage();
+  renderWorkspace();
+}
+
+// --- RESET INDIVIDUAL QUESTION TIME ---
+function promptResetQuestionTime(sessionId, sheetIndex, qIndex) {
+  const session = state.sessions ? state.sessions.find(s => s.id === sessionId) : null;
+  if (!session) return;
+  const sheet = session.sheets[sheetIndex];
+  if (!sheet || !sheet.questions[qIndex]) return;
+
+  const q = sheet.questions[qIndex];
+  if ((q.deltaTimeSec || 0) === 0) return;
+
+  const modalHtml = `
+    <div style="font-size:12px;">
+      <p style="font-weight:700;font-size:13px;margin-bottom:8px;">
+        Reset Timer for Q${q.qNum}
+      </p>
+      <div class="box" style="margin-bottom:10px;background:var(--surface-2);">
+        <div>Current Recorded Time on Q${q.qNum}: <strong>${q.deltaTimeSec}s</strong></div>
+        <div style="font-size:11px;color:var(--fg-muted);margin-top:6px;">
+          This will reset Q${q.qNum} timer to 0s, save <strong>${q.deltaTimeSec}s</strong> to backup memory just in case of accidental click, and subtract it from the full session timer.
+        </div>
+      </div>
+
+      <div class="flex-row" style="justify-content:flex-end;gap:8px;">
+        <button onclick="closeModal()">[Cancel]</button>
+        <button class="active" style="background:var(--status-x);color:#fff;" onclick="executeResetQuestionTime('${sessionId}', ${sheetIndex}, ${qIndex})">
+          [Confirm Reset to 0s]
+        </button>
+      </div>
+    </div>
+  `;
+  openModal(`Reset Time Q${q.qNum}`, modalHtml);
+}
+
+function executeResetQuestionTime(sessionId, sheetIndex, qIndex) {
+  const session = state.sessions ? state.sessions.find(s => s.id === sessionId) : null;
+  if (!session) return;
+  const sheet = session.sheets[sheetIndex];
+  if (!sheet || !sheet.questions[qIndex]) return;
+
+  const q = sheet.questions[qIndex];
+  const oldSec = q.deltaTimeSec || 0;
+
+  q.backupDeltaTimeSec = oldSec;
+  if (!q.timeHistory) q.timeHistory = [];
+  q.timeHistory.push({
+    action: "reset",
+    timestamp: Date.now(),
+    prevTime: oldSec,
+    savedBackup: oldSec
+  });
+
+  sheet.elapsedSessionMs = Math.max(0, (sheet.elapsedSessionMs || 0) - (oldSec * 1000));
+  if (activeTimerState.isRunning && activeTimerState.type === "practice") {
+    activeTimerState.accumulatedSessionMs = sheet.elapsedSessionMs;
+    activeTimerState.startTime = Date.now();
+  }
+
+  q.deltaTimeSec = 0;
+
+  closeModal();
+  saveAllStorage();
+  renderWorkspace();
+}
+
+// --- QUESTION REARRANGEMENT CONTROLLERS (INDIVIDUALLY & EN MASSE) ---
+function moveQuestionRow(sessionId, sheetIndex, qIndex, dir) {
+  const session = state.sessions ? state.sessions.find(s => s.id === sessionId) : null;
+  if (!session) return;
+  const sheet = session.sheets[sheetIndex];
+  if (!sheet) return;
+
+  const targetIdx = qIndex + dir;
+  if (targetIdx < 0 || targetIdx >= sheet.questions.length) return;
+
+  const temp = sheet.questions[qIndex];
+  sheet.questions[qIndex] = sheet.questions[targetIdx];
+  sheet.questions[targetIdx] = temp;
+
+  if (sheet.activeQuestionIndex === qIndex) {
+    sheet.activeQuestionIndex = targetIdx;
+  } else if (sheet.activeQuestionIndex === targetIdx) {
+    sheet.activeQuestionIndex = qIndex;
+  }
+
+  saveAllStorage();
+  renderWorkspace();
+}
+
+function reverseSheetQuestions(sessionId, sheetIndex) {
+  const session = state.sessions ? state.sessions.find(s => s.id === sessionId) : null;
+  if (!session) return;
+  const sheet = session.sheets[sheetIndex];
+  if (!sheet) return;
+
+  sheet.questions.reverse();
+  saveAllStorage();
+  renderWorkspace();
+}
+
+function openRearrangeModal(sessionId, sheetIndex) {
+  const session = state.sessions ? state.sessions.find(s => s.id === sessionId) : null;
+  if (!session) return;
+  const sheet = session.sheets[sheetIndex];
+  if (!sheet) return;
+
+  const qList = sheet.questions.map(q => q.qNum).join(', ');
+
+  const modalHtml = `
+    <div style="font-size:12px;">
+      <p>Rearrange questions in <strong>${sheet.name}</strong> (${sheet.questions.length} questions):</p>
+
+      <div class="box" style="margin:8px 0;">
+        <div class="box-header"><span>1. MASS SORTING MODE</span></div>
+        <select id="massSortCriteria" style="width:100%;margin-top:4px;">
+          <option value="qnum_asc">Natural Question # Ascending (Q1, Q2, Q3...)</option>
+          <option value="qnum_desc">Question # Descending (Highest Q# First)</option>
+          <option value="flag_xwc">Flag Priority ([X] Blocked first, then [W] Speed, then [C])</option>
+          <option value="time_desc">Delta Time: Highest Time First</option>
+          <option value="time_asc">Delta Time: Lowest Time First</option>
+          <option value="unanswered_first">Unanswered First, Answered Last</option>
+          <option value="answered_first">Answered First, Unanswered Last</option>
+        </select>
+      </div>
+
+      <div class="box" style="margin:8px 0;">
+        <div class="box-header"><span>2. RENUMBER QUESTIONS SEQUENTIALLY (OPTIONAL)</span></div>
+        <label style="display:flex;align-items:center;gap:6px;margin-top:4px;">
+          <input type="checkbox" id="massRenumberCheck">
+          <span>Renumber all rows sequentially starting from:</span>
+          <input type="number" id="massRenumberStart" value="1" style="width:60px;">
+        </label>
+      </div>
+
+      <div class="box" style="margin:8px 0;">
+        <div class="box-header"><span>3. CUSTOM SEQUENCE (MANUAL ORDER)</span></div>
+        <p style="font-size:11px;color:var(--fg-muted);margin:2px 0 4px 0;">
+          Or provide exact comma-separated order of Q numbers:
+        </p>
+        <textarea id="massCustomOrder" rows="3" style="width:100%;font-family:var(--font-mono);font-size:11px;">${qList}</textarea>
+      </div>
+
+      <div class="flex-row" style="justify-content:flex-end;gap:8px;margin-top:12px;">
+        <button onclick="closeModal()">Cancel</button>
+        <button class="active" onclick="executeRearrangeSheet('${sessionId}', ${sheetIndex})">[Apply Rearrangement]</button>
+      </div>
+    </div>
+  `;
+  openModal("Rearrange Questions En Masse", modalHtml);
+}
+
+function executeRearrangeSheet(sessionId, sheetIndex) {
+  const session = state.sessions ? state.sessions.find(s => s.id === sessionId) : null;
+  if (!session) return;
+  const sheet = session.sheets[sheetIndex];
+  if (!sheet) return;
+
+  const sortMode = document.getElementById("massSortCriteria")?.value || "qnum_asc";
+  const customOrderStr = document.getElementById("massCustomOrder")?.value?.trim() || "";
+  const renumberCheck = document.getElementById("massRenumberCheck")?.checked || false;
+  const renumberStart = parseInt(document.getElementById("massRenumberStart")?.value) || 1;
+
+  const originalOrderStr = sheet.questions.map(q => q.qNum).join(', ');
+  if (customOrderStr && customOrderStr !== originalOrderStr) {
+    const desiredNums = customOrderStr.split(',').map(s => parseInt(s.trim())).filter(n => !isNaN(n));
+    if (desiredNums.length > 0) {
+      const qMap = new Map();
+      sheet.questions.forEach(q => qMap.set(q.qNum, q));
+      const reordered = [];
+      desiredNums.forEach(n => {
+        if (qMap.has(n)) {
+          reordered.push(qMap.get(n));
+          qMap.delete(n);
+        }
+      });
+      qMap.forEach(q => reordered.push(q));
+      sheet.questions = reordered;
+    }
+  } else {
+    switch (sortMode) {
+      case "qnum_asc":
+        sheet.questions.sort((a, b) => a.qNum - b.qNum);
+        break;
+      case "qnum_desc":
+        sheet.questions.sort((a, b) => b.qNum - a.qNum);
+        break;
+      case "flag_xwc": {
+        const flagRank = { 'X': 1, 'W': 2, 'C': 3, null: 4, undefined: 4 };
+        sheet.questions.sort((a, b) => (flagRank[a.flag] || 4) - (flagRank[b.flag] || 4));
+        break;
+      }
+      case "time_desc":
+        sheet.questions.sort((a, b) => (b.deltaTimeSec || 0) - (a.deltaTimeSec || 0));
+        break;
+      case "time_asc":
+        sheet.questions.sort((a, b) => (a.deltaTimeSec || 0) - (b.deltaTimeSec || 0));
+        break;
+      case "unanswered_first":
+        sheet.questions.sort((a, b) => (a.selectedOption === null ? -1 : 1));
+        break;
+      case "answered_first":
+        sheet.questions.sort((a, b) => (a.selectedOption !== null ? -1 : 1));
+        break;
+    }
+  }
+
+  if (renumberCheck) {
+    sheet.questions.forEach((q, i) => {
+      q.qNum = renumberStart + i;
+    });
+  }
+
+  closeModal();
   saveAllStorage();
   renderWorkspace();
 }
@@ -4490,8 +4890,15 @@ function setAnalysisScope(scope, sheetIdx = 0) {
   renderWorkspace();
 }
 
+function setAnalysisFlagFilter(filter) {
+  state.analysisFlagFilter = filter; // "ALL", "C", "W", "X", "WX"
+  saveAllStorage();
+  renderWorkspace();
+}
+
 function getPracticeAnalysisHTML(session) {
   const scope = state.analysisScope || "sheet";
+  const flagFilter = state.analysisFlagFilter || "ALL";
   const sheetIdx = state.analysisSheetIdx !== undefined ? state.analysisSheetIdx : (session.activeSheetIndex || 0);
   const currentSheet = session.sheets[sheetIdx] || session.sheets[0];
 
@@ -4520,18 +4927,30 @@ function getPracticeAnalysisHTML(session) {
   }
 
   // Active range: from first answered question to last answered question (Line 23)
+  const validScopeQuestions = scopeQuestions.filter(q => !q.isBlanked);
   let firstIdx = -1;
   let lastIdx = -1;
-  scopeQuestions.forEach((q, idx) => {
+  validScopeQuestions.forEach((q, idx) => {
     if (q.selectedOption !== null || q.deltaTimeSec > 0 || q.flag !== null) {
       if (firstIdx === -1) firstIdx = idx;
       lastIdx = idx;
     }
   });
 
-  const filledQuestions = (firstIdx !== -1 && lastIdx !== -1)
-    ? scopeQuestions.slice(firstIdx, lastIdx + 1)
+  let filledQuestions = (firstIdx !== -1 && lastIdx !== -1)
+    ? validScopeQuestions.slice(firstIdx, lastIdx + 1)
     : [];
+
+  // Scoped Outcome Flag Filtering (C, W, X, W+X, ALL)
+  if (flagFilter === "C") {
+    filledQuestions = filledQuestions.filter(q => q.flag === "C");
+  } else if (flagFilter === "W") {
+    filledQuestions = filledQuestions.filter(q => q.flag === "W");
+  } else if (flagFilter === "X") {
+    filledQuestions = filledQuestions.filter(q => q.flag === "X");
+  } else if (flagFilter === "WX") {
+    filledQuestions = filledQuestions.filter(q => q.flag === "W" || q.flag === "X");
+  }
 
   const totalAttempted = filledQuestions.filter(q => q.selectedOption !== null).length;
   const cCount = filledQuestions.filter(q => q.flag === 'C').length;
@@ -4629,7 +5048,7 @@ function getPracticeAnalysisHTML(session) {
       <div>
         <h2>[Session Performance &amp; Manual Rules Analysis]</h2>
         <div style="font-size:11px;color:var(--fg-muted);">
-          Chapter: <strong>${session.chapterName}</strong> | Exam: <strong>${session.exam}</strong> | Scope: <strong>${scopeTitle}</strong>
+          Chapter: <strong>${session.chapterName}</strong> | Exam: <strong>${session.exam}</strong> | Scope: <strong>${scopeTitle}</strong> | Filter: <strong>[${flagFilter}]</strong>
         </div>
       </div>
       <div class="flex-row">
@@ -4638,7 +5057,7 @@ function getPracticeAnalysisHTML(session) {
       </div>
     </div>
 
-    <!-- Scope Filtering Controls (Line 25) -->
+    <!-- Scope & Outcome Flag Filtering Controls (Line 25) -->
     <div class="box" style="margin-bottom:10px;padding:8px 12px;">
       <div class="flex-row" style="justify-content:space-between;">
         <div class="flex-row" style="gap:6px;">
@@ -4658,6 +5077,15 @@ function getPracticeAnalysisHTML(session) {
             </select>
           </div>
         ` : ''}
+      </div>
+
+      <div class="flex-row" style="gap:4px;margin-top:8px;">
+        <span class="tag" style="font-size:10px;">OUTCOME SCOPE:</span>
+        <button class="${flagFilter === 'ALL' ? 'active' : ''}" style="font-size:10px;padding:2px 6px;" onclick="setAnalysisFlagFilter('ALL')">All Outcomes</button>
+        <button class="${flagFilter === 'C' ? 'active' : ''}" style="font-size:10px;padding:2px 6px;color:var(--status-c);font-weight:700;" onclick="setAnalysisFlagFilter('C')">[C] Confirmed Only</button>
+        <button class="${flagFilter === 'W' ? 'active' : ''}" style="font-size:10px;padding:2px 6px;color:var(--status-w);font-weight:700;" onclick="setAnalysisFlagFilter('W')">[W] Speed Only</button>
+        <button class="${flagFilter === 'X' ? 'active' : ''}" style="font-size:10px;padding:2px 6px;color:var(--status-x);font-weight:700;" onclick="setAnalysisFlagFilter('X')">[X] Errors Only</button>
+        <button class="${flagFilter === 'WX' ? 'active' : ''}" style="font-size:10px;padding:2px 6px;color:var(--status-x);font-weight:700;" onclick="setAnalysisFlagFilter('WX')">[W + X] All Issues</button>
       </div>
     </div>
 
@@ -4815,6 +5243,7 @@ function getCumulativeStatsHTML(filterSubj = "All") {
   const filtered = filterSubj === "All"
     ? sessions
     : sessions.filter(s => s.subject === filterSubj);
+  const flagFilter = state.analysisFlagFilter || "ALL";
 
   let totalQuestionsAttempted = 0;
   let totalConfirmed = 0;
@@ -4825,7 +5254,12 @@ function getCumulativeStatsHTML(filterSubj = "All") {
   filtered.forEach(s => {
     (s.sheets || []).forEach(sh => {
       (sh.questions || []).forEach(q => {
-        if (q.selectedOption !== null) {
+        if (q.selectedOption !== null && !q.isBlanked) {
+          if (flagFilter === "C" && q.flag !== "C") return;
+          if (flagFilter === "W" && q.flag !== "W") return;
+          if (flagFilter === "X" && q.flag !== "X") return;
+          if (flagFilter === "WX" && q.flag !== "W" && q.flag !== "X") return;
+
           totalQuestionsAttempted++;
           if (q.flag === 'C') totalConfirmed++;
           if (q.deltaTimeSec > 0) {
@@ -4869,6 +5303,16 @@ function getCumulativeStatsHTML(filterSubj = "All") {
           </button>
         `).join('')}
       </div>
+    </div>
+
+    <!-- Scoped Flag Filtering Toolbar -->
+    <div class="flex-row" style="gap:4px;margin-top:8px;padding-bottom:6px;border-bottom:1px solid var(--border);">
+      <span class="tag" style="font-size:10px;">OUTCOME SCOPE:</span>
+      <button class="${flagFilter === 'ALL' ? 'active' : ''}" style="font-size:10px;padding:2px 6px;" onclick="setAnalysisFlagFilter('ALL')">All Outcomes</button>
+      <button class="${flagFilter === 'C' ? 'active' : ''}" style="font-size:10px;padding:2px 6px;color:var(--status-c);font-weight:700;" onclick="setAnalysisFlagFilter('C')">[C] Confirmed Only</button>
+      <button class="${flagFilter === 'W' ? 'active' : ''}" style="font-size:10px;padding:2px 6px;color:var(--status-w);font-weight:700;" onclick="setAnalysisFlagFilter('W')">[W] Speed Only</button>
+      <button class="${flagFilter === 'X' ? 'active' : ''}" style="font-size:10px;padding:2px 6px;color:var(--status-x);font-weight:700;" onclick="setAnalysisFlagFilter('X')">[X] Errors Only</button>
+      <button class="${flagFilter === 'WX' ? 'active' : ''}" style="font-size:10px;padding:2px 6px;color:var(--status-x);font-weight:700;" onclick="setAnalysisFlagFilter('WX')">[W + X] All Issues</button>
     </div>
 
     <div class="split-2" style="margin-top:8px;">
@@ -5386,7 +5830,7 @@ function getPracticeSessionHTML() {
       </button>
     </div>
 
-    <!-- QUICK ADD & QUICK REMOVE CONTROLS BAR (Direction Choosable) -->
+    <!-- QUICK ADD, REARRANGE & QUICK REMOVE CONTROLS BAR -->
     <div class="box" style="padding:6px 10px;margin-bottom:8px;background:var(--surface-2);">
       <div class="flex-row" style="justify-content:space-between;">
         <div class="flex-row" style="gap:4px;">
@@ -5394,7 +5838,13 @@ function getPracticeSessionHTML() {
           <button style="padding:2px 6px;font-size:10px;" onclick="addQuestionsToSheet('${activeSession.id}', ${currentSheetIndex}, 1, 'end')">+1 End</button>
           <button style="padding:2px 6px;font-size:10px;" onclick="addQuestionsToSheet('${activeSession.id}', ${currentSheetIndex}, 1, 'start')">+1 Top</button>
           <button style="padding:2px 6px;font-size:10px;" onclick="openAddQuestionsModal('${activeSession.id}', ${currentSheetIndex})">[+ Add / Insert Range...]</button>
+        </div>
+
+        <div class="flex-row" style="gap:4px;">
+          <span class="tag" style="font-size:10px;">REARRANGE:</span>
           <button style="padding:2px 6px;font-size:10px;" onclick="sortSheetQuestions('${activeSession.id}', ${currentSheetIndex})">[Sort by Q#]</button>
+          <button style="padding:2px 6px;font-size:10px;" onclick="reverseSheetQuestions('${activeSession.id}', ${currentSheetIndex})">[Reverse Order]</button>
+          <button style="padding:2px 6px;font-size:10px;" onclick="openRearrangeModal('${activeSession.id}', ${currentSheetIndex})">[Rearrange En Masse...]</button>
         </div>
 
         <div class="flex-row" style="gap:4px;">
@@ -5406,15 +5856,16 @@ function getPracticeSessionHTML() {
       </div>
     </div>
 
-    <!-- OMR SPREADSHEET TABLE (Targeted In-Place Updates, No Scroll Jumps) -->
+    <!-- OMR SPREADSHEET TABLE (Targeted In-Place Updates, No Scroll Jumps, Single Active Question) -->
     <div class="omr-container">
       <table class="omr-table">
         <thead>
           <tr>
-            <th style="width:40px;">Q#</th>
-            <th style="width:160px;">Options (${currentSheet.optionStyle})</th>
-            <th style="width:120px;">Delta Time</th>
-            <th style="width:170px;">Outcome Flag</th>
+            <th style="width:55px;" title="Click to set question as active">Q#</th>
+            <th style="width:55px;">Move</th>
+            <th style="width:220px;">Options (${currentSheet.optionStyle})</th>
+            <th style="width:155px;">Delta Time</th>
+            <th style="width:160px;">Outcome Flag</th>
             <th>Error Diagnosis Matrix Flag</th>
             <th style="width:50px;">Act</th>
           </tr>
@@ -5424,27 +5875,60 @@ function getPracticeSessionHTML() {
             const isActive = idx === (currentSheet.activeQuestionIndex || 0);
             return `
               <tr class="omr-row ${isActive ? 'active-q' : ''}" id="omr_row_${activeSession.id}_${currentSheetIndex}_${idx}">
-                <td>
-                  <strong>Q${q.qNum}</strong>
-                  ${isActive ? '<br><span class="active-indicator" style="font-size:9px;color:var(--status-c);font-weight:700;">[ACTIVE]</span>' : ''}
+                <!-- Q# & Click-to-Switch Active -->
+                <td style="cursor:pointer;user-select:none;min-width:55px;" onclick="setActiveQuestion('${activeSession.id}', ${currentSheetIndex}, ${idx})" title="Click to set Q${q.qNum} as active question">
+                  <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;">
+                    <strong>Q${q.qNum}</strong>
+                    <div class="active-badge-container" id="active_badge_${activeSession.id}_${currentSheetIndex}_${idx}" style="min-height:14px;line-height:1;">
+                      ${isActive ? '<span class="active-indicator" style="font-size:9px;color:var(--status-c);font-weight:700;">[ACTIVE]</span>' : ''}
+                    </div>
+                  </div>
                 </td>
+
+                <!-- Individual Move Up/Down Controls -->
                 <td>
-                  <div style="display:flex;justify-content:center;align-items:center;">
+                  <div style="display:flex;gap:2px;justify-content:center;">
+                    <button class="btn-mini-step" onclick="moveQuestionRow('${activeSession.id}', ${currentSheetIndex}, ${idx}, -1)" title="Move Q${q.qNum} Up" ${idx === 0 ? 'disabled' : ''}>▲</button>
+                    <button class="btn-mini-step" onclick="moveQuestionRow('${activeSession.id}', ${currentSheetIndex}, ${idx}, 1)" title="Move Q${q.qNum} Down" ${idx === currentSheet.questions.length - 1 ? 'disabled' : ''}>▼</button>
+                  </div>
+                </td>
+
+                <!-- Option Bubbles & Blank Action -->
+                <td>
+                  <div style="display:flex;justify-content:center;align-items:center;gap:4px;flex-wrap:wrap;">
                     ${optLabels.map(opt => `
-                      <button class="omr-bubble ${q.selectedOption === opt ? 'selected' : ''}" data-opt="${opt}" onclick="onOMRBubbleClick('${activeSession.id}', ${currentSheetIndex}, ${idx}, '${opt}')">
+                      <button class="omr-bubble ${q.selectedOption === opt ? 'selected' : ''}" data-opt="${opt}" onclick="onOMRBubbleClick('${activeSession.id}', ${currentSheetIndex}, ${idx}, '${opt}')" title="${q.selectedOption === opt ? 'Click to undo / blank option' : 'Select ' + opt}">
                         ${opt}
                       </button>
                     `).join('')}
+                    <button class="btn-mini-step" style="padding:1px 5px;font-size:9.5px;margin-left:4px;" onclick="promptBlankOrUndoQuestion('${activeSession.id}', ${currentSheetIndex}, ${idx}, 'blank')" title="Blank this question and subtract recorded time">[Blank]</button>
                   </div>
+                  ${q.isBlanked ? `
+                    <div style="font-size:9.5px;color:var(--fg-muted);margin-top:2px;">
+                      <span class="tag" style="font-size:9px;">[BLANKED]</span>
+                      ${(q.backupDeltaTimeSec || 0) > 0 ? `
+                        <button style="padding:0 4px;font-size:9px;color:var(--status-c);" onclick="restoreQuestionBackup('${activeSession.id}', ${currentSheetIndex}, ${idx})">[Restore ${q.backupDeltaTimeSec}s]</button>
+                      ` : ''}
+                    </div>
+                  ` : ''}
                 </td>
+
+                <!-- Delta Time Controls & Reset to 0s -->
                 <td>
-                  <div class="delta-time-box">
+                  <div class="delta-time-box" style="display:flex;align-items:center;justify-content:center;gap:2px;">
                     <button class="btn-mini-step" onclick="adjustQuestionDeltaSec('${activeSession.id}', ${currentSheetIndex}, ${idx}, -5)">-5</button>
-                    <input type="number" class="delta-val-input" value="${q.deltaTimeSec || 0}" onchange="onDeltaEditInput('${activeSession.id}', ${currentSheetIndex}, ${idx}, this.value)" title="Modifying delta pauses timer">
-                    <span>s</span>
+                    <input type="number" class="delta-val-input" value="${q.deltaTimeSec || 0}" onchange="onDeltaEditInput('${activeSession.id}', ${currentSheetIndex}, ${idx}, this.value)" title="Modifying delta pauses timer" style="width:40px;text-align:center;">
                     <button class="btn-mini-step" onclick="adjustQuestionDeltaSec('${activeSession.id}', ${currentSheetIndex}, ${idx}, 5)">+5</button>
+                    <button class="btn-mini-step" style="color:var(--status-x);margin-left:2px;" onclick="promptResetQuestionTime('${activeSession.id}', ${currentSheetIndex}, ${idx})" title="Reset question timer to 0s (backs up time and subtracts from session)">[↺ 0s]</button>
                   </div>
+                  ${(!q.isBlanked && (q.deltaTimeSec === 0 || !q.deltaTimeSec) && (q.backupDeltaTimeSec || 0) > 0) ? `
+                    <div style="font-size:9.5px;color:var(--fg-muted);margin-top:2px;">
+                      <button style="padding:0 4px;font-size:9px;color:var(--status-c);" onclick="restoreQuestionBackup('${activeSession.id}', ${currentSheetIndex}, ${idx})">[Restore ${q.backupDeltaTimeSec}s]</button>
+                    </div>
+                  ` : ''}
                 </td>
+
+                <!-- Outcome Flag -->
                 <td>
                   <div class="btn-flag-group">
                     <button class="btn-flag ${q.flag === 'C' ? 'active-c' : ''}" onclick="toggleQuestionFlag('${activeSession.id}', ${currentSheetIndex}, ${idx}, 'C')">[C]</button>
@@ -5453,6 +5937,8 @@ function getPracticeSessionHTML() {
                   </div>
                   <span id="flag_badge_${q.qNum}"></span>
                 </td>
+
+                <!-- Error Diagnosis Matrix Flag -->
                 <td>
                   <select style="width:100%;font-size:11px;" onchange="selectQuestionErrorType('${activeSession.id}', ${currentSheetIndex}, ${idx}, this.value)">
                     <option value="" ${!q.errorType ? 'selected' : ''}>-- No Error Flag --</option>
@@ -5462,6 +5948,8 @@ function getPracticeSessionHTML() {
                     <option value="speed" ${q.errorType === 'speed' ? 'selected' : ''}>4. Speed / Method Bottleneck [W]</option>
                   </select>
                 </td>
+
+                <!-- Delete Action -->
                 <td>
                   <button style="padding:1px 4px;font-size:10px;color:var(--status-x);" onclick="deleteQuestionRow('${activeSession.id}', ${currentSheetIndex}, ${idx})">[Del]</button>
                 </td>
@@ -5479,7 +5967,7 @@ function getPracticeSessionHTML() {
         <button onclick="markAllAnsweredAsC('${activeSession.id}', ${currentSheetIndex})">Auto-Flag Answered as [C]</button>
       </div>
       <div class="flex-row">
-        <span style="font-size:11px;color:var(--fg-muted);">Answered: <strong id="practiceAnsweredCount">${currentSheet.questions.filter(q => q.selectedOption !== null).length} / ${currentSheet.questions.length}</strong></span>
+        <span style="font-size:11px;color:var(--fg-muted);">Answered: <strong id="practiceAnsweredCount">${currentSheet.questions.filter(q => q.selectedOption !== null && !q.isBlanked).length} / ${currentSheet.questions.length}</strong></span>
       </div>
     </div>
   </div>`;
@@ -6207,11 +6695,11 @@ function exportBackupZip() {
   const csvStr = "ID,Subject,Chapter,Type,Category,Stage,D0_Date,Accuracy,WX_Log\n" +
     state.chapters.map(c => `"${c.id}","${c.subj}","${c.name.replace(/"/g, '""')}","${c.type}","${c.cat}",${c.stage},"${c.d0}",${c.acc},"${(c.wx || "").replace(/"/g, '""')}"`).join("\n");
   
-  let sessionsCsv = "SessionID,Subject,Chapter,Exam,Book,Level,Set,Section,SheetName,SheetType,QNum,Option,DeltaSec,Flag,ErrorType\n";
+  let sessionsCsv = "SessionID,Subject,Chapter,Exam,Book,Level,Set,Section,SheetName,SheetType,QNum,Option,DeltaSec,Flag,ErrorType,IsBlanked,BackupDeltaSec\n";
   (state.sessions || []).forEach(s => {
     (s.sheets || []).forEach(sh => {
       (sh.questions || []).forEach(q => {
-        sessionsCsv += `"${s.id}","${s.subject}","${s.chapterName.replace(/"/g, '""')}","${s.exam}","${s.book}","${s.level}","${s.set}","${s.section}","${sh.name.replace(/"/g, '""')}","${sh.type}",${q.qNum},"${q.selectedOption || ''}",${q.deltaTimeSec || 0},"${q.flag || ''}","${q.errorType || ''}"\n`;
+        sessionsCsv += `"${s.id}","${s.subject}","${s.chapterName.replace(/"/g, '""')}","${s.exam}","${s.book}","${s.level}","${s.set}","${s.section}","${sh.name.replace(/"/g, '""')}","${sh.type}",${q.qNum},"${q.selectedOption || ''}",${q.deltaTimeSec || 0},"${q.flag || ''}","${q.errorType || ''}","${q.isBlanked ? 'YES' : 'NO'}",${q.backupDeltaTimeSec || 0}\n`;
       });
     });
   });
