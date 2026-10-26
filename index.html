@@ -807,11 +807,11 @@ details.audit-drawer[open] summary {
   box-shadow: var(--shadow-md);
 }
 
-/* Collapsible Large Options Menus (Item 18) */
+/* Collapsible Menus & Multi-Option Sections Everywhere */
 details.collapsible-box {
-  border: 1px solid var(--border);
-  border-radius: 5px;
-  margin-bottom: 12px;
+  border: 1.5px solid var(--border);
+  border-radius: 4px;
+  margin-bottom: 8px;
   background: var(--surface-1);
   box-shadow: var(--shadow-sm);
   overflow: hidden;
@@ -819,25 +819,71 @@ details.collapsible-box {
 details.collapsible-box > summary {
   list-style: none;
   cursor: pointer;
-  padding: 8px 12px;
+  padding: 6px 10px;
   background: var(--surface-2);
-  border-bottom: 1px solid var(--border-subtle);
+  border-bottom: 1.5px solid var(--border-subtle);
   font-family: var(--font-mono);
   font-weight: 700;
-  font-size: 12px;
+  font-size: 11px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   user-select: none;
+  transition: background 0.12s ease, color 0.12s ease;
 }
 details.collapsible-box > summary::-webkit-details-marker {
   display: none;
 }
 details.collapsible-box > summary:hover {
   background: var(--surface-3);
+  color: var(--status-c);
+}
+details.collapsible-box > summary::after {
+  content: '▼';
+  font-size: 8.5px;
+  color: var(--fg-muted);
+  transition: transform 0.15s ease;
+  margin-left: 8px;
+}
+details.collapsible-box:not([open]) > summary::after {
+  transform: rotate(-90deg);
+}
+details.collapsible-box:not([open]) > summary {
+  border-bottom: none;
 }
 details.collapsible-box > .collapsible-body {
-  padding: 12px;
+  padding: 10px;
+}
+
+/* Collapsible .box header support across the entire site */
+.box-header {
+  cursor: pointer;
+  user-select: none;
+  transition: color 0.12s ease;
+}
+.box-header:hover {
+  color: var(--status-c);
+}
+.box-header::after {
+  content: '▼';
+  font-size: 8.5px;
+  color: var(--fg-muted);
+  margin-left: auto;
+  padding-left: 8px;
+  transition: transform 0.15s ease;
+}
+.box.box-collapsed {
+  padding-bottom: 6px;
+}
+.box.box-collapsed > .box-header {
+  margin-bottom: 0;
+  border-bottom: none;
+}
+.box.box-collapsed > .box-header::after {
+  transform: rotate(-90deg);
+}
+.box.box-collapsed > :not(.box-header) {
+  display: none !important;
 }
 .delta-time-box {
   display: inline-flex;
@@ -990,6 +1036,7 @@ mark { background: var(--fg); color: var(--bg); padding: 0 2px; }
     </div>
   </div>
   <div class="toolbar-right">
+    <button id="globalIconModeBtn" onclick="toggleGlobalIconMode()" style="font-size:11px;padding:3px 7px;" title="Toggle Icons vs Text Mode Everywhere">[Mode: Icons]</button>
     <input type="text" id="globalSearch" placeholder="Search manual, concepts, FAQs...">
     <label style="font-family:var(--font-mono);font-size:11px;">Panes:</label>
     <select id="paneCountSelect" title="Multi-Tab Split View Count">
@@ -2561,25 +2608,27 @@ function getTrackerHTML() {
   <div>
     <h1>Syllabus GPS Progress Tracker (All 129 Chapters)</h1>
 
-    <div class="box">
-      <div class="box-header"><span>ADD CUSTOM CHAPTER</span></div>
-      <div class="flex-row">
-        <select id="newChSubj">
-          ${getSubjectList().map(s => `<option value="${s}">${s}</option>`).join("")}
-        </select>
-        <input type="text" id="newChName" placeholder="Chapter Name..." style="flex:1;">
-        <select id="newChType">
-          <option value="Root">Root Foundation</option>
-          <option value="Derivative">Derivative / Application</option>
-        </select>
-        <select id="newChCat">
-          <option value="Logic-Heavy">Logic-Heavy</option>
-          <option value="Data-Heavy">Data-Heavy</option>
-          <option value="Hybrid">Hybrid Organic</option>
-        </select>
-        <button onclick="addChapter()">Add Chapter</button>
+    <details class="collapsible-box" style="margin-bottom:12px;">
+      <summary><span>${getAppIcon('add')} ADD CUSTOM CHAPTER</span></summary>
+      <div class="collapsible-body" style="padding:10px;">
+        <div class="flex-row">
+          <select id="newChSubj">
+            ${getSubjectList().map(s => `<option value="${s}">${s}</option>`).join("")}
+          </select>
+          <input type="text" id="newChName" placeholder="Chapter Name..." style="flex:1;">
+          <select id="newChType">
+            <option value="Root">Root Foundation</option>
+            <option value="Derivative">Derivative / Application</option>
+          </select>
+          <select id="newChCat">
+            <option value="Logic-Heavy">Logic-Heavy</option>
+            <option value="Data-Heavy">Data-Heavy</option>
+            <option value="Hybrid">Hybrid Organic</option>
+          </select>
+          <button onclick="addChapter()">${getAppIcon('add')} Add Chapter</button>
+        </div>
       </div>
-    </div>
+    </details>
 
     <div class="box">
       <div class="box-header">
@@ -3787,10 +3836,22 @@ function onOMRBubbleClick(sessionId, sheetIndex, qIndex, optionVal) {
   const q = sheet.questions[qIndex];
   if (!q) return;
 
+  const isTimerRunning = Boolean(activeTimerState.isRunning && activeTimerState.type === "practice" && activeTimerState.sessionId === sessionId);
+
   // Clicking an already selected option triggers Undo / Blank confirmation workflow
   if (q.selectedOption === optionVal) {
+    if (!isTimerRunning) {
+      const ok = confirm(`Timer is stopped. Are you sure you want to undo / blank Question Q${q.qNum}?`);
+      if (!ok) return;
+    }
     promptBlankOrUndoQuestion(sessionId, sheetIndex, qIndex, 'undo');
     return;
+  }
+
+  // When timer is stopped, confirm before changing an existing answer
+  if (!isTimerRunning && q.selectedOption !== null && q.selectedOption !== optionVal) {
+    const ok = confirm(`Timer is stopped. Confirm changing Question Q${q.qNum} answer from [${q.selectedOption}] to [${optionVal}]?`);
+    if (!ok) return;
   }
 
   q.isBlanked = false;
@@ -3912,8 +3973,13 @@ function toggleQuestionFlag(sessionId, sheetIndex, qIndex, flagVal) {
   if (!sheet || !sheet.questions[qIndex]) return;
 
   const q = sheet.questions[qIndex];
+  const isTimerRunning = Boolean(activeTimerState.isRunning && activeTimerState.type === "practice" && activeTimerState.sessionId === sessionId);
 
   if (flagVal === "X") {
+    if (!isTimerRunning && q.selectedOption !== null && q.flag !== "X") {
+      const ok = confirm(`Timer is stopped. Confirm marking Question Q${q.qNum} as [X] (Wrong)?`);
+      if (!ok) return;
+    }
     // If the question is already X and user clicks X on an old question, allow toggle off
     const isCurrentlyActive = (sheet.activeQuestionIndex === qIndex);
     const wasAlreadyX = (q.flag === "X");
@@ -3991,6 +4057,16 @@ function toggleQuestionFlag(sessionId, sheetIndex, qIndex, flagVal) {
   }
 
   // Outcome Flag toggles for C and W
+  if (!isTimerRunning && q.flag) {
+    if (q.flag === flagVal) {
+      const ok = confirm(`Timer is stopped. Confirm removing [${flagVal}] flag from Question Q${q.qNum}?`);
+      if (!ok) return;
+    } else {
+      const ok = confirm(`Timer is stopped. Confirm changing Question Q${q.qNum} flag from [${q.flag}] to [${flagVal}]?`);
+      if (!ok) return;
+    }
+  }
+
   q.flag = (q.flag === flagVal) ? null : flagVal;
   q.flagOverridden = true;
   q.isBlanked = false;
@@ -4100,7 +4176,7 @@ function openAddQuestionsModal(sessionId, sheetIndex) {
       <p>Add or restore questions to <strong>${sheet.name}</strong>:</p>
 
       <details open class="collapsible-box" style="margin:8px 0;">
-        <summary><span>1. QUESTION RANGE TO ADD</span><span class="tree-chevron">▼</span></summary>
+        <summary><span>${getAppIcon('add')} 1. QUESTION RANGE TO ADD</span></summary>
         <div class="collapsible-body">
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
             <div>
@@ -4116,7 +4192,7 @@ function openAddQuestionsModal(sessionId, sheetIndex) {
       </details>
 
       <details open class="collapsible-box" style="margin:8px 0;">
-        <summary><span>2. INSERTION POSITION / DIRECTION</span><span class="tree-chevron">▼</span></summary>
+        <summary><span>${getAppIcon('sort')} 2. INSERTION POSITION / DIRECTION</span></summary>
         <div class="collapsible-body">
           <select id="addRangePosition" style="width:100%;">
             <option value="auto_sort">Auto-Sort by Question # (Recommended — places Q1 at top, missing ranges in-between)</option>
@@ -4306,6 +4382,13 @@ function promptBlankOrUndoQuestion(sessionId, sheetIndex, qIndex, mode = 'blank'
   if (!sheet || !sheet.questions[qIndex]) return;
 
   const q = sheet.questions[qIndex];
+  const isTimerRunning = Boolean(activeTimerState.isRunning && activeTimerState.type === "practice" && activeTimerState.sessionId === sessionId);
+
+  if (!isTimerRunning && mode === 'blank') {
+    const ok = confirm(`Timer is stopped. Confirm blanking Question Q${q.qNum}? (Recorded time will be backed up and subtracted from main session timer)`);
+    if (!ok) return;
+  }
+
   const sessionElapsed = activeTimerState.isRunning
     ? (Date.now() - activeTimerState.startTime) + activeTimerState.accumulatedSessionMs
     : (sheet.elapsedSessionMs || 0);
@@ -4546,7 +4629,7 @@ function openRearrangeModal(sessionId, sheetIndex) {
       <p>Rearrange questions in <strong>${sheet.name}</strong> (${sheet.questions.length} questions):</p>
 
       <details open class="collapsible-box" style="margin:8px 0;">
-        <summary><span>1. MASS SORTING CRITERIA</span><span class="tree-chevron">▼</span></summary>
+        <summary><span>${getAppIcon('sort')} 1. MASS SORTING CRITERIA</span></summary>
         <div class="collapsible-body">
           <select id="massSortCriteria" style="width:100%;">
             <option value="qnum_asc">Natural Question # Ascending (Q1, Q2, Q3...)</option>
@@ -4561,7 +4644,7 @@ function openRearrangeModal(sessionId, sheetIndex) {
       </details>
 
       <details open class="collapsible-box" style="margin:8px 0;">
-        <summary><span>2. RENUMBER QUESTIONS SEQUENTIALLY (OPTIONAL)</span><span class="tree-chevron">▼</span></summary>
+        <summary><span>${getAppIcon('edit')} 2. RENUMBER QUESTIONS SEQUENTIALLY (OPTIONAL)</span></summary>
         <div class="collapsible-body">
           <label style="display:flex;align-items:center;gap:6px;">
             <input type="checkbox" id="massRenumberCheck">
@@ -4572,7 +4655,7 @@ function openRearrangeModal(sessionId, sheetIndex) {
       </details>
 
       <details open class="collapsible-box" style="margin:8px 0;">
-        <summary><span>3. CUSTOM SEQUENCE (MANUAL ORDER)</span><span class="tree-chevron">▼</span></summary>
+        <summary><span>${getAppIcon('sort')} 3. CUSTOM SEQUENCE (MANUAL ORDER)</span></summary>
         <div class="collapsible-body">
           <p style="font-size:11px;color:var(--fg-muted);margin:0 0 6px 0;">
             Or provide exact comma-separated order of Q numbers:
@@ -4698,38 +4781,109 @@ function setPracticeSessionSubView(viewName) {
   renderWorkspace();
 }
 
-// --- ICON ENGINE (Item 22: Minimal Monochrome Vector SVG Mode) ---
-function getAppIcon(type) {
-  const iconMode = state.practiceSettings?.iconMode !== 'text';
+// --- ICON ENGINE (Minimal Monochrome Vector SVG Mode throughout website) ---
+function getAppIcon(type, textFallback = "") {
+  const iconMode = (state.iconMode !== 'text' && state.practiceSettings?.iconMode !== 'text');
   if (!iconMode) {
+    if (textFallback) return textFallback;
     switch (type) {
       case 'flag-c': return '[C]';
       case 'flag-w': return '[W]';
       case 'flag-x': return '[X]';
       case 'del': return '[Del]';
-      case 'reset': return '[↺ 0s]';
+      case 'reset': return '[Reset 0s]';
       case 'blank': return '[Blank]';
-      case 'up': return '▲';
-      case 'down': return '▼';
+      case 'up': return '^';
+      case 'down': return 'v';
       case 'play': return '[START]';
       case 'pause': return '[PAUSE]';
+      case 'close': return '[X]';
+      case 'check': return '[OK]';
+      case 'edit': return '[Edit]';
+      case 'add': return '[+]';
+      case 'sort': return '[Sort]';
+      case 'chart': return '[Stats]';
+      case 'expand': return '[+]';
+      case 'collapse': return '[-]';
+      case 'nudge-back': return '<<';
+      case 'nudge-fwd': return '>>';
+      case 'lap': return '[Lap]';
+      case 'refresh': return '[Reload]';
+      case 'theme': return '[Theme]';
+      case 'icon-mode': return '[Mode]';
       default: return '';
     }
   }
 
   // Crisp minimal monochrome vector SVGs (Zero Emojis)
   switch (type) {
-    case 'flag-c': // Checkmark
+    case 'dashboard':
+      return `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-1.5px;margin-right:4px;"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>`;
+    case 'timer':
+      return `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-1.5px;margin-right:4px;"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>`;
+    case 'practice':
+      return `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-1.5px;margin-right:4px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>`;
+    case 'manual':
+      return `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-1.5px;margin-right:4px;"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>`;
+    case 'flowcharts':
+      return `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-1.5px;margin-right:4px;"><rect x="3" y="3" width="6" height="6"/><rect x="15" y="15" width="6" height="6"/><path d="M9 6h6a3 3 0 0 1 3 3v6"/></svg>`;
+    case 'reference':
+      return `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-1.5px;margin-right:4px;"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`;
+    case 'gps':
+      return `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-1.5px;margin-right:4px;"><circle cx="12" cy="12" r="10"/><line x1="22" y1="12" x2="18" y2="12"/><line x1="6" y1="12" x2="2" y2="12"/><line x1="12" y1="6" x2="12" y2="2"/><line x1="12" y1="22" x2="12" y2="18"/></svg>`;
+    case 'calendar':
+      return `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-1.5px;margin-right:4px;"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>`;
+    case 'faq':
+      return `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-1.5px;margin-right:4px;"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>`;
+    case 'templates':
+      return `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-1.5px;margin-right:4px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>`;
+    case 'storage':
+      return `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-1.5px;margin-right:4px;"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>`;
+    case 'theme':
+      return `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-1px;margin-right:3px;"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>`;
+    case 'icon-mode':
+      return `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-1px;margin-right:3px;"><circle cx="12" cy="12" r="3"/><circle cx="19" cy="12" r="2"/><circle cx="5" cy="12" r="2"/></svg>`;
+    case 'search':
+      return `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-1px;margin-right:3px;"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>`;
+    case 'add':
+      return `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-1px;margin-right:3px;"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>`;
+    case 'del':
+      return `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-1px;"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>`;
+    case 'edit':
+      return `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-1px;margin-right:2px;"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>`;
+    case 'close':
+      return `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-1px;margin-right:2px;"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>`;
+    case 'check':
+      return `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-1px;margin-right:2px;"><polyline points="20 6 9 17 4 12"/></svg>`;
+    case 'next':
+      return `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-1px;margin-left:2px;"><polyline points="9 18 15 12 9 6"/></svg>`;
+    case 'sort':
+      return `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-1px;margin-right:3px;"><polyline points="7 15 12 20 17 15"/><polyline points="17 9 12 4 7 9"/></svg>`;
+    case 'chart':
+      return `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-1.5px;margin-right:3px;"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>`;
+    case 'expand':
+      return `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-1px;margin-right:2px;"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>`;
+    case 'collapse':
+      return `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-1px;margin-right:2px;"><polyline points="4 14 10 14 10 20"/><polyline points="20 10 14 10 14 4"/><line x1="14" y1="10" x2="21" y2="3"/><line x1="3" y1="21" x2="10" y2="14"/></svg>`;
+    case 'refresh':
+      return `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-1px;margin-right:3px;"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>`;
+    case 'lap':
+      return `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-1px;margin-right:2px;"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>`;
+    case 'nudge-back':
+      return `<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-1px;margin-right:2px;"><polygon points="11 19 2 12 11 5 11 19"/><polygon points="22 19 13 12 22 5 22 19"/></svg>`;
+    case 'nudge-fwd':
+      return `<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-1px;margin-right:2px;"><polygon points="13 19 22 12 13 5 13 19"/><polygon points="2 19 11 12 2 5 2 19"/></svg>`;
+    case 'flag-c':
       return `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;"><polyline points="20 6 9 17 4 12"/></svg>`;
-    case 'flag-w': // Warning triangle
+    case 'flag-w':
       return `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>`;
-    case 'flag-x': // Cross
+    case 'flag-x':
       return `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>`;
-    case 'del': // Trash
+    case 'del':
       return `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>`;
-    case 'reset': // Rotate CCW
+    case 'reset':
       return `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>`;
-    case 'blank': // Slashed circle
+    case 'blank':
       return `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>`;
     case 'up':
       return `<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;"><polyline points="18 15 12 9 6 15"/></svg>`;
@@ -4744,11 +4898,57 @@ function getAppIcon(type) {
   }
 }
 
-function toggleIconMode() {
+function toggleGlobalIconMode() {
+  const isIcon = (state.iconMode !== 'text' && state.practiceSettings?.iconMode !== 'text');
+  const nextMode = isIcon ? 'text' : 'icons';
+  state.iconMode = nextMode;
   if (!state.practiceSettings) state.practiceSettings = {};
-  state.practiceSettings.iconMode = (state.practiceSettings.iconMode === 'text') ? 'icons' : 'text';
+  state.practiceSettings.iconMode = nextMode;
   saveAllStorage();
+  renderTopNav();
   renderWorkspace();
+}
+
+function toggleIconMode() {
+  toggleGlobalIconMode();
+}
+
+function renderTopNav() {
+  const nav = document.getElementById("mainNav");
+  if (!nav) return;
+  const isIcon = (state.iconMode !== "text" && state.practiceSettings?.iconMode !== "text");
+  const activeTab = (state.panes && state.panes[0]) ? state.panes[0] : "dashboard";
+
+  const tabs = [
+    { id: "dashboard", label: "Dashboard", icon: "dashboard" },
+    { id: "timer", label: "[Timer Only]", icon: "timer" },
+    { id: "practice", label: "[Timer & Questions]", icon: "practice" },
+    { id: "manual", label: "Full Manual", icon: "manual" },
+    { id: "flowcharts", label: "Flowcharts", icon: "flowcharts" },
+    { id: "reference", label: "Quick Reference", icon: "reference" },
+    { id: "tracker", label: "GPS Tracker", icon: "gps" },
+    { id: "calendar", label: "Auto-Calendar", icon: "calendar" },
+    { id: "faq", label: "FAQ", icon: "faq" },
+    { id: "templates", label: "Obsidian Gen", icon: "templates" },
+    { id: "storage", label: "Data & Backup", icon: "storage" }
+  ];
+
+  nav.innerHTML = tabs.map(t => `
+    <button data-tab="${t.id}" class="${t.id === activeTab ? 'active' : ''}" onclick="switchTab('${t.id}')">
+      ${isIcon ? getAppIcon(t.icon) : ''}${t.label}
+    </button>
+  `).join('');
+
+  const iconBtn = document.getElementById("globalIconModeBtn");
+  if (iconBtn) {
+    iconBtn.innerHTML = `${isIcon ? getAppIcon('icon-mode') : ''}[Mode: ${isIcon ? 'Icons' : 'Text'}]`;
+    iconBtn.title = isIcon ? "Currently in Icon Mode (Click to switch to Text Mode)" : "Currently in Text Mode (Click to switch to Icon Mode)";
+  }
+
+  const themeBtn = document.getElementById("themeBtn");
+  if (themeBtn) {
+    themeBtn.innerHTML = `${isIcon ? getAppIcon('theme') : ''}Invert Theme`;
+  }
 }
 
 function escapeHtml(str) {
@@ -4930,25 +5130,30 @@ function getSessionHierarchyTreeHTML() {
 
   return `
     <div>
-      <!-- Tree Toolbar: Search, Filters for All Used Identifiers & Expand/Collapse -->
-      <div style="display:flex;gap:5px;flex-wrap:wrap;align-items:center;margin-bottom:8px;padding-bottom:8px;border-bottom:1px solid var(--border);">
-        <input type="text" placeholder="Search sessions (any identifier)..." value="${escapeHtml(state.sessionTreeSearch || '')}" oninput="onSessionTreeSearch(this.value)" style="flex:1;min-width:130px;font-size:11px;padding:3px 6px;">
-        
-        ${renderTreeFilter('subj', 'Subj', usedSubjs)}
-        ${renderTreeFilter('exam', 'Exam', usedExams)}
-        ${renderTreeFilter('book', 'Book', usedBooks)}
-        ${renderTreeFilter('level', 'Level', usedLevels)}
-        ${renderTreeFilter('chapter', 'Chapter', usedChapters)}
-        ${renderTreeFilter('set', 'Set', usedSets)}
-        ${renderTreeFilter('section', 'Section', usedSections)}
+      <!-- Tree Toolbar: Collapsible Multi-Identifier Search & Filters -->
+      <details ${hasActiveFilter ? 'open' : ''} class="collapsible-box" style="margin-bottom:8px;">
+        <summary><span>${getAppIcon('search')} Search &amp; Filter Sessions (${filtered.length}/${sessions.length})</span></summary>
+        <div class="collapsible-body" style="padding:8px;">
+          <div style="display:flex;gap:5px;flex-wrap:wrap;align-items:center;">
+            <input type="text" placeholder="Search sessions (any identifier)..." value="${escapeHtml(state.sessionTreeSearch || '')}" oninput="onSessionTreeSearch(this.value)" style="flex:1;min-width:130px;font-size:11px;padding:3px 6px;">
+            
+            ${renderTreeFilter('subj', 'Subj', usedSubjs)}
+            ${renderTreeFilter('exam', 'Exam', usedExams)}
+            ${renderTreeFilter('book', 'Book', usedBooks)}
+            ${renderTreeFilter('level', 'Level', usedLevels)}
+            ${renderTreeFilter('chapter', 'Chapter', usedChapters)}
+            ${renderTreeFilter('set', 'Set', usedSets)}
+            ${renderTreeFilter('section', 'Section', usedSections)}
 
-        ${hasActiveFilter ? `<button style="padding:2px 6px;font-size:10px;color:var(--status-x);border-color:var(--status-x);" onclick="clearSessionTreeFilters()">[Clear Filters]</button>` : ''}
+            ${hasActiveFilter ? `<button style="padding:2px 6px;font-size:10px;color:var(--status-x);border-color:var(--status-x);" onclick="clearSessionTreeFilters()">${getAppIcon('del')} [Clear Filters]</button>` : ''}
 
-        <div style="display:flex;gap:4px;margin-left:auto;">
-          <button style="padding:2px 6px;font-size:10px;" onclick="expandAllSessionTree(true)" title="Expand all folders">[+ Expand]</button>
-          <button style="padding:2px 6px;font-size:10px;" onclick="expandAllSessionTree(false)" title="Collapse all folders">[- Collapse]</button>
+            <div style="display:flex;gap:4px;margin-left:auto;">
+              <button style="padding:2px 6px;font-size:10px;" onclick="expandAllSessionTree(true)" title="Expand all folders">${getAppIcon('expand')} [+ Expand]</button>
+              <button style="padding:2px 6px;font-size:10px;" onclick="expandAllSessionTree(false)" title="Collapse all folders">${getAppIcon('collapse')} [- Collapse]</button>
+            </div>
+          </div>
         </div>
-      </div>
+      </details>
 
       <!-- Obsidian-style Tree Container -->
       <div class="session-tree" style="max-height:480px;overflow-y:auto;padding-right:4px;">
@@ -5158,49 +5363,51 @@ function openCustomSheetModal(sessionId) {
     <div style="font-size:12px;">
       <p>Add a new custom sheet tab to the active session <strong>${session.chapterName}</strong>:</p>
 
-      <div class="box" style="margin:8px 0;">
-        <div class="box-header"><span>1. CUSTOM SHEET CONFIGURATION</span></div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px;">
-          <div>
-            <label>Sheet Title / Identifier:</label>
-            <input type="text" id="custSheetTitle" value="Custom Drill ${session.sheets.length + 1}" style="width:100%;margin-top:2px;">
+      <details open class="collapsible-box" style="margin:8px 0;">
+        <summary><span>${getAppIcon('practice')} 1. CUSTOM SHEET CONFIGURATION</span></summary>
+        <div class="collapsible-body">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+            <div>
+              <label>Sheet Title / Identifier:</label>
+              <input type="text" id="custSheetTitle" value="Custom Drill ${session.sheets.length + 1}" style="width:100%;margin-top:2px;">
+            </div>
+            <div>
+              <label>Option Style:</label>
+              <select id="custSheetOptStyle" style="width:100%;margin-top:2px;">
+                <option value="ABCD" ${currentSheet.optionStyle === 'ABCD' ? 'selected' : ''}>A, B, C, D</option>
+                <option value="1234" ${currentSheet.optionStyle === '1234' ? 'selected' : ''}>1, 2, 3, 4</option>
+              </select>
+            </div>
           </div>
-          <div>
-            <label>Option Style:</label>
-            <select id="custSheetOptStyle" style="width:100%;margin-top:2px;">
-              <option value="ABCD" ${currentSheet.optionStyle === 'ABCD' ? 'selected' : ''}>A, B, C, D</option>
-              <option value="1234" ${currentSheet.optionStyle === '1234' ? 'selected' : ''}>1, 2, 3, 4</option>
-            </select>
-          </div>
-        </div>
 
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px;">
-          <div>
-            <label>Start Question #:</label>
-            <input type="number" id="custSheetStartQ" value="${lastQ + 1}" style="width:100%;margin-top:2px;">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px;">
+            <div>
+              <label>Start Question #:</label>
+              <input type="number" id="custSheetStartQ" value="${lastQ + 1}" style="width:100%;margin-top:2px;">
+            </div>
+            <div>
+              <label>End Question #:</label>
+              <input type="number" id="custSheetEndQ" value="${lastQ + 30}" style="width:100%;margin-top:2px;">
+            </div>
           </div>
-          <div>
-            <label>End Question #:</label>
-            <input type="number" id="custSheetEndQ" value="${lastQ + 30}" style="width:100%;margin-top:2px;">
-          </div>
-        </div>
 
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px;">
-          <div>
-            <label>Threshold Time (Seconds):</label>
-            <input type="number" id="custSheetThreshold" value="${currentSheet.thresholdSec || 90}" style="width:100%;margin-top:2px;">
-          </div>
-          <div>
-            <label>Seed Source:</label>
-            <select id="custSheetSeed" style="width:100%;margin-top:2px;">
-              <option value="blank">Fresh Blank Questions</option>
-              <option value="clone_w">Clone Weak [W] from active sheet</option>
-              <option value="clone_x">Clone Blocked [X] from active sheet</option>
-              <option value="clone_wx">Clone [W] and [X] from active sheet</option>
-            </select>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px;">
+            <div>
+              <label>Threshold Time (Seconds):</label>
+              <input type="number" id="custSheetThreshold" value="${currentSheet.thresholdSec || 90}" style="width:100%;margin-top:2px;">
+            </div>
+            <div>
+              <label>Seed Source:</label>
+              <select id="custSheetSeed" style="width:100%;margin-top:2px;">
+                <option value="blank">Fresh Blank Questions</option>
+                <option value="clone_w">Clone Weak [W] from active sheet</option>
+                <option value="clone_x">Clone Blocked [X] from active sheet</option>
+                <option value="clone_wx">Clone [W] and [X] from active sheet</option>
+              </select>
+            </div>
           </div>
         </div>
-      </div>
+      </details>
 
       <div class="flex-row" style="justify-content:flex-end;margin-top:12px;">
         <button onclick="closeModal()">Cancel</button>
@@ -5318,7 +5525,7 @@ function openReviewGeneratorModal(sessionId) {
       <p>Generate a decoupled Review Spreadsheet tab tied to <strong>${session.chapterName}</strong> (${currentSheet.name}).</p>
 
       <details open class="collapsible-box" style="margin:8px 0;">
-        <summary><span>1. CHOOSE QUESTIONS BY FLAG COMBINATION</span><span class="tree-chevron">▼</span></summary>
+        <summary><span>${getAppIcon('flag-w')} 1. CHOOSE QUESTIONS BY FLAG COMBINATION</span></summary>
         <div class="collapsible-body">
           <div style="display:flex;gap:12px;flex-wrap:wrap;">
             <label><input type="checkbox" id="revFlagW" checked> <strong>[W] Speed-Drill Queue</strong> (${wCount} Qs)</label>
@@ -5329,7 +5536,7 @@ function openReviewGeneratorModal(sessionId) {
       </details>
 
       <details open class="collapsible-box" style="margin:8px 0;">
-        <summary><span>2. QUESTION RANGE FILTER</span><span class="tree-chevron">▼</span></summary>
+        <summary><span>${getAppIcon('sort')} 2. QUESTION RANGE FILTER</span></summary>
         <div class="collapsible-body">
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
             <div>
@@ -5345,7 +5552,7 @@ function openReviewGeneratorModal(sessionId) {
       </details>
 
       <details open class="collapsible-box" style="margin:8px 0;">
-        <summary><span>3. SELECT REVIEW DAY TARGET</span><span class="tree-chevron">▼</span></summary>
+        <summary><span>${getAppIcon('calendar')} 3. SELECT REVIEW DAY TARGET</span></summary>
         <div class="collapsible-body">
           <select id="revDayTarget" style="width:100%;">
             <option value="d3_review">Day 3 (D3 Review: [W] Stopwatch Re-Test &amp; [X] 1st Cold Test)</option>
@@ -6083,7 +6290,7 @@ function getDefaultSettingsHTML() {
     <div class="split-2">
       <!-- 1. Universal Exam & Threshold Defaults (Collapsible, Item 18) -->
       <details open class="collapsible-box">
-        <summary><span>1. EXAM THRESHOLDS &amp; AUTO-[W] DEFAULTS (Line 34)</span><span class="tree-chevron">▼</span></summary>
+        <summary><span>${getAppIcon('reference')} 1. EXAM THRESHOLDS &amp; AUTO-[W] DEFAULTS (Line 34)</span></summary>
         <div class="collapsible-body">
           <p style="font-size:11.5px;color:var(--fg-muted);">Configure default speed caps. Questions exceeding threshold qualify automatically as [W]:</p>
 
@@ -6136,7 +6343,7 @@ function getDefaultSettingsHTML() {
 
       <!-- 2. Audio & TTS Settings (Collapsible, Item 18) -->
       <details open class="collapsible-box">
-        <summary><span>2. AUDIO TTS &amp; SYNTHETIC OSCILLATOR SETTINGS</span><span class="tree-chevron">▼</span></summary>
+        <summary><span>${getAppIcon('timer')} 2. AUDIO TTS &amp; SYNTHETIC OSCILLATOR SETTINGS</span></summary>
         <div class="collapsible-body">
           <p style="font-size:11.5px;color:var(--fg-muted);">Precision timing intervals, voice rates, and 880Hz acoustic beeps:</p>
 
@@ -6181,7 +6388,7 @@ function getDefaultSettingsHTML() {
 
     <!-- 3. Pomodoro & Dynamic Break Configuration (Collapsible, Item 18) -->
     <details open class="collapsible-box" style="margin-top:12px;">
-      <summary><span>3. STUDY TIMER &amp; POMODORO CONFIGURATION (Line 35)</span><span class="tree-chevron">▼</span></summary>
+      <summary><span>${getAppIcon('timer')} 3. STUDY TIMER &amp; POMODORO CONFIGURATION (Line 35)</span></summary>
       <div class="collapsible-body">
         <p style="font-size:11.5px;color:var(--fg-muted);">Configures the study timer break calculator $\\text{Break Time} = \\lfloor \\text{Study Time} / 5 \\rfloor$:</p>
 
@@ -6207,7 +6414,7 @@ function getDefaultSettingsHTML() {
 
     <!-- 4. Custom Identifiers Library Management (Collapsible, Item 18) -->
     <details open class="collapsible-box" style="margin-top:12px;">
-      <summary><span>4. CUSTOM IDENTIFIERS MANAGEMENT (Line 14)</span><span class="tree-chevron">▼</span></summary>
+      <summary><span>${getAppIcon('storage')} 4. CUSTOM IDENTIFIERS MANAGEMENT (Line 14)</span></summary>
       <div class="collapsible-body">
         <p style="font-size:11.5px;color:var(--fg-muted);">Manage dynamic metadata options (Exams, Books, Levels, Sets, Sections):</p>
 
@@ -6317,101 +6524,115 @@ function getPracticeSessionHTML() {
           <div class="box-header"><span>1. START NEW PRACTICE SESSION</span><span class="tag">D0 ACQUISITION</span></div>
           <p style="font-size:11.5px;color:var(--fg-muted);">Initialize a live OMR drill tied to a specific chapter, book/source, set, and exam:</p>
 
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px;">
-            <div>
-              <div class="flex-row" style="justify-content:space-between;">
-                <label style="font-size:11px;font-weight:700;">Target Exam:</label>
-                <button style="padding:0 4px;font-size:9px;" onclick="promptAddCustomMetadata('exams')">+ Custom</button>
+          <details open class="collapsible-box" style="margin-top:8px;">
+            <summary><span>${getAppIcon('reference')} Target Exam, Subject &amp; Chapter</span></summary>
+            <div class="collapsible-body">
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+                <div>
+                  <div class="flex-row" style="justify-content:space-between;">
+                    <label style="font-size:11px;font-weight:700;">Target Exam:</label>
+                    <button style="padding:0 4px;font-size:9px;" onclick="promptAddCustomMetadata('exams')">${getAppIcon('add')} + Custom</button>
+                  </div>
+                  <select id="newSessExam" style="width:100%;margin-top:2px;" onchange="onExamPresetSelect(this.value)">
+                    ${(m.exams || []).map(e => `<option value="${e}">${e}</option>`).join('')}
+                  </select>
+                </div>
+
+                <div>
+                  <label style="font-size:11px;font-weight:700;">Subject:</label>
+                  <select id="newSessSubject" style="width:100%;margin-top:2px;" onchange="onNewSessSubjectChange(this.value)">
+                    ${subjects.map(s => `<option value="${s}">${s}</option>`).join('')}
+                  </select>
+                </div>
               </div>
-              <select id="newSessExam" style="width:100%;margin-top:2px;" onchange="onExamPresetSelect(this.value)">
-                ${(m.exams || []).map(e => `<option value="${e}">${e}</option>`).join('')}
-              </select>
-            </div>
 
-            <div>
-              <label style="font-size:11px;font-weight:700;">Subject:</label>
-              <select id="newSessSubject" style="width:100%;margin-top:2px;" onchange="onNewSessSubjectChange(this.value)">
-                ${subjects.map(s => `<option value="${s}">${s}</option>`).join('')}
-              </select>
-            </div>
-          </div>
-
-          <div style="margin-top:8px;">
-            <label style="font-size:11px;font-weight:700;">Chapter:</label>
-            <select id="newSessChapter" style="width:100%;margin-top:2px;">
-              ${chapters.map(c => `<option value="${c.id}">[${c.type}] ${c.name} (${GPS_STAGES[c.stage].code})</option>`).join('')}
-            </select>
-          </div>
-
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px;">
-            <div>
-              <div class="flex-row" style="justify-content:space-between;">
-                <label style="font-size:11px;font-weight:700;">Book / Source (Line 14):</label>
-                <button style="padding:0 4px;font-size:9px;" onclick="promptAddCustomMetadata('books')">+ Custom</button>
+              <div style="margin-top:8px;">
+                <label style="font-size:11px;font-weight:700;">Chapter:</label>
+                <select id="newSessChapter" style="width:100%;margin-top:2px;">
+                  ${chapters.map(c => `<option value="${c.id}">[${c.type}] ${c.name} (${GPS_STAGES[c.stage].code})</option>`).join('')}
+                </select>
               </div>
-              <select id="newSessBook" style="width:100%;margin-top:2px;">
-                ${(m.books || []).map(b => `<option value="${b}">${b}</option>`).join('')}
-              </select>
             </div>
+          </details>
 
-            <div>
-              <div class="flex-row" style="justify-content:space-between;">
-                <label style="font-size:11px;font-weight:700;">Level (Line 14):</label>
-                <button style="padding:0 4px;font-size:9px;" onclick="promptAddCustomMetadata('levels')">+ Custom</button>
+          <details open class="collapsible-box">
+            <summary><span>${getAppIcon('storage')} Source Book, Level, Set &amp; Section Metadata</span></summary>
+            <div class="collapsible-body">
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+                <div>
+                  <div class="flex-row" style="justify-content:space-between;">
+                    <label style="font-size:11px;font-weight:700;">Book / Source (Line 14):</label>
+                    <button style="padding:0 4px;font-size:9px;" onclick="promptAddCustomMetadata('books')">${getAppIcon('add')} + Custom</button>
+                  </div>
+                  <select id="newSessBook" style="width:100%;margin-top:2px;">
+                    ${(m.books || []).map(b => `<option value="${b}">${b}</option>`).join('')}
+                  </select>
+                </div>
+
+                <div>
+                  <div class="flex-row" style="justify-content:space-between;">
+                    <label style="font-size:11px;font-weight:700;">Level (Line 14):</label>
+                    <button style="padding:0 4px;font-size:9px;" onclick="promptAddCustomMetadata('levels')">${getAppIcon('add')} + Custom</button>
+                  </div>
+                  <select id="newSessLevel" style="width:100%;margin-top:2px;">
+                    ${(m.levels || []).map(l => `<option value="${l}">${l}</option>`).join('')}
+                  </select>
+                </div>
               </div>
-              <select id="newSessLevel" style="width:100%;margin-top:2px;">
-                ${(m.levels || []).map(l => `<option value="${l}">${l}</option>`).join('')}
-              </select>
-            </div>
-          </div>
 
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px;">
-            <div>
-              <div class="flex-row" style="justify-content:space-between;">
-                <label style="font-size:11px;font-weight:700;">Problem Set (Line 14):</label>
-                <button style="padding:0 4px;font-size:9px;" onclick="promptAddCustomMetadata('sets')">+ Custom</button>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px;">
+                <div>
+                  <div class="flex-row" style="justify-content:space-between;">
+                    <label style="font-size:11px;font-weight:700;">Problem Set (Line 14):</label>
+                    <button style="padding:0 4px;font-size:9px;" onclick="promptAddCustomMetadata('sets')">${getAppIcon('add')} + Custom</button>
+                  </div>
+                  <select id="newSessSet" style="width:100%;margin-top:2px;">
+                    ${(m.sets || []).map(st => `<option value="${st}">${st}</option>`).join('')}
+                  </select>
+                </div>
+
+                <div>
+                  <div class="flex-row" style="justify-content:space-between;">
+                    <label style="font-size:11px;font-weight:700;">Section (Line 14):</label>
+                    <button style="padding:0 4px;font-size:9px;" onclick="promptAddCustomMetadata('sections')">${getAppIcon('add')} + Custom</button>
+                  </div>
+                  <select id="newSessSection" style="width:100%;margin-top:2px;">
+                    ${(m.sections || []).map(sec => `<option value="${sec}">${sec}</option>`).join('')}
+                  </select>
+                </div>
               </div>
-              <select id="newSessSet" style="width:100%;margin-top:2px;">
-                ${(m.sets || []).map(st => `<option value="${st}">${st}</option>`).join('')}
-              </select>
             </div>
+          </details>
 
-            <div>
-              <div class="flex-row" style="justify-content:space-between;">
-                <label style="font-size:11px;font-weight:700;">Section (Line 14):</label>
-                <button style="padding:0 4px;font-size:9px;" onclick="promptAddCustomMetadata('sections')">+ Custom</button>
+          <details open class="collapsible-box">
+            <summary><span>${getAppIcon('timer')} Question Range &amp; Auto-[W] Threshold Rules</span></summary>
+            <div class="collapsible-body">
+              <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:6px;">
+                <div>
+                  <label style="font-size:11px;font-weight:700;">Start Q#:</label>
+                  <input type="number" id="newSessStartQ" value="1" style="width:100%;margin-top:2px;" onchange="updateNewSessCountDisplay()">
+                </div>
+                <div>
+                  <label style="font-size:11px;font-weight:700;">End Q#:</label>
+                  <input type="number" id="newSessEndQ" value="30" style="width:100%;margin-top:2px;" onchange="updateNewSessCountDisplay()">
+                </div>
+                <div>
+                  <label style="font-size:11px;font-weight:700;">Options Style:</label>
+                  <select id="newSessOptStyle" style="width:100%;margin-top:2px;">
+                    <option value="ABCD">A, B, C, D</option>
+                    <option value="1234">1, 2, 3, 4</option>
+                  </select>
+                </div>
+                <div>
+                  <label style="font-size:11px;font-weight:700;">Auto-[W] (s):</label>
+                  <input type="number" id="newSessThreshold" value="${state.practiceSettings.defaultThresholdSec || 90}" style="width:100%;margin-top:2px;">
+                </div>
               </div>
-              <select id="newSessSection" style="width:100%;margin-top:2px;">
-                ${(m.sections || []).map(sec => `<option value="${sec}">${sec}</option>`).join('')}
-              </select>
             </div>
-          </div>
-
-          <!-- Question Range Configuration -->
-          <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:6px;margin-top:8px;">
-            <div>
-              <label style="font-size:11px;font-weight:700;">Start Q#:</label>
-              <input type="number" id="newSessStartQ" value="1" style="width:100%;margin-top:2px;" onchange="updateNewSessCountDisplay()">
-            </div>
-            <div>
-              <label style="font-size:11px;font-weight:700;">End Q#:</label>
-              <input type="number" id="newSessEndQ" value="30" style="width:100%;margin-top:2px;" onchange="updateNewSessCountDisplay()">
-            </div>
-            <div>
-              <label style="font-size:11px;font-weight:700;">Options Style:</label>
-              <select id="newSessOptStyle" style="width:100%;margin-top:2px;">
-                <option value="ABCD">A, B, C, D</option>
-                <option value="1234">1, 2, 3, 4</option>
-              </select>
-            </div>
-            <div>
-              <label style="font-size:11px;font-weight:700;">Auto-[W] (s):</label>
-              <input type="number" id="newSessThreshold" value="${state.practiceSettings.defaultThresholdSec || 90}" style="width:100%;margin-top:2px;">
-            </div>
-          </div>
+          </details>
 
           <button class="active" style="width:100%;margin-top:12px;padding:8px;" onclick="onStartNewSessionSubmit()">
-            [START PRACTICE SESSION]
+            ${getAppIcon('play')} [START PRACTICE SESSION]
           </button>
         </div>
 
@@ -6457,12 +6678,12 @@ function getPracticeSessionHTML() {
         </div>
       </div>
       <div class="flex-row">
-        <button onclick="toggleIconMode()" title="Toggle Minimal Monochrome Icons vs Text Mode">[Mode: ${state.practiceSettings?.iconMode === 'text' ? 'Text' : 'Icons'}]</button>
-        <button onclick="setPracticeSessionSubView('analysis')">[Session Analysis]</button>
-        <button onclick="openCustomSheetModal('${activeSession.id}')">[+ Add Custom Sheet]</button>
-        <button onclick="openReviewGeneratorModal('${activeSession.id}')">[Generate Review Sheet]</button>
-        <button style="border-color:var(--status-c);color:var(--status-c);" onclick="syncSessionToChapterGPS('${activeSession.id}')">[Chapter GPS]</button>
-        <button style="border-color:var(--status-x);color:var(--status-x);" onclick="exitPracticeSession()">[Close Session]</button>
+        <button onclick="toggleIconMode()" title="Toggle Minimal Monochrome Icons vs Text Mode">${getAppIcon('icon-mode')}[Mode: ${state.practiceSettings?.iconMode === 'text' ? 'Text' : 'Icons'}]</button>
+        <button onclick="setPracticeSessionSubView('analysis')">${getAppIcon('chart')}[Session Analysis]</button>
+        <button onclick="openCustomSheetModal('${activeSession.id}')">${getAppIcon('add')}[+ Add Custom Sheet]</button>
+        <button onclick="openReviewGeneratorModal('${activeSession.id}')">${getAppIcon('refresh')}[Generate Review Sheet]</button>
+        <button style="border-color:var(--status-c);color:var(--status-c);" onclick="syncSessionToChapterGPS('${activeSession.id}')">${getAppIcon('gps')}[Chapter GPS]</button>
+        <button style="border-color:var(--status-x);color:var(--status-x);" onclick="exitPracticeSession()">${getAppIcon('close')}[Close Session]</button>
       </div>
     </div>
 
@@ -6491,15 +6712,22 @@ function getPracticeSessionHTML() {
         </div>
       </div>
 
-      <!-- TTS Mode Selectors & Speed Threshold -->
-      <div class="flex-row" style="margin-top:6px;gap:6px;font-size:11px;">
-        <span class="tag">TTS MODE:</span>
-        <button class="${ttsMode === 'delta' ? 'active' : ''}" style="padding:1px 6px;font-size:10px;" onclick="setSheetTTSMode('${activeSession.id}', ${currentSheetIndex}, 'delta')">Delta TTS</button>
-        <button class="${ttsMode === 'full' ? 'active' : ''}" style="padding:1px 6px;font-size:10px;" onclick="setSheetTTSMode('${activeSession.id}', ${currentSheetIndex}, 'full')">Full TTS</button>
-        <button class="${ttsMode === 'mixed' ? 'active' : ''}" style="padding:1px 6px;font-size:10px;" onclick="setSheetTTSMode('${activeSession.id}', ${currentSheetIndex}, 'mixed')">Mixed TTS</button>
-        <button class="${ttsMode === 'off' ? 'active' : ''}" style="padding:1px 6px;font-size:10px;" onclick="setSheetTTSMode('${activeSession.id}', ${currentSheetIndex}, 'off')">Off</button>
-        <span style="color:var(--fg-muted);margin-left:8px;">Auto-[W] Threshold: <strong>${currentSheet.thresholdSec || 90}s</strong></span>
-      </div>
+      <!-- TTS Mode Selectors & Speed Threshold (Collapsible) -->
+      <details class="collapsible-box" style="margin-top:8px;border:none;background:transparent;box-shadow:none;">
+        <summary style="padding:2px 0;font-size:11px;color:var(--fg-muted);border:none;background:transparent;">
+          <span>${getAppIcon('timer')} TTS Audio &amp; Speed Threshold Options</span>
+        </summary>
+        <div class="collapsible-body" style="padding:6px 0 0 0;border-top:1px dashed var(--border);margin-top:4px;">
+          <div class="flex-row" style="gap:6px;font-size:11px;flex-wrap:wrap;">
+            <span class="tag">TTS MODE:</span>
+            <button class="${ttsMode === 'delta' ? 'active' : ''}" style="padding:1px 6px;font-size:10px;" onclick="setSheetTTSMode('${activeSession.id}', ${currentSheetIndex}, 'delta')">Delta TTS</button>
+            <button class="${ttsMode === 'full' ? 'active' : ''}" style="padding:1px 6px;font-size:10px;" onclick="setSheetTTSMode('${activeSession.id}', ${currentSheetIndex}, 'full')">Full TTS</button>
+            <button class="${ttsMode === 'mixed' ? 'active' : ''}" style="padding:1px 6px;font-size:10px;" onclick="setSheetTTSMode('${activeSession.id}', ${currentSheetIndex}, 'mixed')">Mixed TTS</button>
+            <button class="${ttsMode === 'off' ? 'active' : ''}" style="padding:1px 6px;font-size:10px;" onclick="setSheetTTSMode('${activeSession.id}', ${currentSheetIndex}, 'off')">Off</button>
+            <span style="color:var(--fg-muted);margin-left:8px;">Auto-[W] Threshold: <strong>${currentSheet.thresholdSec || 90}s</strong></span>
+          </div>
+        </div>
+      </details>
     </div>
 
     <!-- SHEET TABS BAR -->
@@ -6510,38 +6738,41 @@ function getPracticeSessionHTML() {
         </button>
       `).join('')}
       <button class="sheet-tab-btn" style="border-style:dashed;" onclick="openCustomSheetModal('${activeSession.id}')">
-        [+ Custom Sheet]
+        ${getAppIcon('add')} [+ Custom Sheet]
       </button>
       <button class="sheet-tab-btn" style="border-style:dashed;" onclick="openReviewGeneratorModal('${activeSession.id}')">
-        [+ Spaced Review Sheet]
+        ${getAppIcon('refresh')} [+ Spaced Review Sheet]
       </button>
     </div>
 
-    <!-- QUICK ADD, REARRANGE & QUICK REMOVE CONTROLS BAR -->
-    <div class="box" style="padding:6px 10px;margin-bottom:8px;background:var(--surface-2);">
-      <div class="flex-row" style="justify-content:space-between;">
-        <div class="flex-row" style="gap:4px;">
-          <span class="tag" style="font-size:10px;">ADD:</span>
-          <button style="padding:2px 6px;font-size:10px;" onclick="addQuestionsToSheet('${activeSession.id}', ${currentSheetIndex}, 1, 'end')">+1 End</button>
-          <button style="padding:2px 6px;font-size:10px;" onclick="addQuestionsToSheet('${activeSession.id}', ${currentSheetIndex}, 1, 'start')">+1 Top</button>
-          <button style="padding:2px 6px;font-size:10px;" onclick="openAddQuestionsModal('${activeSession.id}', ${currentSheetIndex})">[+ Add / Insert Range...]</button>
-        </div>
+    <!-- QUICK ADD, REARRANGE & QUICK REMOVE CONTROLS BAR (Collapsible) -->
+    <details class="collapsible-box" style="margin-bottom:8px;">
+      <summary><span>${getAppIcon('edit')} Question Management &amp; Spreadsheet Controls (Add, Rearrange, Remove)</span></summary>
+      <div class="collapsible-body" style="padding:8px;">
+        <div class="flex-row" style="justify-content:space-between;flex-wrap:wrap;gap:8px;">
+          <div class="flex-row" style="gap:4px;">
+            <span class="tag" style="font-size:10px;">ADD:</span>
+            <button style="padding:2px 6px;font-size:10px;" onclick="addQuestionsToSheet('${activeSession.id}', ${currentSheetIndex}, 1, 'end')">${getAppIcon('add')} +1 End</button>
+            <button style="padding:2px 6px;font-size:10px;" onclick="addQuestionsToSheet('${activeSession.id}', ${currentSheetIndex}, 1, 'start')">${getAppIcon('add')} +1 Top</button>
+            <button style="padding:2px 6px;font-size:10px;" onclick="openAddQuestionsModal('${activeSession.id}', ${currentSheetIndex})">[+ Add / Insert Range...]</button>
+          </div>
 
-        <div class="flex-row" style="gap:4px;">
-          <span class="tag" style="font-size:10px;">REARRANGE:</span>
-          <button style="padding:2px 6px;font-size:10px;" onclick="sortSheetQuestions('${activeSession.id}', ${currentSheetIndex})">[Sort by Q#]</button>
-          <button style="padding:2px 6px;font-size:10px;" onclick="reverseSheetQuestions('${activeSession.id}', ${currentSheetIndex})">[Reverse Order]</button>
-          <button style="padding:2px 6px;font-size:10px;" onclick="openRearrangeModal('${activeSession.id}', ${currentSheetIndex})">[Rearrange En Masse...]</button>
-        </div>
+          <div class="flex-row" style="gap:4px;">
+            <span class="tag" style="font-size:10px;">REARRANGE:</span>
+            <button style="padding:2px 6px;font-size:10px;" onclick="sortSheetQuestions('${activeSession.id}', ${currentSheetIndex})">${getAppIcon('sort')} [Sort by Q#]</button>
+            <button style="padding:2px 6px;font-size:10px;" onclick="reverseSheetQuestions('${activeSession.id}', ${currentSheetIndex})">${getAppIcon('refresh')} [Reverse Order]</button>
+            <button style="padding:2px 6px;font-size:10px;" onclick="openRearrangeModal('${activeSession.id}', ${currentSheetIndex})">[Rearrange En Masse...]</button>
+          </div>
 
-        <div class="flex-row" style="gap:4px;">
-          <span class="tag" style="font-size:10px;">REMOVE:</span>
-          <button style="padding:2px 6px;font-size:10px;" onclick="removeLastQuestionFromSheet('${activeSession.id}', ${currentSheetIndex})">-1 End</button>
-          <button style="padding:2px 6px;font-size:10px;" onclick="removeUnansweredFromSheet('${activeSession.id}', ${currentSheetIndex})">Remove Unanswered</button>
-          <button style="padding:2px 6px;font-size:10px;" onclick="removeRangeFromSheet('${activeSession.id}', ${currentSheetIndex})">Remove Range...</button>
+          <div class="flex-row" style="gap:4px;">
+            <span class="tag" style="font-size:10px;">REMOVE:</span>
+            <button style="padding:2px 6px;font-size:10px;" onclick="removeLastQuestionFromSheet('${activeSession.id}', ${currentSheetIndex})">${getAppIcon('del')} -1 End</button>
+            <button style="padding:2px 6px;font-size:10px;" onclick="removeUnansweredFromSheet('${activeSession.id}', ${currentSheetIndex})">${getAppIcon('del')} Remove Unanswered</button>
+            <button style="padding:2px 6px;font-size:10px;" onclick="removeRangeFromSheet('${activeSession.id}', ${currentSheetIndex})">${getAppIcon('del')} Remove Range...</button>
+          </div>
         </div>
       </div>
-    </div>
+    </details>
 
     <!-- OMR SPREADSHEET TABLE (Targeted In-Place Updates, No Scroll Jumps, Single Active Question) -->
     <div class="omr-container">
@@ -6650,8 +6881,8 @@ function getPracticeSessionHTML() {
     <!-- BOTTOM ROW UTILITIES -->
     <div class="flex-row" style="justify-content:space-between;margin-top:8px;">
       <div class="flex-row">
-        <button onclick="addQuestionsToSheet('${activeSession.id}', ${currentSheetIndex}, 10, 'end')">+ Add 10 More Rows</button>
-        <button onclick="markAllAnsweredAsC('${activeSession.id}', ${currentSheetIndex})">Auto-Flag Answered as [C]</button>
+        <button onclick="addQuestionsToSheet('${activeSession.id}', ${currentSheetIndex}, 10, 'end')">${getAppIcon('add')} + Add 10 More Rows</button>
+        <button onclick="markAllAnsweredAsC('${activeSession.id}', ${currentSheetIndex})">${getAppIcon('flag-c')} Auto-Flag Answered as [C]</button>
       </div>
       <div class="flex-row">
         <span style="font-size:11px;color:var(--fg-muted);">Answered: <strong id="practiceAnsweredCount">${currentSheet.questions.filter(q => (q.selectedOption !== null || q.flag !== null) && !q.isBlanked).length} / ${currentSheet.questions.length}</strong></span>
@@ -6767,29 +6998,31 @@ function openTimerSettingsModal() {
     <div style="font-size:12px;">
       <p>Configure dedicated audio timer intervals, countdown duration, and TTS:</p>
 
-      <div class="box" style="margin:8px 0;">
-        <div class="box-header"><span>1. INTERVALS &amp; COUNTDOWN</span></div>
-        <div style="margin-top:6px;">
-          <label>Target Countdown Duration (Seconds, e.g. 3600 for 1h):</label>
-          <input type="number" id="cfgTimerTarget" value="${t.targetDurationSec || 3600}" style="width:100%;margin-top:2px;">
+      <details open class="collapsible-box" style="margin:8px 0;">
+        <summary><span>${getAppIcon('timer')} 1. INTERVALS &amp; COUNTDOWN</span></summary>
+        <div class="collapsible-body">
+          <div style="margin-top:2px;">
+            <label>Target Countdown Duration (Seconds, e.g. 3600 for 1h):</label>
+            <input type="number" id="cfgTimerTarget" value="${t.targetDurationSec || 3600}" style="width:100%;margin-top:2px;">
+          </div>
+          <div style="margin-top:6px;">
+            <label>Pomodoro Study Interval (Seconds, e.g. 1500 for 25m):</label>
+            <input type="number" id="cfgTimerPomoSec" value="${t.pomodoroStudySec || 1500}" style="width:100%;margin-top:2px;">
+          </div>
+          <div style="margin-top:6px;">
+            <label>Lap / Delta Intervals (Seconds, comma-separated):</label>
+            <input type="text" id="cfgTimerDeltaInt" value="${t.deltaIntervals || "30,60,90,120"}" style="width:100%;margin-top:2px;">
+          </div>
+          <div style="margin-top:6px;">
+            <label>Session Intervals (Seconds, comma-separated):</label>
+            <input type="text" id="cfgTimerFullInt" value="${t.fullIntervals || "300,600,900"}" style="width:100%;margin-top:2px;">
+          </div>
+          <div style="display:flex;gap:12px;margin-top:8px;">
+            <label><input type="checkbox" id="cfgTimerBeeps" ${t.enableBeeps !== false ? 'checked' : ''}> Acoustic Beep at Boundaries</label>
+            <label><input type="checkbox" id="cfgTimerSpeech" ${t.enableSpeech !== false ? 'checked' : ''}> Speak Time via TTS</label>
+          </div>
         </div>
-        <div style="margin-top:6px;">
-          <label>Pomodoro Study Interval (Seconds, e.g. 1500 for 25m):</label>
-          <input type="number" id="cfgTimerPomoSec" value="${t.pomodoroStudySec || 1500}" style="width:100%;margin-top:2px;">
-        </div>
-        <div style="margin-top:6px;">
-          <label>Lap / Delta Intervals (Seconds, comma-separated):</label>
-          <input type="text" id="cfgTimerDeltaInt" value="${t.deltaIntervals || "30,60,90,120"}" style="width:100%;margin-top:2px;">
-        </div>
-        <div style="margin-top:6px;">
-          <label>Session Intervals (Seconds, comma-separated):</label>
-          <input type="text" id="cfgTimerFullInt" value="${t.fullIntervals || "300,600,900"}" style="width:100%;margin-top:2px;">
-        </div>
-        <div style="display:flex;gap:12px;margin-top:6px;">
-          <label><input type="checkbox" id="cfgTimerBeeps" ${t.enableBeeps !== false ? 'checked' : ''}> Acoustic Beep at Boundaries</label>
-          <label><input type="checkbox" id="cfgTimerSpeech" ${t.enableSpeech !== false ? 'checked' : ''}> Speak Time via TTS</label>
-        </div>
-      </div>
+      </details>
 
       <div class="flex-row" style="justify-content:flex-end;margin-top:12px;">
         <button onclick="closeModal()">Cancel</button>
@@ -6977,7 +7210,7 @@ function renderWorkspace() {
   });
   if (typeof window !== "undefined") window.scrollTo(window.scrollX, winScrollY);
 
-  updateNavHighlight();
+  renderTopNav();
   updateStatusBar();
   bindConceptLinks();
   requestAnimationFrame(() => triggerMathRender(ws));
@@ -7507,7 +7740,19 @@ document.addEventListener("keydown", e => {
   if (e.key === "Escape") closeModal();
 });
 
-loadAllStorage().catch(err => console.error("Storage load error:", err)).then(() => renderWorkspace());
+// Global delegated click listener to collapse/expand any .box across the entire website
+document.addEventListener("click", e => {
+  const header = e.target.closest(".box-header");
+  if (header && !e.target.closest("button, select, input, a, label, .tag, textarea")) {
+    const box = header.closest(".box");
+    if (box) box.classList.toggle("box-collapsed");
+  }
+});
+
+loadAllStorage().catch(err => console.error("Storage load error:", err)).then(() => {
+  renderTopNav();
+  renderWorkspace();
+});
 </script>
 </body>
 </html>
