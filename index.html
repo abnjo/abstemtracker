@@ -5643,8 +5643,8 @@ function getSessionHierarchyTreeHTML() {
                                                 ${setSessions.map(s => {
                                                   const sh = s.sheets || [];
                                                   const qCount = sh.reduce((acc, x) => acc + (x.questions ? x.questions.filter(q => (q.selectedOption !== null || q.flag !== null) && !q.isBlanked).length : 0), 0);
-                                                  const cCount = sh.reduce((acc, x) => acc + (x.questions ? x.questions.filter(q => q.flag === 'C').length : 0), 0);
-                                                  const acc = qCount > 0 ? Math.round((cCount / qCount) * 100) : 0;
+                                                  const correctCount = sh.reduce((acc, x) => acc + (x.questions ? x.questions.filter(q => q.flag === 'C' || q.flag === 'W').length : 0), 0);
+                                                  const acc = qCount > 0 ? Math.round((correctCount / qCount) * 100) : 0;
                                                   const totalSec = Math.floor((sh.reduce((acc, x) => acc + (x.elapsedSessionMs || 0), 0)) / 1000);
 
                                                   return `
@@ -6116,11 +6116,11 @@ function syncSessionToChapterGPS(sessionId) {
 
   const currentSheet = session.sheets[session.activeSheetIndex || 0];
   const attempted = currentSheet.questions.filter(q => (q.selectedOption !== null || q.flag !== null) && !q.isBlanked);
-  const correct = currentSheet.questions.filter(q => q.flag === 'C');
+  const correct = currentSheet.questions.filter(q => q.flag === 'C' || q.flag === 'W');
   const acc = attempted.length > 0 ? Math.round((correct.length / attempted.length) * 100) : 0;
 
   let msg = `<strong>${ch.name}</strong> is currently at <strong>${GPS_STAGES[ch.stage].name}</strong>.<br>`;
-  msg += `Active Sheet Accuracy: <strong>${acc}%</strong> (${correct.length}/${attempted.length} confirmed).<br><br>`;
+  msg += `Active Sheet Accuracy: <strong>${acc}%</strong> (${correct.length}/${attempted.length} correct [C+W]).<br><br>`;
 
   let actionsHtml = "";
 
@@ -6288,7 +6288,8 @@ function getPracticeAnalysisHTML(session) {
   const cCount = filledQuestions.filter(q => q.flag === 'C').length;
   const wCount = filledQuestions.filter(q => q.flag === 'W').length;
   const xCount = filledQuestions.filter(q => q.flag === 'X').length;
-  const accuracy = totalAttempted > 0 ? Math.round((cCount / totalAttempted) * 100) : 0;
+  const correctCount = cCount + wCount;
+  const accuracy = totalAttempted > 0 ? Math.round((correctCount / totalAttempted) * 100) : 0;
 
   const answeredWithTime = filledQuestions.filter(q => q.deltaTimeSec > 0);
   const avgDelta = answeredWithTime.length > 0
@@ -6436,7 +6437,7 @@ function getPracticeAnalysisHTML(session) {
       <div class="session-summary-grid">
         <div class="stat-card-mini">
           <div class="stat-card-val" style="color:var(--status-c);">${accuracy}%</div>
-          <div class="stat-card-lbl">Accuracy (${cCount}/${totalAttempted})</div>
+          <div class="stat-card-lbl">Accuracy (${correctCount}/${totalAttempted})</div>
         </div>
         <div class="stat-card-mini">
           <div class="stat-card-val">${avgDelta}s</div>
@@ -6754,8 +6755,9 @@ function getCumulativeStatsHTML(filterSubj = "All") {
     });
   });
 
+  const totalCorrect = totalConfirmed + totalSpeed;
   const lifetimeAcc = totalQuestionsAttempted > 0
-    ? Math.round((totalConfirmed / totalQuestionsAttempted) * 100)
+    ? Math.round((totalCorrect / totalQuestionsAttempted) * 100)
     : 0;
   const lifetimeAvgSpeed = timedQuestionsCount > 0
     ? Math.round(totalDeltaSec / timedQuestionsCount)
@@ -6866,7 +6868,7 @@ function getCumulativeStatsHTML(filterSubj = "All") {
           </div>
           <div class="stat-card-mini">
             <div class="stat-card-val" style="color:var(--status-c);">${lifetimeAcc}%</div>
-            <div class="stat-card-lbl">Lifetime Accuracy</div>
+            <div class="stat-card-lbl">Lifetime Accuracy (${totalCorrect}/${totalQuestionsAttempted})</div>
           </div>
           <div class="stat-card-mini">
             <div class="stat-card-val">${lifetimeAvgSpeed}s</div>
@@ -7732,7 +7734,7 @@ function saveTimerSettings() {
 function getLivePracticeDashWidgetHTML() {
   const sessions = state.sessions || [];
   let totalQs = 0;
-  let totalC = 0;
+  let totalCorrect = 0;
   let totalDeltaSec = 0;
   let timedQs = 0;
   let mem = 0, conc = 0, read = 0, spd = 0;
@@ -7740,9 +7742,9 @@ function getLivePracticeDashWidgetHTML() {
   sessions.forEach(s => {
     (s.sheets || []).forEach(sh => {
       (sh.questions || []).forEach(q => {
-        if (q.selectedOption !== null) {
+        if ((q.selectedOption !== null || q.flag !== null) && !q.isBlanked) {
           totalQs++;
-          if (q.flag === 'C') totalC++;
+          if (q.flag === 'C' || q.flag === 'W') totalCorrect++;
           if (q.deltaTimeSec > 0) {
             totalDeltaSec += q.deltaTimeSec;
             timedQs++;
@@ -7756,7 +7758,7 @@ function getLivePracticeDashWidgetHTML() {
     });
   });
 
-  const acc = totalQs > 0 ? Math.round((totalC / totalQs) * 100) : 0;
+  const acc = totalQs > 0 ? Math.round((totalCorrect / totalQs) * 100) : 0;
   const avgSpeed = timedQs > 0 ? Math.round(totalDeltaSec / timedQs) : 0;
   const denom = Math.max(1, totalQs);
   const radar = {
@@ -7783,7 +7785,7 @@ function getLivePracticeDashWidgetHTML() {
           </div>
           <div class="stat-card-mini">
             <div class="stat-card-val" style="color:var(--status-c);">${acc}%</div>
-            <div class="stat-card-lbl">Lifetime Acc</div>
+            <div class="stat-card-lbl">Lifetime Acc (${totalCorrect}/${totalQs})</div>
           </div>
           <div class="stat-card-mini">
             <div class="stat-card-val">${avgSpeed}s</div>
