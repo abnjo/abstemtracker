@@ -58,16 +58,22 @@
   --status-x: #ef4444;
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
+html {
+  height: 100%;
+}
 body {
   background: var(--bg);
   color: var(--fg);
   font-family: var(--font-sans);
   font-size: 13px;
   line-height: 1.5;
+  height: 100%;
   height: 100vh;
+  height: 100dvh;
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  min-height: 0;
 }
 a, .concept-link {
   color: var(--fg);
@@ -128,6 +134,7 @@ code, pre, .math { font-family: var(--font-mono); background: var(--bg-alt); }
 code, .math { padding: 1px 4px; border: 1px solid var(--border); font-size: 11.5px; }
 pre { padding: 10px; border: 1px solid var(--border); overflow-x: auto; margin: 8px 0; font-size: 11.5px; white-space: pre-wrap; }
 .topbar {
+  flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -136,18 +143,21 @@ pre { padding: 10px; border: 1px solid var(--border); overflow-x: auto; margin: 
   background: var(--bg);
   gap: 8px;
   flex-wrap: wrap;
+  z-index: 10;
 }
 .brand { font-family: var(--font-mono); font-size: 15px; font-weight: 700; letter-spacing: -0.5px; }
 .nav-tabs { display: flex; gap: 4px; flex-wrap: wrap; }
 .toolbar-right { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
-#globalSearch { width: 210px; }
+#globalSearch { max-width: 100%; min-width: 130px; width: 210px; }
 .workspace {
-  flex: 1;
+  flex: 1 1 0;
+  min-height: 0;
+  min-width: 0;
+  height: auto;
   display: grid;
   gap: 6px;
   background: var(--border-dark);
   overflow: hidden;
-  height: calc(100vh - 76px);
   padding: 4px;
 }
 .workspace.panes-1 { gap: 0; background: transparent; padding: 0; }
@@ -162,8 +172,12 @@ pre { padding: 10px; border: 1px solid var(--border); overflow-x: auto; margin: 
   box-shadow: var(--shadow-sm);
   overflow: hidden;
   background: var(--bg);
+  min-height: 0;
+  min-width: 0;
+  height: 100%;
 }
 .pane-header {
+  flex-shrink: 0;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -174,9 +188,12 @@ pre { padding: 10px; border: 1px solid var(--border); overflow-x: auto; margin: 
   font-size: 11px;
 }
 .pane-body {
-  flex: 1;
+  flex: 1 1 0;
+  min-height: 0;
   overflow-y: auto;
+  overflow-x: auto;
   padding: 12px;
+  padding-bottom: 24px;
 }
 .dash-grid {
   display: grid;
@@ -557,6 +574,7 @@ details.audit-drawer[open] summary {
 }
 .cal-ev.done { text-decoration: line-through; opacity: 0.5; }
 .statusbar {
+  flex-shrink: 0;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -565,6 +583,7 @@ details.audit-drawer[open] summary {
   background: var(--bg-alt);
   font-family: var(--font-mono);
   font-size: 11px;
+  z-index: 10;
 }
 .modal-backdrop {
   position: fixed;
@@ -595,8 +614,11 @@ details.audit-drawer[open] summary {
 }
 .modal-content { padding: 12px; overflow-y: auto; }
 .flex-row { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
-.split-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-@media (max-width: 768px) { .split-2 { grid-template-columns: 1fr; } }
+.split-2 {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 10px;
+}
 /* Timer Only & Practice Session Styles */
 .timer-hero {
   border: 1.5px solid var(--border-dark);
@@ -639,8 +661,81 @@ details.audit-drawer[open] summary {
   border-radius: 5px;
   box-shadow: var(--shadow-sm);
   background: var(--surface-1);
-  max-height: 520px;
+  max-height: clamp(260px, 60vh, 750px);
   overflow-y: auto;
+}
+.omr-key-bubble {
+  width: 26px;
+  height: 26px;
+  border-radius: 4px;
+  border: 1.5px dashed var(--border-dark);
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 11px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 2px;
+  cursor: pointer;
+  transition: background 0.1s ease, border-color 0.1s ease, transform 0.08s ease;
+  padding: 0;
+}
+.omr-key-bubble:hover:not(:disabled) {
+  border-color: var(--fg);
+  background: var(--surface-3);
+}
+.omr-key-bubble:active:not(:disabled) {
+  transform: scale(0.92);
+}
+.omr-key-bubble.selected-key {
+  background: var(--fg);
+  color: var(--bg);
+  border-style: solid;
+  border-color: var(--fg);
+  box-shadow: 0 0 0 2px var(--bg), 0 0 0 3.5px var(--fg);
+}
+.stats-filter-card {
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--surface-2);
+  padding: 8px;
+  font-size: 11.5px;
+  display: flex;
+  flex-direction: column;
+}
+.stats-filter-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid var(--border-subtle);
+  font-weight: 700;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+.stats-filter-card-body {
+  max-height: 150px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding-right: 4px;
+}
+@media (max-height: 480px) {
+  body {
+    overflow-y: auto;
+    height: auto;
+    min-height: 100dvh;
+  }
+  .workspace {
+    min-height: 420px;
+    height: auto;
+  }
 }
 .omr-table {
   width: 100%;
@@ -1781,6 +1876,19 @@ async function loadAllStorage() {
       sections: ["Section A", "Section B", "Section C", "Section D", "Numerical"]
     }, state.customMetadata || {});
     migrateSetsToSet1Set2(state);
+    if (Array.isArray(state.sessions)) {
+      state.sessions.forEach(sess => {
+        if (Array.isArray(sess.sheets)) {
+          sess.sheets.forEach(sh => {
+            if (Array.isArray(sh.questions)) {
+              sh.questions.forEach(q => {
+                if (q.correctOption === undefined) q.correctOption = null;
+              });
+            }
+          });
+        }
+      });
+    }
     state.timerOnly = Object.assign({
       mode: "stopwatch",
       targetDurationSec: 3600,
@@ -3974,6 +4082,17 @@ function onOMRBubbleClick(sessionId, sheetIndex, qIndex, optionVal) {
     }
   }
 
+  // Marking Mode Auto-Evaluation (task.md Item 5)
+  if (q.correctOption !== null && q.correctOption !== undefined) {
+    if (String(q.selectedOption) === String(q.correctOption)) {
+      q.flag = "C";
+    } else {
+      q.flag = "X";
+    }
+    q.isAttempted = true;
+    q.flagOverridden = false;
+  }
+
   // Zero-point reset synchronized with current sessionSec
   sheet.questionStartSessionSec = sessionSec;
   sheet.nudgeDeltaSec = 0;
@@ -3990,6 +4109,9 @@ function onOMRBubbleClick(sessionId, sheetIndex, qIndex, optionVal) {
   if (rowEl) {
     rowEl.querySelectorAll('.omr-bubble').forEach(b => {
       b.classList.toggle('selected', b.dataset.opt === optionVal);
+    });
+    rowEl.querySelectorAll('.omr-key-bubble').forEach(b => {
+      b.classList.toggle('selected-key', b.dataset.opt === q.correctOption);
     });
     const deltaInp = rowEl.querySelector('.delta-val-input');
     if (deltaInp) deltaInp.value = q.deltaTimeSec || 0;
@@ -4013,6 +4135,199 @@ function onOMRBubbleClick(sessionId, sheetIndex, qIndex, optionVal) {
   } else {
     renderWorkspace();
   }
+}
+
+// --- MARKING MODE ANSWER KEY HANDLERS (task.md Item 5) ---
+function onOMRCorrectBubbleClick(sessionId, sheetIndex, qIndex, optionVal) {
+  const session = state.sessions ? state.sessions.find(s => s.id === sessionId) : null;
+  if (!session) return;
+  const sheet = session.sheets[sheetIndex];
+  if (!sheet) return;
+  const q = sheet.questions[qIndex];
+  if (!q) return;
+
+  const isTimerRunning = Boolean(activeTimerState.isRunning && activeTimerState.type === "practice" && activeTimerState.sessionId === sessionId);
+
+  // If clicking already selected correct option -> toggle off
+  if (q.correctOption === optionVal) {
+    if (!isTimerRunning) {
+      const ok = confirm(`Timer is stopped. Remove Answer Key [${optionVal}] from Question Q${q.qNum}?`);
+      if (!ok) return;
+    }
+    q.correctOption = null;
+    saveAllStorage();
+    renderWorkspace();
+    return;
+  }
+
+  // When timer is stopped, prompt ONLY when attempting to change an already registered correct key
+  if (!isTimerRunning && q.correctOption !== null && q.correctOption !== undefined && q.correctOption !== optionVal) {
+    const ok = confirm(`Timer is stopped. Confirm changing Question Q${q.qNum} Answer Key from [${q.correctOption}] to [${optionVal}]?`);
+    if (!ok) return;
+  }
+
+  q.correctOption = optionVal;
+
+  // Auto-grade against entered option if present
+  if (q.selectedOption !== null && q.selectedOption !== undefined && !q.isBlanked) {
+    if (String(q.selectedOption) === String(q.correctOption)) {
+      q.flag = 'C';
+    } else {
+      q.flag = 'X';
+    }
+    q.isAttempted = true;
+    q.flagOverridden = false;
+  }
+
+  // Advance active question to next question if currently active
+  if (sheet.activeQuestionIndex === qIndex && qIndex + 1 < sheet.questions.length) {
+    sheet.activeQuestionIndex = qIndex + 1;
+  }
+
+  saveAllStorage();
+
+  const rowEl = document.getElementById(`omr_row_${sessionId}_${sheetIndex}_${qIndex}`);
+  if (rowEl) {
+    rowEl.querySelectorAll('.omr-key-bubble').forEach(b => {
+      b.classList.toggle('selected-key', b.dataset.opt === optionVal);
+    });
+    rowEl.querySelectorAll('.btn-flag').forEach(btn => {
+      const f = btn.dataset.flag;
+      btn.classList.toggle('active-c', f === 'C' && q.flag === 'C');
+      btn.classList.toggle('active-w', f === 'W' && q.flag === 'W');
+      btn.classList.toggle('active-x', f === 'X' && q.flag === 'X');
+    });
+    updateActiveQuestionDOM(sessionId, sheetIndex, sheet.activeQuestionIndex);
+  } else {
+    renderWorkspace();
+  }
+}
+
+function toggleSheetMarkingMode(sessionId, sheetIndex) {
+  const session = state.sessions ? state.sessions.find(s => s.id === sessionId) : null;
+  if (!session) return;
+  const sheet = session.sheets[sheetIndex];
+  if (!sheet) return;
+  sheet.markingMode = !sheet.markingMode;
+  saveAllStorage();
+  renderWorkspace();
+}
+
+function clearSheetKeys(sessionId, sheetIndex) {
+  const session = state.sessions ? state.sessions.find(s => s.id === sessionId) : null;
+  if (!session) return;
+  const sheet = session.sheets[sheetIndex];
+  if (!sheet) return;
+  const ok = confirm(`Are you sure you want to clear all answer keys from Sheet "${sheet.name || 'Current Sheet'}"?`);
+  if (!ok) return;
+  sheet.questions.forEach(q => {
+    q.correctOption = null;
+  });
+  saveAllStorage();
+  renderWorkspace();
+}
+
+function openBulkKeyEntryModal(sessionId, sheetIndex) {
+  const session = state.sessions ? state.sessions.find(s => s.id === sessionId) : null;
+  if (!session) return;
+  const sheet = session.sheets[sheetIndex];
+  if (!sheet) return;
+
+  const title = `Bulk Answer Key Entry — ${escapeHtml(sheet.name || 'Current Sheet')}`;
+  const bodyHtml = `
+    <div style="font-size:12px;display:flex;flex-direction:column;gap:8px;">
+      <p style="color:var(--fg-muted);">Paste or type the answer keys for the <strong>${sheet.questions.length}</strong> questions on this sheet. The tracker will automatically compare them with your selected options and mark questions as <strong>[C]</strong> (matching) or <strong>[X]</strong> (wrong).</p>
+      
+      <div style="font-size:11px;background:var(--surface-3);padding:6px 8px;border:1px solid var(--border);">
+        <strong>Supported Formats:</strong>
+        <ul style="margin:4px 0 0 16px;padding:0;">
+          <li>Continuous string: <code>12341234...</code> or <code>ABCDABCD...</code></li>
+          <li>Separated: <code>1, 2, 4, 3, 2</code> or <code>A B D C B</code></li>
+          <li>Numbered lines: <code>1: 2<br>2: 4<br>3: 1</code></li>
+        </ul>
+      </div>
+
+      <textarea id="bulkKeyInput" placeholder="Paste keys here (e.g. 1 2 4 3 2 1...)" style="width:100%;height:130px;font-family:var(--font-mono);font-size:12px;padding:6px;resize:vertical;"></textarea>
+
+      <div class="flex-row" style="justify-content:flex-end;gap:6px;margin-top:6px;">
+        <button onclick="closeModal()">Cancel</button>
+        <button class="active" onclick="applyBulkKeyEntry('${sessionId}', ${sheetIndex})">Apply Keys &amp; Auto-Grade</button>
+      </div>
+    </div>
+  `;
+  openModal(title, bodyHtml);
+  setTimeout(() => {
+    const inp = document.getElementById("bulkKeyInput");
+    if (inp) inp.focus();
+  }, 100);
+}
+
+function applyBulkKeyEntry(sessionId, sheetIndex) {
+  const session = state.sessions ? state.sessions.find(s => s.id === sessionId) : null;
+  if (!session) return;
+  const sheet = session.sheets[sheetIndex];
+  if (!sheet) return;
+
+  const inp = document.getElementById("bulkKeyInput");
+  if (!inp || !inp.value.trim()) {
+    alert("Please enter or paste answer keys first.");
+    return;
+  }
+
+  const raw = inp.value.trim();
+  const lines = raw.split(/[\r\n]+/);
+  let tokens = [];
+
+  for (const line of lines) {
+    const trimmed = line.trim();
+    if (!trimmed) continue;
+    const lineMatch = trimmed.match(/^(?:Q\d+[\s.:\-)]*|\d+[\s]*[:.\-)]+)\s*([1-5A-Ea-e])\b/i);
+    if (lineMatch) {
+      tokens.push(lineMatch[1]);
+    } else {
+      const matches = trimmed.match(/[1-5A-Ea-e]/gi);
+      if (matches) {
+        tokens.push(...matches);
+      }
+    }
+  }
+
+  if (tokens.length === 0) {
+    alert("No valid option keys (1-5 or A-E) detected in input.");
+    return;
+  }
+
+  const optStyle = sheet.optionStyle || "1234";
+  const numToLetter = { "1": "A", "2": "B", "3": "C", "4": "D", "5": "E" };
+  const letterToNum = { "A": "1", "B": "2", "C": "3", "D": "4", "E": "5" };
+
+  tokens = tokens.map(tok => {
+    const upper = tok.toUpperCase();
+    if (optStyle === "ABCD") {
+      return numToLetter[upper] || upper;
+    } else {
+      return letterToNum[upper] || upper;
+    }
+  });
+
+  for (let i = 0; i < sheet.questions.length && i < tokens.length; i++) {
+    const q = sheet.questions[i];
+    q.correctOption = tokens[i];
+    if (q.selectedOption !== null && !q.isBlanked) {
+      if (String(q.selectedOption) === String(q.correctOption)) {
+        q.flag = 'C';
+      } else {
+        q.flag = 'X';
+      }
+      q.isAttempted = true;
+      q.flagOverridden = false;
+    }
+  }
+
+  sheet.markingMode = true;
+  saveAllStorage();
+  closeModal();
+  renderWorkspace();
 }
 
 function onDeltaEditInput(sessionId, sheetIndex, qIndex, valStr) {
@@ -4194,6 +4509,7 @@ function addQuestionsToSheet(sessionId, sheetIndex, count = 10, position = 'end'
       newQuestions.push({
         qNum: startNum + i,
         selectedOption: null,
+        correctOption: null,
         deltaTimeSec: 0,
         originalTimeSec: 0,
         flag: null,
@@ -4209,6 +4525,7 @@ function addQuestionsToSheet(sessionId, sheetIndex, count = 10, position = 'end'
       sheet.questions.push({
         qNum: lastQ + i,
         selectedOption: null,
+        correctOption: null,
         deltaTimeSec: 0,
         originalTimeSec: 0,
         flag: null,
@@ -4292,6 +4609,7 @@ function executeAddQuestionsRange(sessionId, sheetIndex) {
       newQuestions.push({
         qNum: qNum,
         selectedOption: null,
+        correctOption: null,
         deltaTimeSec: 0,
         originalTimeSec: 0,
         flag: null,
@@ -5354,6 +5672,7 @@ function createPracticeSession(exam, subject, chapterId, book, level, set, secti
     questions.push({
       qNum: i,
       selectedOption: null,
+      correctOption: null,
       deltaTimeSec: 0,
       originalTimeSec: 0,
       flag: null,
@@ -5504,6 +5823,7 @@ function executeCreateCustomSheet(sessionId) {
         questions.push({
           qNum: questions.length + 1,
           selectedOption: null,
+          correctOption: null,
           deltaTimeSec: 0,
           originalTimeSec: 0,
           flag: null,
@@ -5526,6 +5846,7 @@ function executeCreateCustomSheet(sessionId) {
       questions.push({
         qNum: i,
         selectedOption: null,
+        correctOption: null,
         deltaTimeSec: 0,
         originalTimeSec: 0,
         flag: null,
@@ -5672,6 +5993,7 @@ function executeGenerateReviewSheet(sessionId) {
       reviewQuestions.push({
         qNum: reviewQuestions.length + 1,
         selectedOption: null,
+        correctOption: null,
         deltaTimeSec: 0,
         originalTimeSec: 0,
         flag: null,
@@ -5695,6 +6017,7 @@ function executeGenerateReviewSheet(sessionId) {
       reviewQuestions.push({
         qNum: startNum + i,
         selectedOption: null,
+        correctOption: null,
         deltaTimeSec: 0,
         originalTimeSec: 0,
         flag: null,
@@ -6209,12 +6532,89 @@ function getPracticeAnalysisHTML(session) {
   </div>`;
 }
 
-// --- CUMULATIVE STATS RENDERER (Line 27, task.md Item 5 & 6) ---
+// --- CUMULATIVE STATS RENDERER (Line 27, task.md Item 4 & 5) ---
+function getSelectedItemsForFilter(fieldKey, usedList) {
+  if (!state.cumulativeStatsFilter) return [...usedList];
+  const val = state.cumulativeStatsFilter[fieldKey];
+  if (val === undefined || val === null || val === "All") return [...usedList];
+  if (Array.isArray(val)) return val;
+  if (typeof val === "string") return [val];
+  return [...usedList];
+}
+
+function toggleCumulativeStatsFilterItem(fieldKey, val) {
+  if (!state.cumulativeStatsFilter) state.cumulativeStatsFilter = { matchMode: "AND" };
+  const sessions = state.sessions || [];
+  const usedMap = {
+    subj: [...new Set(sessions.map(s => s.subject).filter(Boolean))].sort(),
+    exam: [...new Set(sessions.map(s => s.exam).filter(Boolean))].sort(),
+    book: [...new Set(sessions.map(s => s.book).filter(Boolean))].sort(),
+    level: [...new Set(sessions.map(s => s.level).filter(Boolean))].sort(),
+    set: [...new Set(sessions.map(s => s.set).filter(Boolean))].sort(),
+    section: [...new Set(sessions.map(s => s.section).filter(Boolean))].sort()
+  };
+  const usedList = usedMap[fieldKey] || [];
+  let cur = getSelectedItemsForFilter(fieldKey, usedList);
+  if (cur.includes(val)) {
+    cur = cur.filter(x => x !== val);
+  } else {
+    cur = [...cur, val];
+  }
+  state.cumulativeStatsFilter[fieldKey] = cur;
+  saveAllStorage();
+  renderWorkspace();
+}
+
+function selectAllCumulativeStatsFilter(fieldKey) {
+  if (!state.cumulativeStatsFilter) state.cumulativeStatsFilter = { matchMode: "AND" };
+  const sessions = state.sessions || [];
+  const usedMap = {
+    subj: [...new Set(sessions.map(s => s.subject).filter(Boolean))].sort(),
+    exam: [...new Set(sessions.map(s => s.exam).filter(Boolean))].sort(),
+    book: [...new Set(sessions.map(s => s.book).filter(Boolean))].sort(),
+    level: [...new Set(sessions.map(s => s.level).filter(Boolean))].sort(),
+    set: [...new Set(sessions.map(s => s.set).filter(Boolean))].sort(),
+    section: [...new Set(sessions.map(s => s.section).filter(Boolean))].sort()
+  };
+  state.cumulativeStatsFilter[fieldKey] = [...(usedMap[fieldKey] || [])];
+  saveAllStorage();
+  renderWorkspace();
+}
+
+function invertCumulativeStatsFilter(fieldKey) {
+  if (!state.cumulativeStatsFilter) state.cumulativeStatsFilter = { matchMode: "AND" };
+  const sessions = state.sessions || [];
+  const usedMap = {
+    subj: [...new Set(sessions.map(s => s.subject).filter(Boolean))].sort(),
+    exam: [...new Set(sessions.map(s => s.exam).filter(Boolean))].sort(),
+    book: [...new Set(sessions.map(s => s.book).filter(Boolean))].sort(),
+    level: [...new Set(sessions.map(s => s.level).filter(Boolean))].sort(),
+    set: [...new Set(sessions.map(s => s.set).filter(Boolean))].sort(),
+    section: [...new Set(sessions.map(s => s.section).filter(Boolean))].sort()
+  };
+  const usedList = usedMap[fieldKey] || [];
+  const cur = getSelectedItemsForFilter(fieldKey, usedList);
+  state.cumulativeStatsFilter[fieldKey] = usedList.filter(x => !cur.includes(x));
+  saveAllStorage();
+  renderWorkspace();
+}
+
+function clearCumulativeStatsFilterField(fieldKey) {
+  if (!state.cumulativeStatsFilter) state.cumulativeStatsFilter = { matchMode: "AND" };
+  state.cumulativeStatsFilter[fieldKey] = [];
+  saveAllStorage();
+  renderWorkspace();
+}
+
 function setCumulativeStatsFilter(field, val) {
   if (!state.cumulativeStatsFilter) {
     state.cumulativeStatsFilter = { matchMode: "AND" };
   }
-  state.cumulativeStatsFilter[field] = val;
+  if (val === "All") {
+    delete state.cumulativeStatsFilter[field];
+  } else {
+    state.cumulativeStatsFilter[field] = [val];
+  }
   if (field === "subj") {
     state.practiceFilterSubj = val;
   }
@@ -6231,13 +6631,7 @@ function toggleCumulativeStatsMatchMode() {
 
 function clearCumulativeStatsFilters() {
   state.cumulativeStatsFilter = {
-    matchMode: "AND",
-    subj: "All",
-    exam: "All",
-    book: "All",
-    level: "All",
-    set: "All",
-    section: "All"
+    matchMode: "AND"
   };
   state.practiceFilterSubj = "All";
   saveAllStorage();
@@ -6246,8 +6640,7 @@ function clearCumulativeStatsFilters() {
 
 function getCumulativeStatsHTML(filterSubj = "All") {
   const sessions = state.sessions || [];
-  const filter = state.cumulativeStatsFilter || { matchMode: "AND", subj: filterSubj || "All" };
-  if (!filter.subj) filter.subj = filterSubj || "All";
+  const filter = state.cumulativeStatsFilter || { matchMode: "AND" };
   const matchMode = filter.matchMode || "AND";
   const flagFilter = state.analysisFlagFilter || "ALL";
 
@@ -6259,23 +6652,30 @@ function getCumulativeStatsHTML(filterSubj = "All") {
   const usedSets = [...new Set(sessions.map(s => s.set).filter(Boolean))].sort();
   const usedSections = [...new Set(sessions.map(s => s.section).filter(Boolean))].sort();
 
+  const selSubjs = getSelectedItemsForFilter('subj', usedSubjs);
+  const selExams = getSelectedItemsForFilter('exam', usedExams);
+  const selBooks = getSelectedItemsForFilter('book', usedBooks);
+  const selLevels = getSelectedItemsForFilter('level', usedLevels);
+  const selSets = getSelectedItemsForFilter('set', usedSets);
+  const selSections = getSelectedItemsForFilter('section', usedSections);
+
   const hasActiveFilter = Boolean(
-    (filter.subj && filter.subj !== "All") ||
-    (filter.exam && filter.exam !== "All") ||
-    (filter.book && filter.book !== "All") ||
-    (filter.level && filter.level !== "All") ||
-    (filter.set && filter.set !== "All") ||
-    (filter.section && filter.section !== "All")
+    selSubjs.length < usedSubjs.length ||
+    selExams.length < usedExams.length ||
+    selBooks.length < usedBooks.length ||
+    selLevels.length < usedLevels.length ||
+    selSets.length < usedSets.length ||
+    selSections.length < usedSections.length
   );
 
   const filtered = sessions.filter(s => {
     const checks = [];
-    if (filter.subj && filter.subj !== "All") checks.push((s.subject || "General") === filter.subj);
-    if (filter.exam && filter.exam !== "All") checks.push((s.exam || "General Exam") === filter.exam);
-    if (filter.book && filter.book !== "All") checks.push((s.book || "Unassigned Book") === filter.book);
-    if (filter.level && filter.level !== "All") checks.push((s.level || "General Level") === filter.level);
-    if (filter.set && filter.set !== "All") checks.push((s.set || "General Set") === filter.set);
-    if (filter.section && filter.section !== "All") checks.push((s.section || "General Section") === filter.section);
+    if (usedSubjs.length > 0) checks.push(selSubjs.includes(s.subject || "General"));
+    if (usedExams.length > 0) checks.push(selExams.includes(s.exam || "General Exam"));
+    if (usedBooks.length > 0) checks.push(selBooks.includes(s.book || "Unassigned Book"));
+    if (usedLevels.length > 0) checks.push(selLevels.includes(s.level || "General Level"));
+    if (usedSets.length > 0) checks.push(selSets.includes(s.set || "General Set"));
+    if (usedSections.length > 0) checks.push(selSections.includes(s.section || "General Section"));
 
     if (checks.length === 0) return true;
     return matchMode === "OR" ? checks.some(Boolean) : checks.every(Boolean);
@@ -6333,15 +6733,33 @@ function getCumulativeStatsHTML(filterSubj = "All") {
 
   const subjects = ["All", ...getSubjectList()];
 
-  function renderStatsFilter(fieldKey, label, usedList) {
+  function renderFilterCard(fieldKey, label, usedList, selectedList) {
     if (!usedList || usedList.length === 0) return '';
-    const curVal = filter[fieldKey] || 'All';
-    const isFiltered = curVal !== 'All';
+    const isRestricted = selectedList.length < usedList.length;
     return `
-      <select onchange="setCumulativeStatsFilter('${fieldKey}', this.value)" style="font-size:11px;padding:2px 5px;${isFiltered ? 'border-color:var(--status-c);background:var(--surface-3);font-weight:700;' : ''}">
-        <option value="All">${label}: All (${usedList.length})</option>
-        ${usedList.map(v => `<option value="${escapeHtml(v)}" ${curVal === v ? 'selected' : ''}>${label}: ${escapeHtml(v)}</option>`).join('')}
-      </select>
+      <div class="stats-filter-card" style="${isRestricted ? 'border-color:var(--status-c);box-shadow:0 0 0 1px var(--status-c);' : ''}">
+        <div class="stats-filter-card-header">
+          <span>${label} (${selectedList.length}/${usedList.length})</span>
+          <div style="display:flex;gap:3px;">
+            <button type="button" style="padding:1px 5px;font-size:9.5px;" onclick="selectAllCumulativeStatsFilter('${fieldKey}')" title="Select All ${label}">All</button>
+            <button type="button" style="padding:1px 5px;font-size:9.5px;" onclick="invertCumulativeStatsFilter('${fieldKey}')" title="Invert Selection">Invert</button>
+            <button type="button" style="padding:1px 5px;font-size:9.5px;" onclick="clearCumulativeStatsFilterField('${fieldKey}')" title="Deselect All">None</button>
+          </div>
+        </div>
+        <div class="stats-filter-card-body">
+          ${usedList.map(item => {
+            const isChecked = selectedList.includes(item);
+            const count = sessions.filter(s => (s[fieldKey === 'subj' ? 'subject' : fieldKey] || (fieldKey === 'book' ? 'Unassigned Book' : 'General')) === item).length;
+            return `
+              <label style="display:flex;align-items:center;gap:6px;cursor:pointer;padding:2px 0;user-select:none;font-size:11px;">
+                <input type="checkbox" ${isChecked ? 'checked' : ''} onchange="toggleCumulativeStatsFilterItem('${fieldKey}', '${escapeHtml(item)}')">
+                <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;" title="${escapeHtml(item)}">${escapeHtml(item)}</span>
+                <span class="tag" style="font-size:9px;padding:0 3px;">${count}</span>
+              </label>
+            `;
+          }).join('')}
+        </div>
+      </div>
     `;
   }
 
@@ -6352,7 +6770,7 @@ function getCumulativeStatsHTML(filterSubj = "All") {
       <div class="flex-row">
         <span class="tag" style="font-size:10px;">${filtered.length} / ${sessions.length} Sessions</span>
         ${subjects.map(subj => `
-          <button class="${(filter.subj || 'All') === subj ? 'active' : ''}" style="font-size:10px;padding:2px 6px;" onclick="setPracticeFilterSubj('${subj}')">
+          <button class="${(state.practiceFilterSubj || 'All') === subj ? 'active' : ''}" style="font-size:10px;padding:2px 6px;" onclick="setPracticeFilterSubj('${subj}')">
             ${subj}
           </button>
         `).join('')}
@@ -6361,19 +6779,27 @@ function getCumulativeStatsHTML(filterSubj = "All") {
 
     <!-- Multi-Identifier Session Type Filters (Books, Levels, Sets, Union/Intersection) -->
     <details ${hasActiveFilter ? 'open' : ''} class="collapsible-box" style="margin-top:8px;">
-      <summary><span>${getAppIcon('search')} Advanced Session Type Filters (By Books, Levels, Sets, Mode: ${matchMode === 'OR' ? 'Union' : 'Intersection'})</span></summary>
+      <summary><span>${getAppIcon('search')} Advanced Session Type Filters (By Books, Levels, Sets, Mode: ${matchMode === 'OR' ? 'Union' : 'Intersection'}) ${hasActiveFilter ? '<span class="tag" style="background:var(--status-c);color:#fff;font-size:9.5px;margin-left:6px;">Active Filters</span>' : ''}</span></summary>
       <div class="collapsible-body" style="padding:8px;">
-        <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;">
-          <button class="tag" style="cursor:pointer;padding:3px 7px;font-size:11px;" onclick="toggleCumulativeStatsMatchMode()" title="Toggle Intersection (AND: matches all selected filters) vs Union (OR: matches any selected filter)">
-            Mode: <strong>${matchMode === 'OR' ? 'Union (OR)' : 'Intersection (AND)'}</strong>
-          </button>
-          ${renderStatsFilter('subj', 'Subj', usedSubjs)}
-          ${renderStatsFilter('exam', 'Exam', usedExams)}
-          ${renderStatsFilter('book', 'Book', usedBooks)}
-          ${renderStatsFilter('level', 'Level', usedLevels)}
-          ${renderStatsFilter('set', 'Set', usedSets)}
-          ${renderStatsFilter('section', 'Section', usedSections)}
-          ${hasActiveFilter ? `<button style="padding:2px 6px;font-size:10px;color:var(--status-x);border-color:var(--status-x);" onclick="clearCumulativeStatsFilters()">${getAppIcon('del')} [Clear Filters]</button>` : ''}
+        <div class="flex-row" style="justify-content:space-between;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:8px;">
+          <div class="flex-row" style="gap:6px;">
+            <button class="tag" style="cursor:pointer;padding:3px 7px;font-size:11px;" onclick="toggleCumulativeStatsMatchMode()" title="Toggle Intersection (AND: matches all selected filters) vs Union (OR: matches any selected filter)">
+              Mode: <strong>${matchMode === 'OR' ? 'Union (OR)' : 'Intersection (AND)'}</strong>
+            </button>
+            <span style="font-size:11px;color:var(--fg-muted);">
+              ${matchMode === 'OR' ? 'Matches ANY selected checkbox (Union)' : 'Matches ALL selected categories (Intersection)'}
+            </span>
+          </div>
+          ${hasActiveFilter ? `<button style="padding:2px 8px;font-size:10px;color:var(--status-x);border-color:var(--status-x);" onclick="clearCumulativeStatsFilters()">${getAppIcon('del')} [Reset All Filters to All]</button>` : ''}
+        </div>
+
+        <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(190px, 1fr));gap:8px;">
+          ${renderFilterCard('subj', 'Subjects', usedSubjs, selSubjs)}
+          ${renderFilterCard('exam', 'Exams', usedExams, selExams)}
+          ${renderFilterCard('book', 'Books', usedBooks, selBooks)}
+          ${renderFilterCard('level', 'Levels', usedLevels, selLevels)}
+          ${renderFilterCard('set', 'Sets', usedSets, selSets)}
+          ${renderFilterCard('section', 'Sections', usedSections, selSections)}
         </div>
       </div>
     </details>
@@ -6941,6 +7367,22 @@ function getPracticeSessionHTML() {
       </div>
     </details>
 
+    <!-- MARKING MODE & ANSWER KEY CONTROLS TOOLBAR (Item 5) -->
+    <div class="flex-row" style="justify-content:space-between;margin-bottom:8px;padding:6px 10px;background:var(--surface-2);border:1px solid var(--border);border-radius:4px;flex-wrap:wrap;gap:8px;">
+      <div class="flex-row" style="gap:6px;">
+        <button class="${currentSheet.markingMode ? 'active' : ''}" style="font-size:11px;font-weight:700;" onclick="toggleSheetMarkingMode('${activeSession.id}', ${currentSheetIndex})" title="Toggle Marking Mode to enter correct answer keys side-by-side and auto-grade">
+          ${getAppIcon('check')} [Marking Mode: ${currentSheet.markingMode ? 'ENABLED' : 'DISABLED'}]
+        </button>
+        <span style="font-size:11px;color:var(--fg-muted);">
+          ${currentSheet.markingMode ? 'Marking Mode active: Correct keys auto-grade entered answers into [C] or [X]' : 'Click to enable Answer Key column & auto-grading'}
+        </span>
+      </div>
+      <div class="flex-row" style="gap:4px;">
+        <button style="padding:2px 8px;font-size:10.5px;" onclick="openBulkKeyEntryModal('${activeSession.id}', ${currentSheetIndex})" title="Paste continuous or numbered answer key text to auto-grade entire sheet">[Bulk Key Entry...]</button>
+        <button style="padding:2px 8px;font-size:10.5px;color:var(--status-x);border-color:var(--status-x);" onclick="clearSheetKeys('${activeSession.id}', ${currentSheetIndex})" title="Clear all answer keys from current sheet">[Clear Keys]</button>
+      </div>
+    </div>
+
     <!-- OMR SPREADSHEET TABLE (Targeted In-Place Updates, No Scroll Jumps, Single Active Question) -->
     <div class="omr-container">
       <table class="omr-table">
@@ -6948,7 +7390,8 @@ function getPracticeSessionHTML() {
           <tr>
             <th style="width:55px;" title="Click to set question as active">Q#</th>
             <th style="width:55px;">Move</th>
-            <th style="width:220px;">Options (${currentSheet.optionStyle})</th>
+            <th style="width:200px;">Your Answer (${currentSheet.optionStyle})</th>
+            ${currentSheet.markingMode ? `<th style="width:200px;background:var(--surface-3);border-left:2px solid var(--border-dark);">Correct Key (${currentSheet.optionStyle})</th>` : ''}
             <th style="width:155px;">Delta Time</th>
             <th style="width:160px;">Outcome Flag</th>
             <th>Error Diagnosis Matrix Flag</th>
@@ -6997,6 +7440,19 @@ function getPracticeSessionHTML() {
                     </div>
                   ` : ''}
                 </td>
+
+                ${currentSheet.markingMode ? `
+                  <!-- Correct Answer Key Bubbles (Marking Mode) -->
+                  <td style="border-left:2px solid var(--border-dark);background:var(--surface-inset);">
+                    <div style="display:flex;justify-content:center;align-items:center;gap:3px;flex-wrap:wrap;">
+                      ${optLabels.map(opt => `
+                        <button class="omr-key-bubble ${q.correctOption === opt ? 'selected-key' : ''}" data-opt="${opt}" onclick="onOMRCorrectBubbleClick('${activeSession.id}', ${currentSheetIndex}, ${idx}, '${opt}')" title="Mark Correct Key as [${opt}]">
+                          ${opt}
+                        </button>
+                      `).join('')}
+                    </div>
+                  </td>
+                ` : ''}
 
                 <!-- Delta Time Controls & Reset to 0s -->
                 <td>
@@ -7380,7 +7836,17 @@ function renderWorkspace() {
   renderTopNav();
   updateStatusBar();
   bindConceptLinks();
-  requestAnimationFrame(() => triggerMathRender(ws));
+  requestAnimationFrame(() => {
+    triggerMathRender(ws);
+    // Secondary restore to prevent math expansion / KaTeX layout shifts from clamping scroll position
+    const postScrollables = ws.querySelectorAll(".omr-container, .pane-body");
+    postScrollables.forEach((el, idx) => {
+      if (scrollMap[idx]) {
+        if (scrollMap[idx].top > 0) el.scrollTop = scrollMap[idx].top;
+        if (scrollMap[idx].left > 0) el.scrollLeft = scrollMap[idx].left;
+      }
+    });
+  });
 }
 
 function updateNavHighlight() {
