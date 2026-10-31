@@ -6640,8 +6640,8 @@ function clearCumulativeStatsFilters() {
 
 function getCumulativeStatsHTML(filterSubj = "All") {
   const sessions = state.sessions || [];
-  const filter = state.cumulativeStatsFilter || { matchMode: "AND" };
-  const matchMode = filter.matchMode || "AND";
+  const cumFilter = state.cumulativeStatsFilter || { matchMode: "AND" };
+  const matchMode = cumFilter.matchMode || "AND";
   const flagFilter = state.analysisFlagFilter || "ALL";
 
   // Distinct used classifications across all saved sessions
