@@ -1395,7 +1395,7 @@ let state = {
   activeManualPhase2Tab: "logic",
   practiceSettings: {
     exam: "NEET",
-    optionStyle: "ABCD",
+    optionStyle: "1234",
     defaultThresholdSec: 90,
     enableAutoWThreshold: true,
     ttsMode: "delta",
@@ -1421,8 +1421,17 @@ let state = {
     exams: ["JEE Advanced", "JEE Main", "NEET", "IAT / NEST", "Custom Drill"],
     books: ["Coaching Module", "NCERT Textbook", "HC Verma", "Cengage", "DC Pandey", "MS Chouhan", "PYQ 37-Year", "Reference Book"],
     levels: ["Level 1", "Level 2", "Level 3", "Olympiad", "Advanced Mastery"],
-    sets: ["Exercise Drills", "Worked Examples", "Try Yourself", "Illustrations", "Set A", "Set B", "PYQ"],
+    sets: ["Exercise Drills", "Worked Examples", "Try Yourself", "Illustrations", "Set 1", "Set 2", "PYQ"],
     sections: ["Section A", "Section B", "Section C", "Section D", "Numerical"]
+  },
+  cumulativeStatsFilter: {
+    matchMode: "AND",
+    subj: "All",
+    exam: "All",
+    book: "All",
+    level: "All",
+    set: "All",
+    section: "All"
   },
   sessions: [],
   activeSessionId: null,
@@ -1672,6 +1681,31 @@ async function saveAllStorage() {
   updateStatusBar();
 }
 
+function migrateSetsToSet1Set2(targetState) {
+  if (!targetState) return;
+  if (targetState.customMetadata && Array.isArray(targetState.customMetadata.sets)) {
+    targetState.customMetadata.sets = targetState.customMetadata.sets.map(s => {
+      if (s === "Set A") return "Set 1";
+      if (s === "Set B") return "Set 2";
+      return s;
+    });
+    if (!targetState.customMetadata.sets.includes("Set 1")) targetState.customMetadata.sets.push("Set 1");
+    if (!targetState.customMetadata.sets.includes("Set 2")) targetState.customMetadata.sets.push("Set 2");
+  }
+  if (Array.isArray(targetState.sessions)) {
+    targetState.sessions.forEach(sess => {
+      if (sess.set === "Set A") sess.set = "Set 1";
+      if (sess.set === "Set B") sess.set = "Set 2";
+      if (Array.isArray(sess.sheets)) {
+        sess.sheets.forEach(sh => {
+          if (sh.set === "Set A") sh.set = "Set 1";
+          if (sh.set === "Set B") sh.set = "Set 2";
+        });
+      }
+    });
+  }
+}
+
 async function loadAllStorage() {
   if (navigator.storage && navigator.storage.persist) {
     try { await navigator.storage.persist(); } catch (e) {}
@@ -1717,7 +1751,7 @@ async function loadAllStorage() {
     state = Object.assign({}, state, loaded);
     state.practiceSettings = Object.assign({
       exam: "NEET",
-      optionStyle: "ABCD",
+      optionStyle: "1234",
       defaultThresholdSec: 90,
       enableAutoWThreshold: true,
       ttsMode: "delta",
@@ -1743,9 +1777,10 @@ async function loadAllStorage() {
       exams: ["JEE Advanced", "JEE Main", "NEET", "IAT / NEST", "Custom Drill"],
       books: ["Coaching Module", "NCERT Textbook", "HC Verma", "Cengage", "DC Pandey", "MS Chouhan", "PYQ 37-Year", "Reference Book"],
       levels: ["Level 1", "Level 2", "Level 3", "Olympiad", "Advanced Mastery"],
-      sets: ["Exercise Drills", "Worked Examples", "Try Yourself", "Illustrations", "Set A", "Set B", "PYQ"],
+      sets: ["Exercise Drills", "Worked Examples", "Try Yourself", "Illustrations", "Set 1", "Set 2", "PYQ"],
       sections: ["Section A", "Section B", "Section C", "Section D", "Numerical"]
     }, state.customMetadata || {});
+    migrateSetsToSet1Set2(state);
     state.timerOnly = Object.assign({
       mode: "stopwatch",
       targetDurationSec: 3600,
@@ -2114,9 +2149,9 @@ function getManualHTML() {
     <h2 id="sec-p3-drilling">5. Phase 3: Drilling, Flagging, Algorithm Tracing &amp; D0 Exit Gate (GPS Stages 2, 3 &amp; 4)</h2>
     <div class="box">
       <div class="box-header"><span>STEP-BY-STEP D0 PROBLEM DRILLING &amp; DEBUGGING ENGINE</span><span class="tag">GPS STAGES 2–4</span></div>
-      <p><strong>What We Are Doing in Phase 3:</strong> Building a formula table does not mean you can solve MCQs in 90 seconds. In Phase 3—with your Obsidian Chapter API Table open beside you—you drill through two specific <code>D0</code> question buckets (<strong>Set A: In-Chapter Worked Examples</strong> &rarr; <strong>Set B: Module Drills &amp; Older PYQs</strong>) until you pass the <code>D0</code> Exit Gate (<code>GPS Stage 4</code>).</p>
+      <p><strong>What We Are Doing in Phase 3:</strong> Building a formula table does not mean you can solve MCQs in 90 seconds. In Phase 3—with your Obsidian Chapter API Table open beside you—you drill through two specific <code>D0</code> question buckets (<strong>Set 1: In-Chapter Worked Examples</strong> &rarr; <strong>Set 2: Module Drills &amp; Older PYQs</strong>) until you pass the <code>D0</code> Exit Gate (<code>GPS Stage 4</code>).</p>
 
-      <h4>Step 3.1 — Practice Set A: The 30 / 70 In-Chapter Worked Example Split (GPS Stage 2: D0_P3_EX)</h4>
+      <h4>Step 3.1 — Practice Set 1: The 30 / 70 In-Chapter Worked Example Split (GPS Stage 2: D0_P3_EX)</h4>
       <ul>
         <li><strong>First 20–30% of Worked Examples (Uncovered Trace):</strong> Keep the printed solution uncovered. Read it line-by-line like code: (1) Identify given input variables and hidden English conditions (e.g., <em>"starts from rest"</em> $\\implies u=0$), (2) Identify which formula from your Obsidian API Table bridges inputs to output, and (3) Spot any sign convention or unit trap. <em>If a new constraint appears that wasn't in your lecture, add it to your Obsidian API Table immediately.</em></li>
         <li><strong>Remaining 70% of Worked Examples (Covered Attempt):</strong> Cover the solution with paper and solve from scratch on your Left Scratchpad under a timer. Grade every single attempt immediately using the <strong>Universal Flagging System (<code>[C]</code>, <code>[W]</code>, <code>[X]</code>)</strong> below.</li>
@@ -2124,7 +2159,7 @@ function getManualHTML() {
       </ul>
 
       <h4>Step 3.2 — Grade Every Attempt Immediately: The Decoupled <code>[C]</code> / <code>[W]</code> / <code>[X]</code> Flags</h4>
-      <p>Apply these three flags to every worked example (in Set A), module drill (in Set B), and PYQ you attempt:</p>
+      <p>Apply these three flags to every worked example (in Set 1), module drill (in Set 2), and PYQ you attempt:</p>
       <ul>
         <li><span class="tag flag-C">[C] Confirmed</span> <strong>Solved 100% correctly, optimal method, under target exam time</strong> ($\\le 90\\text{s}$ NEET; $\\le 2\\text{m}$ JEE/IAT). <em>Action:</em> Do nothing. Ignore until <code>D21</code> cumulative mixed mocks.</li>
         <li><span class="tag flag-W">[W] Weak (Speed Pipeline)</span> <strong>Correct answer, BUT slow, used ugly brute-force algebra, hesitated, or guessed 50/50.</strong> <em>Immediate D0 Action:</em> <strong>Zero Anki and Zero YouTube.</strong> Inspect the printed solution, write a 1-line shortcut or 1-2-3 Problem Recipe in Obsidian, and add the Question ID to your <strong><code>[W]</code> Speed-Drill Queue</strong> (to be re-tested under a strict stopwatch on <code>D3</code>).</li>
@@ -2171,13 +2206,13 @@ function getManualHTML() {
         </ol>
       </div>
 
-      <h4>Step 3.4 — Practice Set B: Unsolved Module Drills &amp; The D0 PYQ Exit Gate (GPS Stage 3 &rarr; Stage 4)</h4>
-      <p>After finishing the worked examples (Set A), move to the unsolved questions at the back of your module and PYQ book. <strong>How PYQs are split between Day 0 and Day 3:</strong></p>
+      <h4>Step 3.4 — Practice Set 2: Unsolved Module Drills &amp; The D0 PYQ Exit Gate (GPS Stage 3 &rarr; Stage 4)</h4>
+      <p>After finishing the worked examples (Set 1), move to the unsolved questions at the back of your module and PYQ book. <strong>How PYQs are split between Day 0 and Day 3:</strong></p>
       <ul>
         <li><strong>Tier 1 — Topic-Wise Module Drills (Executed on <code>D0</code>, GPS Stage 3):</strong> Solve <strong>20–30 Level-1 / Topic-wise coaching module questions</strong> in Physics/Math/Chem (or <strong>40–50 NCERT-based MCQs</strong> in Biology) to build tool-selection speed.</li>
         <li><strong>Tier 2 — The <code>D0</code> Timed PYQ Gate (Older PYQs Executed on <code>D0</code>, GPS Stage 3):</strong> Take <strong>15–20 older Chapter PYQs</strong> (e.g., from 5–10 years ago) and solve them under a strict exam stopwatch ($\\le 90\\text{s}$ NEET; $\\le 2\\text{m}$ JEE).</li>
         <li><strong>Tier 3 — The <code>D3</code> Unseen PYQ Reserve (Recent PYQs Saved Strictly for Day 3):</strong> Hold back the <strong>most recent 3–5 years of Chapter PYQs (20–30 questions)</strong> completely untouched on <code>D0</code>. You will use this unseen reserve 3 days later on <strong><code>D3</code> (Phase 4)</strong> to test true retention after a 72-hour memory gap.</li>
-        <li><strong>The Hard <code>D0</code> Exit Gate (<code>GPS Stage 4: D0_DONE</code>):</strong> A chapter's <code>D0</code> acquisition phase is officially complete when you score <strong>$\\ge 75\\text{--}80\\%$ accuracy on Tier 2 Timed PYQs</strong>, log all <code>[W]</code> and <code>[X]</code> questions from Set A and Set B into Obsidian/Anki, and trash your paper scratchpad. Mark the chapter as <strong><code>Stage 4: D0_DONE</code></strong> in the GPS Tracker.</li>
+        <li><strong>The Hard <code>D0</code> Exit Gate (<code>GPS Stage 4: D0_DONE</code>):</strong> A chapter's <code>D0</code> acquisition phase is officially complete when you score <strong>$\\ge 75\\text{--}80\\%$ accuracy on Tier 2 Timed PYQs</strong>, log all <code>[W]</code> and <code>[X]</code> questions from Set 1 and Set 2 into Obsidian/Anki, and trash your paper scratchpad. Mark the chapter as <strong><code>Stage 4: D0_DONE</code></strong> in the GPS Tracker.</li>
       </ul>
     </div>
 
@@ -2253,7 +2288,7 @@ function getManualHTML() {
       </table>
 
       <h3>Post-Practice Error Diagnosis Matrix (Run Immediately After Grading ANY Worked Example Set, D0 Module/PYQ Drill, D3 Unseen PYQ Test, or D21 Mock)</h3>
-      <p>Whenever you finish grading a set of questions (Set A worked examples on <code>D0</code>, Set B module/PYQ drills on <code>D0</code>, unseen PYQs on <code>D3</code>, or a mock on <code>D21</code>), route every non-<code>[C]</code> question through this 4-row matrix before closing your desk:</p>
+      <p>Whenever you finish grading a set of questions (Set 1 worked examples on <code>D0</code>, Set 2 module/PYQ drills on <code>D0</code>, unseen PYQs on <code>D3</code>, or a mock on <code>D21</code>), route every non-<code>[C]</code> question through this 4-row matrix before closing your desk:</p>
       <table>
         <thead><tr><th>Error Type</th><th>What Actually Happened</th><th>Immediate Fix Action (Do This Today)</th></tr></thead>
         <tbody>
@@ -3059,25 +3094,68 @@ function getStorageHTML() {
       </ul>
     </div>
 
+    <!-- 2. FILE ROLES IN BACKUP ARCHIVE (task.md Item 14) -->
+    <div class="box">
+      <div class="box-header"><span>FILE ROLES IN THE BACKUP ARCHIVE</span><span class="tag">ARCHITECTURE</span></div>
+      <p style="font-size:11.5px;color:var(--fg-muted);margin-bottom:8px;">Every native <code>backup.zip</code> export bundles four decoupled, dedicated files for complete offline persistence and external auditing:</p>
+      <table style="width:100%;font-size:11.5px;">
+        <thead>
+          <tr><th style="width:130px;">File Name</th><th style="width:110px;">Format</th><th>Role &amp; Exact System Function</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>state.json</code></td>
+            <td><span class="tag" style="background:var(--status-c);color:#fff;">JSON State</span></td>
+            <td><strong>Master Application State &amp; Database:</strong> Contains the entire live state of the application. Stores all 129 STEM chapters with their GPS progress stages (Stage 0 to Stage 9), scheduled and completed calendar events, side quests, user preferences, custom metadata (exams, books, levels, sets, sections), audio/TTS intervals, and every single practice drill session across all sheets (question rows, selected options, delta times, original times, backup times, [C]/[W]/[X] flags, error diagnosis matrix flags). <em>This is the primary file parsed by the Restore engine to restore 100% of your data.</em></td>
+          </tr>
+          <tr>
+            <td><code>chapters.csv</code></td>
+            <td><span class="tag">CSV Table</span></td>
+            <td><strong>Syllabus Progress Spreadsheet:</strong> Tabular spreadsheet representation of all 129 STEM chapters. Columns include Subject, Chapter Name, Type (Root Foundation vs Derivative Application), Category (Logic-Heavy, Data-Heavy, Hybrid Organic), GPS Stage (0–9), D0 Acquisition Date, Accuracy %, and W/X Question Log. Designed for direct import into Excel, Google Sheets, or LibreOffice Calc for independent external auditing.</td>
+          </tr>
+          <tr>
+            <td><code>sessions.csv</code></td>
+            <td><span class="tag">CSV Table</span></td>
+            <td><strong>Drill &amp; Question Log Spreadsheet:</strong> Granular question-level export of every practice session. Includes Session ID, Subject, Chapter, Exam, Book, Level, Set, Section, Sheet Name, Question #, Selected Option, Delta Time (s), Outcome Flag ([C]/[W]/[X]), Error Matrix Category, and Backup Delta Times.</td>
+          </tr>
+          <tr>
+            <td><code>manual.txt</code></td>
+            <td><span class="tag">Markdown Doc</span></td>
+            <td><strong>Complete Execution Manual:</strong> Standalone copy of the complete STEM Study &amp; Exam Execution Manual. Documents the 2 Foundational Directives, the 5 Resolved Contradictions, the GPS 10-Stage Pipeline, Subject Protocols (Formula API, NCERT 4-Pass, Organic Dual-Capture), the 30/70 Solved Example Split, the Decoupled [W]/[X] Graduation Rules, Spaced Review Algorithms (D1, D3, D7, D21), and the 4-Row Error Autopsy Matrix. Formatted for viewing in Obsidian, Notion, or any text editor.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
     <div class="split-2">
       <div class="box">
-        <div class="box-header"><span>2. EXPORT NATIVE BACKUP.ZIP</span></div>
-        <p>Generates a standard binary <code>backup.zip</code> archive directly in the browser containing three files: <code>state.json</code> (full tracker, chapter stages, calendar, the later queue), <code>chapters.csv</code> (spreadsheet export), and <code>manual.md</code> (markdown manual).</p>
+        <div class="box-header"><span>3. EXPORT NATIVE BACKUP.ZIP</span></div>
+        <p>Generates a standard binary <code>backup.zip</code> archive directly in the browser containing <code>state.json</code>, <code>chapters.csv</code>, <code>sessions.csv</code>, and <code>manual.txt</code>:</p>
         <div class="flex-row" style="margin-top:10px;">
-          <button onclick="exportBackupZip()">Download backup.zip</button>
-          <button onclick="exportJSONOnly()">Download state.json</button>
+          <button type="button" onclick="exportBackupZip()">${getAppIcon('storage')} Download backup.zip</button>
+          <button type="button" onclick="exportJSONOnly()">${getAppIcon('storage')} Download state.json</button>
         </div>
       </div>
 
       <div class="box">
-        <div class="box-header"><span>3. RESTORE FROM BACKUP.ZIP OR STATE.JSON</span></div>
-        <p>Select a previously exported <code>backup.zip</code> or <code>state.json</code> file to restore all chapters, GPS stages, and scheduled calendar records across all three storage layers:</p>
-        <div class="flex-row" style="margin-top:10px;">
-          <input type="file" id="backupFileInput" accept=".zip,.json">
-          <button onclick="importBackupFile()">Load Backup</button>
-          <button onclick="resetFactoryDefaults()">Reset to Defaults</button>
+        <div class="box-header"><span>4. RESTORE FROM BACKUP.ZIP OR STATE.JSON</span></div>
+        <p>Select a previously exported <code>backup.zip</code> or <code>state.json</code> file to restore all chapters, GPS stages, and practice sessions across all three storage layers without page reload:</p>
+        <div class="flex-row" style="margin-top:10px;gap:6px;">
+          <input type="file" id="backupFileInput" accept=".zip,.json" onchange="importBackupFile(this)">
+          <button type="button" onclick="importBackupFile()">${getAppIcon('check')} Load Backup</button>
+          <button type="button" onclick="resetFactoryDefaults()">${getAppIcon('del')} Reset to Defaults</button>
         </div>
-        <div id="importMsg" style="margin-top:8px;font-family:var(--font-mono);font-size:11px;"></div>
+
+        <details class="collapsible-box" style="margin-top:10px;">
+          <summary><span>${getAppIcon('edit')} Direct JSON Text Paste (Mobile / Termux Fallback)</span></summary>
+          <div class="collapsible-body" style="padding:8px;">
+            <p style="font-size:11px;color:var(--fg-muted);margin-bottom:6px;">Paste the contents of <code>state.json</code> directly here to restore without triggering mobile browser file-picker reloads:</p>
+            <textarea id="jsonPasteRestoreArea" rows="4" style="width:100%;font-family:var(--font-mono);font-size:11px;" placeholder="Paste state.json text here..."></textarea>
+            <button type="button" style="margin-top:6px;" onclick="restoreFromPastedJSON()">${getAppIcon('check')} Restore from Pasted JSON</button>
+          </div>
+        </details>
+
+        <div id="importMsg" style="margin-top:8px;font-family:var(--font-mono);font-size:11.5px;"></div>
       </div>
     </div>
   </div>`;
@@ -3838,17 +3916,19 @@ function onOMRBubbleClick(sessionId, sheetIndex, qIndex, optionVal) {
 
   const isTimerRunning = Boolean(activeTimerState.isRunning && activeTimerState.type === "practice" && activeTimerState.sessionId === sessionId);
 
-  // Clicking an already selected option triggers Undo / Blank confirmation workflow
+  // Clicking an already selected option
   if (q.selectedOption === optionVal) {
     if (!isTimerRunning) {
+      // When stopped: prompt before undoing / blanking
       const ok = confirm(`Timer is stopped. Are you sure you want to undo / blank Question Q${q.qNum}?`);
       if (!ok) return;
+      promptBlankOrUndoQuestion(sessionId, sheetIndex, qIndex, 'undo');
     }
-    promptBlankOrUndoQuestion(sessionId, sheetIndex, qIndex, 'undo');
+    // When timer is running: preserve the selected answer without accidental clearing
     return;
   }
 
-  // When timer is stopped, confirm before changing an existing answer
+  // When timer is stopped, prompt ONLY when attempting to change an already registered answer
   if (!isTimerRunning && q.selectedOption !== null && q.selectedOption !== optionVal) {
     const ok = confirm(`Timer is stopped. Confirm changing Question Q${q.qNum} answer from [${q.selectedOption}] to [${optionVal}]?`);
     if (!ok) return;
@@ -3863,11 +3943,13 @@ function onOMRBubbleClick(sessionId, sheetIndex, qIndex, optionVal) {
   const deltaSec = Math.max(0, sessionSec - (sheet.questionStartSessionSec || 0) + (sheet.nudgeDeltaSec || 0));
 
   // Line 15: If an old choice on the OMR is modified, the delta since the past question should get added to that question
-  const isOldChoice = (sheet.activeQuestionIndex !== undefined && qIndex < sheet.activeQuestionIndex && q.selectedOption !== null);
+  const isOldChoice = (sheet.activeQuestionIndex !== undefined && qIndex < sheet.activeQuestionIndex && (q.selectedOption !== null || q.flag !== null || q.deltaTimeSec > 0));
 
   if (isOldChoice) {
     q.selectedOption = optionVal;
-    q.deltaTimeSec = (q.deltaTimeSec || 0) + deltaSec;
+    if (isTimerRunning && deltaSec > 0) {
+      q.deltaTimeSec = (q.deltaTimeSec || 0) + deltaSec;
+    }
   } else {
     // Current active question answered
     q.selectedOption = optionVal;
@@ -3882,9 +3964,9 @@ function onOMRBubbleClick(sessionId, sheetIndex, qIndex, optionVal) {
       q.flag = "W";
     }
 
-    // Advance active question pointer to next unanswered question
+    // Advance active question pointer to next unanswered/unflagged question
     let nextIdx = qIndex + 1;
-    while (nextIdx < sheet.questions.length && sheet.questions[nextIdx].selectedOption !== null) {
+    while (nextIdx < sheet.questions.length && ((sheet.questions[nextIdx].selectedOption !== null || sheet.questions[nextIdx].flag !== null) && !sheet.questions[nextIdx].isBlanked)) {
       nextIdx++;
     }
     if (nextIdx < sheet.questions.length) {
@@ -3899,7 +3981,7 @@ function onOMRBubbleClick(sessionId, sheetIndex, qIndex, optionVal) {
   sheet.currentDeltaMs = 0;
   appAudioTTS.lastDispatchedDeltaSec = -1;
 
-  if (sheet.enableBeeps !== false) appAudioTTS.playSyntheticBeep();
+  if (sheet.enableBeeps !== false && isTimerRunning) appAudioTTS.playSyntheticBeep();
 
   saveAllStorage();
 
@@ -3912,12 +3994,19 @@ function onOMRBubbleClick(sessionId, sheetIndex, qIndex, optionVal) {
     const deltaInp = rowEl.querySelector('.delta-val-input');
     if (deltaInp) deltaInp.value = q.deltaTimeSec || 0;
 
+    rowEl.querySelectorAll('.btn-flag').forEach(btn => {
+      const f = btn.dataset.flag;
+      btn.classList.toggle('active-c', f === 'C' && q.flag === 'C');
+      btn.classList.toggle('active-w', f === 'W' && q.flag === 'W');
+      btn.classList.toggle('active-x', f === 'X' && q.flag === 'X');
+    });
+
     // Clean active row update without element leakage or height expansion
     updateActiveQuestionDOM(sessionId, sheetIndex, sheet.activeQuestionIndex);
 
     const ansCountEl = document.getElementById('practiceAnsweredCount');
     if (ansCountEl) {
-      ansCountEl.textContent = `${sheet.questions.filter(x => x.selectedOption !== null && !x.isBlanked).length} / ${sheet.questions.length}`;
+      ansCountEl.textContent = `${sheet.questions.filter(x => (x.selectedOption !== null || x.flag !== null) && !x.isBlanked).length} / ${sheet.questions.length}`;
     }
     const deltaDisp = document.getElementById("practiceDeltaTimerDisp");
     if (deltaDisp) deltaDisp.textContent = "00:00";
@@ -3975,88 +4064,7 @@ function toggleQuestionFlag(sessionId, sheetIndex, qIndex, flagVal) {
   const q = sheet.questions[qIndex];
   const isTimerRunning = Boolean(activeTimerState.isRunning && activeTimerState.type === "practice" && activeTimerState.sessionId === sessionId);
 
-  if (flagVal === "X") {
-    if (!isTimerRunning && q.selectedOption !== null && q.flag !== "X") {
-      const ok = confirm(`Timer is stopped. Confirm marking Question Q${q.qNum} as [X] (Wrong)?`);
-      if (!ok) return;
-    }
-    // If the question is already X and user clicks X on an old question, allow toggle off
-    const isCurrentlyActive = (sheet.activeQuestionIndex === qIndex);
-    const wasAlreadyX = (q.flag === "X");
-
-    if (wasAlreadyX && !isCurrentlyActive) {
-      q.flag = null;
-    } else {
-      q.flag = "X";
-    }
-    q.flagOverridden = true;
-    q.isBlanked = false;
-    q.isAttempted = true;
-
-    // Save its delta time and advance to next question
-    const sessionElapsed = activeTimerState.isRunning
-      ? (Date.now() - activeTimerState.startTime) + activeTimerState.accumulatedSessionMs
-      : (sheet.elapsedSessionMs || 0);
-    const sessionSec = Math.floor(sessionElapsed / 1000);
-    const deltaSec = Math.max(0, sessionSec - (sheet.questionStartSessionSec || 0) + (sheet.nudgeDeltaSec || 0));
-
-    const isOldChoice = (sheet.activeQuestionIndex !== undefined && qIndex < sheet.activeQuestionIndex && (q.selectedOption !== null || q.deltaTimeSec > 0));
-
-    if (isOldChoice) {
-      if (deltaSec > 0) {
-        q.deltaTimeSec = (q.deltaTimeSec || 0) + deltaSec;
-      }
-    } else {
-      if (q.deltaTimeSec === 0 || !q.deltaTimeSec) {
-        q.deltaTimeSec = deltaSec;
-        q.originalTimeSec = deltaSec;
-      }
-      // Advance active question to next unconsidered/unanswered question
-      let nextIdx = qIndex + 1;
-      while (nextIdx < sheet.questions.length && ((sheet.questions[nextIdx].selectedOption !== null || sheet.questions[nextIdx].flag !== null) && !sheet.questions[nextIdx].isBlanked)) {
-        nextIdx++;
-      }
-      if (nextIdx < sheet.questions.length) {
-        sheet.activeQuestionIndex = nextIdx;
-      }
-    }
-
-    // Reset delta zero-point for the next question
-    sheet.questionStartSessionSec = sessionSec;
-    sheet.nudgeDeltaSec = 0;
-    sheet.currentDeltaSec = 0;
-    sheet.currentDeltaMs = 0;
-    appAudioTTS.lastDispatchedDeltaSec = -1;
-    if (sheet.enableBeeps !== false) appAudioTTS.playSyntheticBeep();
-
-    saveAllStorage();
-
-    // In-place targeted DOM updates
-    const rowEl = document.getElementById(`omr_row_${sessionId}_${sheetIndex}_${qIndex}`);
-    if (rowEl) {
-      rowEl.querySelectorAll('.btn-flag').forEach(btn => {
-        btn.classList.toggle('active-c', q.flag === 'C');
-        btn.classList.toggle('active-w', q.flag === 'W');
-        btn.classList.toggle('active-x', q.flag === 'X');
-      });
-      const deltaInp = rowEl.querySelector('.delta-val-input');
-      if (deltaInp) deltaInp.value = q.deltaTimeSec || 0;
-
-      updateActiveQuestionDOM(sessionId, sheetIndex, sheet.activeQuestionIndex);
-
-      const ansCountEl = document.getElementById('practiceAnsweredCount');
-      if (ansCountEl) {
-        ansCountEl.textContent = `${sheet.questions.filter(x => (x.selectedOption !== null || x.flag !== null) && !x.isBlanked).length} / ${sheet.questions.length}`;
-      }
-      const deltaDisp = document.getElementById("practiceDeltaTimerDisp");
-      if (deltaDisp) deltaDisp.textContent = "00:00";
-    } else {
-      renderWorkspace();
-    }
-    return;
-  }
-
-  // Outcome Flag toggles for C and W
+  // Prompt ONLY when attempting to change or remove an already registered flag
   if (!isTimerRunning && q.flag) {
     if (q.flag === flagVal) {
       const ok = confirm(`Timer is stopped. Confirm removing [${flagVal}] flag from Question Q${q.qNum}?`);
@@ -4067,23 +4075,77 @@ function toggleQuestionFlag(sessionId, sheetIndex, qIndex, flagVal) {
     }
   }
 
-  q.flag = (q.flag === flagVal) ? null : flagVal;
+  // If already flagged with flagVal and question is not currently active, allow toggle off
+  const isCurrentlyActive = (sheet.activeQuestionIndex === qIndex);
+  const wasAlreadyFlag = (q.flag === flagVal);
+
+  if (wasAlreadyFlag && !isCurrentlyActive) {
+    q.flag = null;
+  } else {
+    q.flag = flagVal;
+  }
   q.flagOverridden = true;
   q.isBlanked = false;
   q.isAttempted = true;
+
+  // Save its delta time and advance to next question (for ALL flags: C, W, or X)
+  const sessionElapsed = activeTimerState.isRunning
+    ? (Date.now() - activeTimerState.startTime) + activeTimerState.accumulatedSessionMs
+    : (sheet.elapsedSessionMs || 0);
+  const sessionSec = Math.floor(sessionElapsed / 1000);
+  const deltaSec = Math.max(0, sessionSec - (sheet.questionStartSessionSec || 0) + (sheet.nudgeDeltaSec || 0));
+
+  const isOldChoice = (sheet.activeQuestionIndex !== undefined && qIndex < sheet.activeQuestionIndex && (q.selectedOption !== null || q.flag !== null || q.deltaTimeSec > 0));
+
+  if (isOldChoice) {
+    if (isTimerRunning && deltaSec > 0) {
+      q.deltaTimeSec = (q.deltaTimeSec || 0) + deltaSec;
+    }
+  } else {
+    if (q.deltaTimeSec === 0 || !q.deltaTimeSec) {
+      q.deltaTimeSec = deltaSec;
+      q.originalTimeSec = deltaSec;
+    }
+    // Advance active question to next unconsidered/unanswered question
+    let nextIdx = qIndex + 1;
+    while (nextIdx < sheet.questions.length && ((sheet.questions[nextIdx].selectedOption !== null || sheet.questions[nextIdx].flag !== null) && !sheet.questions[nextIdx].isBlanked)) {
+      nextIdx++;
+    }
+    if (nextIdx < sheet.questions.length) {
+      sheet.activeQuestionIndex = nextIdx;
+    }
+  }
+
+  // Reset delta zero-point for the next question
+  sheet.questionStartSessionSec = sessionSec;
+  sheet.nudgeDeltaSec = 0;
+  sheet.currentDeltaSec = 0;
+  sheet.currentDeltaMs = 0;
+  appAudioTTS.lastDispatchedDeltaSec = -1;
+  if (sheet.enableBeeps !== false && isTimerRunning) appAudioTTS.playSyntheticBeep();
+
   saveAllStorage();
 
+  // In-place targeted DOM updates
   const rowEl = document.getElementById(`omr_row_${sessionId}_${sheetIndex}_${qIndex}`);
   if (rowEl) {
     rowEl.querySelectorAll('.btn-flag').forEach(btn => {
-      btn.classList.toggle('active-c', q.flag === 'C');
-      btn.classList.toggle('active-w', q.flag === 'W');
-      btn.classList.toggle('active-x', q.flag === 'X');
+      const f = btn.dataset.flag;
+      btn.classList.toggle('active-c', f === 'C' && q.flag === 'C');
+      btn.classList.toggle('active-w', f === 'W' && q.flag === 'W');
+      btn.classList.toggle('active-x', f === 'X' && q.flag === 'X');
     });
+    const deltaInp = rowEl.querySelector('.delta-val-input');
+    if (deltaInp) deltaInp.value = q.deltaTimeSec || 0;
+
+    updateActiveQuestionDOM(sessionId, sheetIndex, sheet.activeQuestionIndex);
+
     const ansCountEl = document.getElementById('practiceAnsweredCount');
     if (ansCountEl) {
       ansCountEl.textContent = `${sheet.questions.filter(x => (x.selectedOption !== null || x.flag !== null) && !x.isBlanked).length} / ${sheet.questions.length}`;
     }
+    const deltaDisp = document.getElementById("practiceDeltaTimerDisp");
+    if (deltaDisp) deltaDisp.textContent = "00:00";
     const badge = document.getElementById(`flag_badge_${q.qNum}`);
     if (badge) badge.innerHTML = '';
   } else {
@@ -4107,10 +4169,10 @@ function selectQuestionErrorType(sessionId, sheetIndex, qIndex, errType) {
   const rowEl = document.getElementById(`omr_row_${sessionId}_${sheetIndex}_${qIndex}`);
   if (rowEl) {
     rowEl.querySelectorAll('.btn-flag').forEach(btn => {
-      btn.classList.remove('active-c', 'active-w', 'active-x');
-      if (q.flag === 'C' && btn.textContent.includes('C')) btn.classList.add('active-c');
-      if (q.flag === 'W' && btn.textContent.includes('W')) btn.classList.add('active-w');
-      if (q.flag === 'X' && btn.textContent.includes('X')) btn.classList.add('active-x');
+      const f = btn.dataset.flag;
+      btn.classList.toggle('active-c', f === 'C' && q.flag === 'C');
+      btn.classList.toggle('active-w', f === 'W' && q.flag === 'W');
+      btn.classList.toggle('active-x', f === 'X' && q.flag === 'X');
     });
   } else {
     renderWorkspace();
@@ -5307,7 +5369,7 @@ function createPracticeSession(exam, subject, chapterId, book, level, set, secti
     type: "d0",
     startQ: qStart,
     endQ: qEnd,
-    optionStyle: optionStyle || state.practiceSettings.optionStyle || "ABCD",
+    optionStyle: optionStyle || state.practiceSettings.optionStyle || "1234",
     thresholdSec: parseInt(thresholdSec) || state.practiceSettings.defaultThresholdSec || 90,
     enableAutoWThreshold: autoW !== false,
     activeQuestionIndex: 0,
@@ -5848,9 +5910,11 @@ function getPracticeAnalysisHTML(session) {
     ? validScopeQuestions.slice(firstIdx, lastIdx + 1)
     : [];
 
-  // Scoped Outcome Flag Filtering (C, W, X, W+X, ALL)
+  // Scoped Outcome Flag Filtering (C, CW, W, X, W+X, ALL)
   if (flagFilter === "C") {
     filledQuestions = filledQuestions.filter(q => q.flag === "C");
+  } else if (flagFilter === "CW") {
+    filledQuestions = filledQuestions.filter(q => q.flag === "C" || q.flag === "W");
   } else if (flagFilter === "W") {
     filledQuestions = filledQuestions.filter(q => q.flag === "W");
   } else if (flagFilter === "X") {
@@ -5990,6 +6054,7 @@ function getPracticeAnalysisHTML(session) {
         <span class="tag" style="font-size:10px;">OUTCOME SCOPE:</span>
         <button class="${flagFilter === 'ALL' ? 'active' : ''}" style="font-size:10px;padding:2px 6px;" onclick="setAnalysisFlagFilter('ALL')">All Outcomes</button>
         <button class="${flagFilter === 'C' ? 'active' : ''}" style="font-size:10px;padding:2px 6px;color:var(--status-c);font-weight:700;" onclick="setAnalysisFlagFilter('C')">[C] Confirmed Only</button>
+        <button class="${flagFilter === 'CW' ? 'active' : ''}" style="font-size:10px;padding:2px 6px;color:var(--status-c);font-weight:700;" onclick="setAnalysisFlagFilter('CW')">[C + W] Non-Errors</button>
         <button class="${flagFilter === 'W' ? 'active' : ''}" style="font-size:10px;padding:2px 6px;color:var(--status-w);font-weight:700;" onclick="setAnalysisFlagFilter('W')">[W] Speed Only</button>
         <button class="${flagFilter === 'X' ? 'active' : ''}" style="font-size:10px;padding:2px 6px;color:var(--status-x);font-weight:700;" onclick="setAnalysisFlagFilter('X')">[X] Errors Only</button>
         <button class="${flagFilter === 'WX' ? 'active' : ''}" style="font-size:10px;padding:2px 6px;color:var(--status-x);font-weight:700;" onclick="setAnalysisFlagFilter('WX')">[W + X] All Issues</button>
@@ -6144,16 +6209,82 @@ function getPracticeAnalysisHTML(session) {
   </div>`;
 }
 
-// --- CUMULATIVE STATS RENDERER (Line 27) ---
+// --- CUMULATIVE STATS RENDERER (Line 27, task.md Item 5 & 6) ---
+function setCumulativeStatsFilter(field, val) {
+  if (!state.cumulativeStatsFilter) {
+    state.cumulativeStatsFilter = { matchMode: "AND" };
+  }
+  state.cumulativeStatsFilter[field] = val;
+  if (field === "subj") {
+    state.practiceFilterSubj = val;
+  }
+  saveAllStorage();
+  renderWorkspace();
+}
+
+function toggleCumulativeStatsMatchMode() {
+  if (!state.cumulativeStatsFilter) state.cumulativeStatsFilter = { matchMode: "AND" };
+  state.cumulativeStatsFilter.matchMode = (state.cumulativeStatsFilter.matchMode === "OR") ? "AND" : "OR";
+  saveAllStorage();
+  renderWorkspace();
+}
+
+function clearCumulativeStatsFilters() {
+  state.cumulativeStatsFilter = {
+    matchMode: "AND",
+    subj: "All",
+    exam: "All",
+    book: "All",
+    level: "All",
+    set: "All",
+    section: "All"
+  };
+  state.practiceFilterSubj = "All";
+  saveAllStorage();
+  renderWorkspace();
+}
+
 function getCumulativeStatsHTML(filterSubj = "All") {
   const sessions = state.sessions || [];
-  const filtered = filterSubj === "All"
-    ? sessions
-    : sessions.filter(s => s.subject === filterSubj);
+  const filter = state.cumulativeStatsFilter || { matchMode: "AND", subj: filterSubj || "All" };
+  if (!filter.subj) filter.subj = filterSubj || "All";
+  const matchMode = filter.matchMode || "AND";
   const flagFilter = state.analysisFlagFilter || "ALL";
+
+  // Distinct used classifications across all saved sessions
+  const usedSubjs = [...new Set(sessions.map(s => s.subject).filter(Boolean))].sort();
+  const usedExams = [...new Set(sessions.map(s => s.exam).filter(Boolean))].sort();
+  const usedBooks = [...new Set(sessions.map(s => s.book).filter(Boolean))].sort();
+  const usedLevels = [...new Set(sessions.map(s => s.level).filter(Boolean))].sort();
+  const usedSets = [...new Set(sessions.map(s => s.set).filter(Boolean))].sort();
+  const usedSections = [...new Set(sessions.map(s => s.section).filter(Boolean))].sort();
+
+  const hasActiveFilter = Boolean(
+    (filter.subj && filter.subj !== "All") ||
+    (filter.exam && filter.exam !== "All") ||
+    (filter.book && filter.book !== "All") ||
+    (filter.level && filter.level !== "All") ||
+    (filter.set && filter.set !== "All") ||
+    (filter.section && filter.section !== "All")
+  );
+
+  const filtered = sessions.filter(s => {
+    const checks = [];
+    if (filter.subj && filter.subj !== "All") checks.push((s.subject || "General") === filter.subj);
+    if (filter.exam && filter.exam !== "All") checks.push((s.exam || "General Exam") === filter.exam);
+    if (filter.book && filter.book !== "All") checks.push((s.book || "Unassigned Book") === filter.book);
+    if (filter.level && filter.level !== "All") checks.push((s.level || "General Level") === filter.level);
+    if (filter.set && filter.set !== "All") checks.push((s.set || "General Set") === filter.set);
+    if (filter.section && filter.section !== "All") checks.push((s.section || "General Section") === filter.section);
+
+    if (checks.length === 0) return true;
+    return matchMode === "OR" ? checks.some(Boolean) : checks.every(Boolean);
+  });
 
   let totalQuestionsAttempted = 0;
   let totalConfirmed = 0;
+  let totalSpeed = 0;
+  let totalBlocked = 0;
   let totalDeltaSec = 0;
   let timedQuestionsCount = 0;
   let totalMem = 0, totalConc = 0, totalRead = 0, totalSpd = 0;
@@ -6163,12 +6294,15 @@ function getCumulativeStatsHTML(filterSubj = "All") {
       (sh.questions || []).forEach(q => {
         if ((q.selectedOption !== null || q.flag !== null) && !q.isBlanked) {
           if (flagFilter === "C" && q.flag !== "C") return;
+          if (flagFilter === "CW" && q.flag !== "C" && q.flag !== "W") return;
           if (flagFilter === "W" && q.flag !== "W") return;
           if (flagFilter === "X" && q.flag !== "X") return;
           if (flagFilter === "WX" && q.flag !== "W" && q.flag !== "X") return;
 
           totalQuestionsAttempted++;
           if (q.flag === 'C') totalConfirmed++;
+          if (q.flag === 'W') totalSpeed++;
+          if (q.flag === 'X') totalBlocked++;
           if (q.deltaTimeSec > 0) {
             totalDeltaSec += q.deltaTimeSec;
             timedQuestionsCount++;
@@ -6199,24 +6333,57 @@ function getCumulativeStatsHTML(filterSubj = "All") {
 
   const subjects = ["All", ...getSubjectList()];
 
+  function renderStatsFilter(fieldKey, label, usedList) {
+    if (!usedList || usedList.length === 0) return '';
+    const curVal = filter[fieldKey] || 'All';
+    const isFiltered = curVal !== 'All';
+    return `
+      <select onchange="setCumulativeStatsFilter('${fieldKey}', this.value)" style="font-size:11px;padding:2px 5px;${isFiltered ? 'border-color:var(--status-c);background:var(--surface-3);font-weight:700;' : ''}">
+        <option value="All">${label}: All (${usedList.length})</option>
+        ${usedList.map(v => `<option value="${escapeHtml(v)}" ${curVal === v ? 'selected' : ''}>${label}: ${escapeHtml(v)}</option>`).join('')}
+      </select>
+    `;
+  }
+
   return `
   <div class="box" style="margin-top:14px;">
     <div class="box-header">
       <span>CUMULATIVE DRILL METRICS &amp; MULTI-AXIS RADAR (LIFETIME / ALL SESSIONS)</span>
       <div class="flex-row">
+        <span class="tag" style="font-size:10px;">${filtered.length} / ${sessions.length} Sessions</span>
         ${subjects.map(subj => `
-          <button class="${filterSubj === subj ? 'active' : ''}" style="font-size:10px;padding:2px 6px;" onclick="setPracticeFilterSubj('${subj}')">
+          <button class="${(filter.subj || 'All') === subj ? 'active' : ''}" style="font-size:10px;padding:2px 6px;" onclick="setPracticeFilterSubj('${subj}')">
             ${subj}
           </button>
         `).join('')}
       </div>
     </div>
 
-    <!-- Scoped Flag Filtering Toolbar -->
-    <div class="flex-row" style="gap:4px;margin-top:8px;padding-bottom:6px;border-bottom:1px solid var(--border);">
+    <!-- Multi-Identifier Session Type Filters (Books, Levels, Sets, Union/Intersection) -->
+    <details ${hasActiveFilter ? 'open' : ''} class="collapsible-box" style="margin-top:8px;">
+      <summary><span>${getAppIcon('search')} Advanced Session Type Filters (By Books, Levels, Sets, Mode: ${matchMode === 'OR' ? 'Union' : 'Intersection'})</span></summary>
+      <div class="collapsible-body" style="padding:8px;">
+        <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;">
+          <button class="tag" style="cursor:pointer;padding:3px 7px;font-size:11px;" onclick="toggleCumulativeStatsMatchMode()" title="Toggle Intersection (AND: matches all selected filters) vs Union (OR: matches any selected filter)">
+            Mode: <strong>${matchMode === 'OR' ? 'Union (OR)' : 'Intersection (AND)'}</strong>
+          </button>
+          ${renderStatsFilter('subj', 'Subj', usedSubjs)}
+          ${renderStatsFilter('exam', 'Exam', usedExams)}
+          ${renderStatsFilter('book', 'Book', usedBooks)}
+          ${renderStatsFilter('level', 'Level', usedLevels)}
+          ${renderStatsFilter('set', 'Set', usedSets)}
+          ${renderStatsFilter('section', 'Section', usedSections)}
+          ${hasActiveFilter ? `<button style="padding:2px 6px;font-size:10px;color:var(--status-x);border-color:var(--status-x);" onclick="clearCumulativeStatsFilters()">${getAppIcon('del')} [Clear Filters]</button>` : ''}
+        </div>
+      </div>
+    </details>
+
+    <!-- Scoped Flag Filtering Toolbar (including [C + W] Non-Errors) -->
+    <div class="flex-row" style="gap:4px;margin-top:8px;padding-bottom:6px;border-bottom:1px solid var(--border);flex-wrap:wrap;">
       <span class="tag" style="font-size:10px;">OUTCOME SCOPE:</span>
       <button class="${flagFilter === 'ALL' ? 'active' : ''}" style="font-size:10px;padding:2px 6px;" onclick="setAnalysisFlagFilter('ALL')">All Outcomes</button>
       <button class="${flagFilter === 'C' ? 'active' : ''}" style="font-size:10px;padding:2px 6px;color:var(--status-c);font-weight:700;" onclick="setAnalysisFlagFilter('C')">[C] Confirmed Only</button>
+      <button class="${flagFilter === 'CW' ? 'active' : ''}" style="font-size:10px;padding:2px 6px;color:var(--status-c);font-weight:700;" onclick="setAnalysisFlagFilter('CW')">[C + W] Non-Errors</button>
       <button class="${flagFilter === 'W' ? 'active' : ''}" style="font-size:10px;padding:2px 6px;color:var(--status-w);font-weight:700;" onclick="setAnalysisFlagFilter('W')">[W] Speed Only</button>
       <button class="${flagFilter === 'X' ? 'active' : ''}" style="font-size:10px;padding:2px 6px;color:var(--status-x);font-weight:700;" onclick="setAnalysisFlagFilter('X')">[X] Errors Only</button>
       <button class="${flagFilter === 'WX' ? 'active' : ''}" style="font-size:10px;padding:2px 6px;color:var(--status-x);font-weight:700;" onclick="setAnalysisFlagFilter('WX')">[W + X] All Issues</button>
@@ -6227,7 +6394,7 @@ function getCumulativeStatsHTML(filterSubj = "All") {
         <div class="session-summary-grid">
           <div class="stat-card-mini">
             <div class="stat-card-val">${filtered.length}</div>
-            <div class="stat-card-lbl">Total Sessions</div>
+            <div class="stat-card-lbl">Matching Sessions</div>
           </div>
           <div class="stat-card-mini">
             <div class="stat-card-val">${totalQuestionsAttempted}</div>
@@ -6275,7 +6442,7 @@ function getDefaultSettingsHTML() {
     exams: ["JEE Advanced", "JEE Main", "NEET", "IAT / NEST", "Custom Drill"],
     books: ["Coaching Module", "NCERT Textbook", "HC Verma", "Cengage", "DC Pandey", "MS Chouhan", "PYQ 37-Year", "Reference Book"],
     levels: ["Level 1", "Level 2", "Level 3", "Olympiad", "Advanced Mastery"],
-    sets: ["Exercise Drills", "Worked Examples", "Try Yourself", "Illustrations", "Set A", "Set B", "PYQ"],
+    sets: ["Exercise Drills", "Worked Examples", "Try Yourself", "Illustrations", "Set 1", "Set 2", "PYQ"],
     sections: ["Section A", "Section B", "Section C", "Section D", "Numerical"]
   };
   const t = state.timerOnly || {};
@@ -6504,7 +6671,7 @@ function getPracticeSessionHTML() {
       exams: ["JEE Advanced", "JEE Main", "NEET", "IAT / NEST", "Custom Drill"],
       books: ["Coaching Module", "NCERT Textbook", "HC Verma", "Cengage", "DC Pandey", "MS Chouhan", "PYQ 37-Year", "Reference Book"],
       levels: ["Level 1", "Level 2", "Level 3", "Olympiad", "Advanced Mastery"],
-      sets: ["Exercise Drills", "Worked Examples", "Try Yourself", "Illustrations", "Set A", "Set B", "PYQ"],
+      sets: ["Exercise Drills", "Worked Examples", "Try Yourself", "Illustrations", "Set 1", "Set 2", "PYQ"],
       sections: ["Section A", "Section B", "Section C", "Section D", "Numerical"]
     };
 
@@ -6534,7 +6701,7 @@ function getPracticeSessionHTML() {
                     <button style="padding:0 4px;font-size:9px;" onclick="promptAddCustomMetadata('exams')">${getAppIcon('add')} + Custom</button>
                   </div>
                   <select id="newSessExam" style="width:100%;margin-top:2px;" onchange="onExamPresetSelect(this.value)">
-                    ${(m.exams || []).map(e => `<option value="${e}">${e}</option>`).join('')}
+                    ${(m.exams || []).map(e => `<option value="${e}" ${e === (state.practiceSettings?.exam || "NEET") ? 'selected' : ''}>${e}</option>`).join('')}
                   </select>
                 </div>
 
@@ -6619,8 +6786,8 @@ function getPracticeSessionHTML() {
                 <div>
                   <label style="font-size:11px;font-weight:700;">Options Style:</label>
                   <select id="newSessOptStyle" style="width:100%;margin-top:2px;">
-                    <option value="ABCD">A, B, C, D</option>
-                    <option value="1234">1, 2, 3, 4</option>
+                    <option value="1234" ${(state.practiceSettings?.optionStyle || "1234") === "1234" ? 'selected' : ''}>1, 2, 3, 4</option>
+                    <option value="ABCD" ${(state.practiceSettings?.optionStyle || "1234") === "ABCD" ? 'selected' : ''}>A, B, C, D</option>
                   </select>
                 </div>
                 <div>
@@ -6947,7 +7114,7 @@ function onExamPresetSelect(examName) {
   if (examName === "NEET") {
     if (startQInp) startQInp.value = 1;
     if (endQInp) endQInp.value = 45;
-    if (optStyleSel) optStyleSel.value = "ABCD";
+    if (optStyleSel) optStyleSel.value = "1234";
   } else if (examName === "JEE Main") {
     if (startQInp) startQInp.value = 1;
     if (endQInp) endQInp.value = 30;
@@ -6955,11 +7122,11 @@ function onExamPresetSelect(examName) {
   } else if (examName === "JEE Advanced") {
     if (startQInp) startQInp.value = 1;
     if (endQInp) endQInp.value = 18;
-    if (optStyleSel) optStyleSel.value = "ABCD";
+    if (optStyleSel) optStyleSel.value = "1234";
   } else if (examName === "IAT / NEST") {
     if (startQInp) startQInp.value = 1;
     if (endQInp) endQInp.value = 15;
-    if (optStyleSel) optStyleSel.value = "ABCD";
+    if (optStyleSel) optStyleSel.value = "1234";
   }
 }
 
@@ -6981,7 +7148,7 @@ function onStartNewSessionSubmit() {
   const section = document.getElementById("newSessSection")?.value || "Section A";
   const startQ = parseInt(document.getElementById("newSessStartQ")?.value) || 1;
   const endQ = parseInt(document.getElementById("newSessEndQ")?.value) || (startQ + 29);
-  const optStyle = document.getElementById("newSessOptStyle")?.value || "ABCD";
+  const optStyle = document.getElementById("newSessOptStyle")?.value || "1234";
   const thresh = parseInt(document.getElementById("newSessThreshold")?.value) || 90;
 
   createPracticeSession(exam, subject, chapterId, book, level, set, section, startQ, endQ, optStyle, thresh, true);
@@ -7651,8 +7818,79 @@ function exportJSONOnly() {
   a.click();
 }
 
-async function importBackupFile() {
-  const input = document.getElementById("backupFileInput");
+function extractStateFromZip(bytes) {
+  // Method 1: Local file headers traversal
+  const view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
+  let offset = 0;
+  while (offset + 30 <= bytes.length) {
+    const sig = view.getUint32(offset, true);
+    if (sig !== 0x04034b50) break;
+    const compMethod = view.getUint16(offset + 8, true);
+    const compSize = view.getUint32(offset + 18, true);
+    const uncompSize = view.getUint32(offset + 22, true);
+    const nameLen = view.getUint16(offset + 26, true);
+    const extraLen = view.getUint16(offset + 28, true);
+    const nameBytes = bytes.subarray(offset + 30, offset + 30 + nameLen);
+    const fileName = new TextDecoder("utf-8", { fatal: false }).decode(nameBytes);
+    const dataStart = offset + 30 + nameLen + extraLen;
+    const dataBytes = bytes.subarray(dataStart, dataStart + compSize);
+    if (fileName.includes("state.json") || fileName.endsWith(".json")) {
+      if (compMethod === 0) {
+        const jsonStr = new TextDecoder("utf-8", { fatal: false }).decode(dataBytes);
+        try {
+          const parsed = JSON.parse(jsonStr);
+          if (parsed && (Array.isArray(parsed.chapters) || Array.isArray(parsed.sessions))) return parsed;
+        } catch (e) {}
+      }
+    }
+    offset = dataStart + compSize;
+  }
+
+  // Method 2: Fallback scanning for valid tracker state JSON inside archive
+  const str = new TextDecoder("utf-8", { fatal: false }).decode(bytes);
+  const startMarkers = ['{"chapters"', '{"theme"', '{"practiceSettings"', '{"customMetadata"'];
+  for (const marker of startMarkers) {
+    const idx = str.indexOf(marker);
+    if (idx !== -1) {
+      let depth = 0, endIdx = -1;
+      for (let i = idx; i < str.length; i++) {
+        if (str[i] === '{') depth++;
+        else if (str[i] === '}') {
+          depth--;
+          if (depth === 0) { endIdx = i + 1; break; }
+        }
+      }
+      if (endIdx !== -1) {
+        try {
+          const parsed = JSON.parse(str.slice(idx, endIdx));
+          if (parsed && (Array.isArray(parsed.chapters) || Array.isArray(parsed.sessions))) return parsed;
+        } catch (e) {}
+      }
+    }
+  }
+  return null;
+}
+
+async function applyRestoredState(parsed, sourceLabel) {
+  if (!parsed || (!Array.isArray(parsed.chapters) && !Array.isArray(parsed.sessions))) {
+    throw new Error("Invalid tracker backup format. Missing chapters or sessions data.");
+  }
+  // Preserve the current active tab so the page does NOT jump to Dashboard or appear to reload
+  const currentTab = (state.panes && state.panes[0]) ? state.panes[0] : "storage";
+  state = Object.assign({}, state, parsed);
+  state.panes[0] = currentTab;
+  migrateSetsToSet1Set2(state);
+  await saveAllStorage();
+  renderWorkspace();
+
+  const msgEl = document.getElementById("importMsg");
+  if (msgEl) {
+    msgEl.innerHTML = `<span style="color:var(--status-c);font-weight:700;">[RESTORED SUCCESSFULLY from ${escapeHtml(sourceLabel)}] ${(state.chapters || []).length} chapters and ${(state.sessions || []).length} sessions restored cleanly without page reload!</span>`;
+  }
+}
+
+async function importBackupFile(fileInputEl) {
+  const input = fileInputEl || document.getElementById("backupFileInput");
   const msg = document.getElementById("importMsg");
   if (!input || !input.files || !input.files[0]) {
     if (msg) msg.textContent = "Please select a file first.";
@@ -7663,41 +7901,36 @@ async function importBackupFile() {
     if (file.name.endsWith(".json")) {
       const text = await file.text();
       const parsed = JSON.parse(text);
-      if (Array.isArray(parsed.chapters)) {
-        state = Object.assign({}, state, parsed);
-        await saveAllStorage();
-        renderWorkspace();
-        if (msg) msg.textContent = "RESTORED STATE.JSON SUCCESSFULLY!";
-        return;
-      }
+      await applyRestoredState(parsed, file.name);
     } else if (file.name.endsWith(".zip")) {
       const buf = await file.arrayBuffer();
       const bytes = new Uint8Array(buf);
-      const str = new TextDecoder("utf-8", { fatal: false }).decode(bytes);
-      const startTag = '{"theme"';
-      const idx = str.indexOf(startTag);
-      if (idx !== -1) {
-        let depth = 0, endIdx = -1;
-        for (let i = idx; i < str.length; i++) {
-          if (str[i] === '{') depth++;
-          else if (str[i] === '}') {
-            depth--;
-            if (depth === 0) { endIdx = i + 1; break; }
-          }
-        }
-        if (endIdx !== -1) {
-          const parsed = JSON.parse(str.slice(idx, endIdx));
-          state = Object.assign({}, state, parsed);
-          await saveAllStorage();
-          renderWorkspace();
-          if (msg) msg.textContent = "RESTORED FROM BACKUP.ZIP SUCCESSFULLY!";
-          return;
-        }
+      const parsed = extractStateFromZip(bytes);
+      if (!parsed) {
+        throw new Error("Could not find valid state.json inside ZIP archive.");
       }
-      throw new Error("Could not find valid JSON state within ZIP archive.");
+      await applyRestoredState(parsed, file.name);
+    } else {
+      throw new Error("Unsupported file type. Please select a .zip or .json backup file.");
     }
   } catch (err) {
-    if (msg) msg.textContent = "IMPORT FAILED: " + err.message;
+    if (msg) msg.innerHTML = `<span style="color:var(--status-x);font-weight:700;">IMPORT FAILED: ${escapeHtml(err.message)}</span>`;
+  }
+}
+
+async function restoreFromPastedJSON() {
+  const area = document.getElementById("jsonPasteRestoreArea");
+  const msg = document.getElementById("importMsg");
+  if (!area || !area.value.trim()) {
+    if (msg) msg.innerHTML = `<span style="color:var(--status-x);">Please paste JSON text into the box first.</span>`;
+    return;
+  }
+  try {
+    const parsed = JSON.parse(area.value.trim());
+    await applyRestoredState(parsed, "Pasted JSON Text");
+    area.value = "";
+  } catch (err) {
+    if (msg) msg.innerHTML = `<span style="color:var(--status-x);font-weight:700;">PASTE RESTORE FAILED: ${escapeHtml(err.message)}</span>`;
   }
 }
 
