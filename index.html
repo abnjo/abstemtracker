@@ -1493,6 +1493,7 @@ let state = {
     optionStyle: "1234",
     defaultThresholdSec: 90,
     enableAutoWThreshold: true,
+    flagIconMode: "inherit",
     ttsMode: "delta",
     deltaIntervals: "30,60,90,120",
     fullIntervals: "300,600,900",
@@ -1849,6 +1850,7 @@ async function loadAllStorage() {
       optionStyle: "1234",
       defaultThresholdSec: 90,
       enableAutoWThreshold: true,
+      flagIconMode: "inherit",
       ttsMode: "delta",
       deltaIntervals: "30,60,90,120",
       fullIntervals: "300,600,900",
@@ -4082,10 +4084,12 @@ function onOMRBubbleClick(sessionId, sheetIndex, qIndex, optionVal) {
     }
   }
 
-  // Marking Mode Auto-Evaluation (task.md Item 5)
+  // Marking Mode Auto-Evaluation (Preserve [W] warning/speed flag if answer is correct, but override to [X] if incorrect)
   if (q.correctOption !== null && q.correctOption !== undefined) {
     if (String(q.selectedOption) === String(q.correctOption)) {
-      q.flag = "C";
+      if (q.flag !== "W") {
+        q.flag = "C";
+      }
     } else {
       q.flag = "X";
     }
@@ -4168,10 +4172,12 @@ function onOMRCorrectBubbleClick(sessionId, sheetIndex, qIndex, optionVal) {
 
   q.correctOption = optionVal;
 
-  // Auto-grade against entered option if present
+  // Auto-grade against entered option if present (Preserve [W] warning/speed flag if answer is correct, but override to [X] if incorrect)
   if (q.selectedOption !== null && q.selectedOption !== undefined && !q.isBlanked) {
     if (String(q.selectedOption) === String(q.correctOption)) {
-      q.flag = 'C';
+      if (q.flag !== 'W') {
+        q.flag = 'C';
+      }
     } else {
       q.flag = 'X';
     }
@@ -4236,7 +4242,7 @@ function openBulkKeyEntryModal(sessionId, sheetIndex) {
   const title = `Bulk Answer Key Entry — ${escapeHtml(sheet.name || 'Current Sheet')}`;
   const bodyHtml = `
     <div style="font-size:12px;display:flex;flex-direction:column;gap:8px;">
-      <p style="color:var(--fg-muted);">Paste or type the answer keys for the <strong>${sheet.questions.length}</strong> questions on this sheet. The tracker will automatically compare them with your selected options and mark questions as <strong>[C]</strong> (matching) or <strong>[X]</strong> (wrong).</p>
+      <p style="color:var(--fg-muted);">Paste or type the answer keys for the <strong>${sheet.questions.length}</strong> questions on this sheet. The tracker will automatically compare them with your selected options and mark questions as <strong>[C]</strong> (matching, preserving [W] speed flags) or <strong>[X]</strong> (wrong).</p>
       
       <div style="font-size:11px;background:var(--surface-3);padding:6px 8px;border:1px solid var(--border);">
         <strong>Supported Formats:</strong>
@@ -4315,7 +4321,9 @@ function applyBulkKeyEntry(sessionId, sheetIndex) {
     q.correctOption = tokens[i];
     if (q.selectedOption !== null && !q.isBlanked) {
       if (String(q.selectedOption) === String(q.correctOption)) {
-        q.flag = 'C';
+        if (q.flag !== 'W') {
+          q.flag = 'C';
+        }
       } else {
         q.flag = 'X';
       }
@@ -5163,7 +5171,18 @@ function setPracticeSessionSubView(viewName) {
 
 // --- ICON ENGINE (Minimal Monochrome Vector SVG Mode throughout website) ---
 function getAppIcon(type, textFallback = "") {
-  const iconMode = (state.iconMode !== 'text' && state.practiceSettings?.iconMode !== 'text');
+  let iconMode = (state.iconMode !== 'text' && state.practiceSettings?.iconMode !== 'text');
+
+  // Question Outcome Flags specific override (independent of whether icons are enabled for the rest of site)
+  if (type === 'flag-c' || type === 'flag-w' || type === 'flag-x') {
+    const flagMode = state.practiceSettings?.flagIconMode || state.flagIconMode || 'inherit';
+    if (flagMode === 'icons') {
+      iconMode = true;
+    } else if (flagMode === 'text') {
+      iconMode = false;
+    }
+  }
+
   if (!iconMode) {
     if (textFallback) return textFallback;
     switch (type) {
@@ -5291,6 +5310,25 @@ function toggleGlobalIconMode() {
 
 function toggleIconMode() {
   toggleGlobalIconMode();
+}
+
+function toggleFlagIconMode() {
+  if (!state.practiceSettings) state.practiceSettings = {};
+  const current = state.practiceSettings.flagIconMode || 'inherit';
+  let next;
+  if (current === 'icons') {
+    next = 'text';
+  } else if (current === 'text') {
+    next = 'icons';
+  } else {
+    // If inherit, toggle opposite of current effective site icon mode
+    const siteIsIcon = (state.iconMode !== 'text' && state.practiceSettings?.iconMode !== 'text');
+    next = siteIsIcon ? 'text' : 'icons';
+  }
+  state.practiceSettings.flagIconMode = next;
+  state.flagIconMode = next;
+  saveAllStorage();
+  renderWorkspace();
 }
 
 function renderTopNav() {
@@ -6925,11 +6963,21 @@ function getDefaultSettingsHTML() {
           </div>
 
           <div style="margin-top:10px;">
-            <label>Interface Icon Mode (Item 22):</label>
+            <label>Interface Icon Mode (Site-wide):</label>
             <select id="defIconMode" style="width:100%;margin-top:2px;">
               <option value="icons" ${s.iconMode !== 'text' ? 'selected' : ''}>Monochrome Vector Icons (Clean SVGs)</option>
               <option value="text" ${s.iconMode === 'text' ? 'selected' : ''}>Text Labels Only ([C], [W], [X])</option>
             </select>
+          </div>
+
+          <div style="margin-top:10px;">
+            <label>Question Outcome Flags Icon Mode (Question Flags [C] / [W] / [X] only):</label>
+            <select id="defFlagIconMode" style="width:100%;margin-top:2px;">
+              <option value="inherit" ${(!s.flagIconMode || s.flagIconMode === 'inherit') ? 'selected' : ''}>Inherit from Site Icon Mode</option>
+              <option value="icons" ${s.flagIconMode === 'icons' ? 'selected' : ''}>Icons Only (Force SVG Icons for [C], [W], [X])</option>
+              <option value="text" ${s.flagIconMode === 'text' ? 'selected' : ''}>Text Only (Force Text Labels [C], [W], [X])</option>
+            </select>
+            <small style="color:var(--fg-muted);font-size:10.5px;display:block;margin-top:2px;">Controls whether Question Outcome Flags ([C], [W], [X]) use SVG icons or text, independent of whether icons are enabled for the rest of the site.</small>
           </div>
         </div>
       </details>
@@ -7058,6 +7106,8 @@ function saveDefaultSettingsMenu() {
   state.practiceSettings.optionStyle = document.getElementById("defOptStyle")?.value || "ABCD";
   state.practiceSettings.defaultQCount = parseInt(document.getElementById("defQCount")?.value) || 30;
   state.practiceSettings.iconMode = document.getElementById("defIconMode")?.value || "icons";
+  state.practiceSettings.flagIconMode = document.getElementById("defFlagIconMode")?.value || "inherit";
+  state.flagIconMode = state.practiceSettings.flagIconMode;
 
   state.practiceSettings.ttsMode = document.getElementById("defTTSMode")?.value || "delta";
   state.practiceSettings.deltaIntervals = document.getElementById("defDeltaIntervals")?.value || "30,60,90,120";
@@ -7374,10 +7424,13 @@ function getPracticeSessionHTML() {
           ${getAppIcon('check')} [Marking Mode: ${currentSheet.markingMode ? 'ENABLED' : 'DISABLED'}]
         </button>
         <span style="font-size:11px;color:var(--fg-muted);">
-          ${currentSheet.markingMode ? 'Marking Mode active: Correct keys auto-grade entered answers into [C] or [X]' : 'Click to enable Answer Key column & auto-grading'}
+          ${currentSheet.markingMode ? 'Marking Mode active: Correct keys auto-grade entered answers into [C] or [X] (preserves [W])' : 'Click to enable Answer Key column & auto-grading'}
         </span>
       </div>
       <div class="flex-row" style="gap:4px;">
+        <button style="padding:2px 8px;font-size:10.5px;" onclick="toggleFlagIconMode()" title="Toggle Question Outcome Flag buttons between SVG icons and text [C]/[W]/[X] (independent of rest of site)">
+          ${getAppIcon('icon-mode')} [Flag Icons: ${state.practiceSettings?.flagIconMode === 'text' ? 'TEXT' : (state.practiceSettings?.flagIconMode === 'icons' ? 'ICONS' : 'AUTO')}]
+        </button>
         <button style="padding:2px 8px;font-size:10.5px;" onclick="openBulkKeyEntryModal('${activeSession.id}', ${currentSheetIndex})" title="Paste continuous or numbered answer key text to auto-grade entire sheet">[Bulk Key Entry...]</button>
         <button style="padding:2px 8px;font-size:10.5px;color:var(--status-x);border-color:var(--status-x);" onclick="clearSheetKeys('${activeSession.id}', ${currentSheetIndex})" title="Clear all answer keys from current sheet">[Clear Keys]</button>
       </div>
@@ -7393,8 +7446,13 @@ function getPracticeSessionHTML() {
             <th style="width:200px;">Your Answer (${currentSheet.optionStyle})</th>
             ${currentSheet.markingMode ? `<th style="width:200px;background:var(--surface-3);border-left:2px solid var(--border-dark);">Correct Key (${currentSheet.optionStyle})</th>` : ''}
             <th style="width:155px;">Delta Time</th>
-            <th style="width:160px;">Outcome Flag</th>
-            <th>Error Diagnosis Matrix Flag</th>
+            <th style="width:175px;" title="Outcome Flags ([C] Confirmed, [W] Speed Warning, [X] Wrong). Click button to toggle icons vs text for flags only.">
+              Outcome Flag
+              <button type="button" class="tag" style="cursor:pointer;padding:1px 5px;font-size:9.5px;font-weight:700;margin-left:4px;" onclick="toggleFlagIconMode()" title="Toggle icons vs text specifically for outcome flag buttons">
+                ${state.practiceSettings?.flagIconMode === 'text' ? 'Text' : (state.practiceSettings?.flagIconMode === 'icons' ? 'Icons' : 'Auto')}
+              </button>
+            </th>
+            <th title="Underlying Error Diagnosis Matrix Reason (Memory, Concept, Reading, Speed)">Error Diagnosis Reason</th>
             <th style="width:50px;">Act</th>
           </tr>
         </thead>
