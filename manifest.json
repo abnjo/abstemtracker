@@ -1,0 +1,68 @@
+{
+  "name": "AB STEM Tracker",
+  "short_name": "STEM Tracker",
+  "description": "Rigorous STEM Study, Practice Session Timer & Spaced Review Execution Engine",
+  "id": "ab-stem-tracker",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "theme_color": "#0a0a0a",
+  "background_color": "#0a0a0a",
+  "categories": ["education", "productivity", "utilities"],
+  "icons": [
+    {
+      "src": "resources/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "resources/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "resources/icon-maskable-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "resources/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "resources/stem.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Timer & Questions",
+      "short_name": "Practice",
+      "description": "Start or resume timed question practice session",
+      "url": "./index.html?tab=practice",
+      "icons": [{ "src": "resources/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Timer Only",
+      "short_name": "Timer",
+      "description": "Stopwatch, Pomodoro and interval audio TTS timer",
+      "url": "./index.html?tab=timer",
+      "icons": [{ "src": "resources/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "GPS Tracker",
+      "short_name": "GPS",
+      "description": "Chapter acquisition and review milestone stages",
+      "url": "./index.html?tab=tracker",
+      "icons": [{ "src": "resources/icon-192.png", "sizes": "192x192" }]
+    }
+  ]
+}

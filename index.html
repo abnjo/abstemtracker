@@ -4,10 +4,23 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ab's stem manual</title>
-<!-- KaTeX LaTeX Formula Rendering -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
-<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
-<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+<meta name="description" content="Offline-first STEM study system, question-level timing, spaced repetition, Obsidian sync & syllabus tracker">
+<meta name="theme-color" content="#0a0a0a">
+<meta name="color-scheme" content="dark light">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="STEM Tracker">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/svg+xml" href="resources/stem.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="resources/favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="resources/favicon-16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="resources/apple-touch-icon.png">
+<link rel="shortcut icon" href="resources/favicon.ico">
+<!-- KaTeX LaTeX Formula Rendering (Offline Local Bundle with CDN Fallback) -->
+<link rel="stylesheet" href="resources/katex/katex.min.css" onerror="this.onerror=null;this.href='https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css'">
+<script defer src="resources/katex/katex.min.js" onerror="this.onerror=null;this.src='https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js'"></script>
+<script defer src="resources/katex/contrib/auto-render.min.js" onerror="this.onerror=null;this.src='https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js'"></script>
 <style>
 :root {
   --bg: #f6f8fa;
@@ -1115,7 +1128,7 @@ mark { background: var(--fg); color: var(--bg); padding: 0 2px; }
 
 <div class="topbar">
   <div class="flex-row">
-    <span class="brand">ab's stem manual</span>
+    <span class="brand"><img src="resources/stem.svg" width="16" height="16" alt="AB Logo" style="vertical-align:-2px;margin-right:6px;display:inline-block;">ab's stem manual</span>
     <div class="nav-tabs" id="mainNav">
       <button data-tab="dashboard" class="active">Dashboard</button>
       <button data-tab="timer">[Timer Only]</button>
@@ -1131,6 +1144,7 @@ mark { background: var(--fg); color: var(--bg); padding: 0 2px; }
     </div>
   </div>
   <div class="toolbar-right">
+    <button id="pwaInstallBtn" onclick="installPwaApp()" style="display:none;font-size:11px;padding:3px 7px;border-color:var(--status-c);color:var(--status-c);" title="Install AB STEM Tracker to your device/homescreen">[Install App]</button>
     <button id="globalIconModeBtn" onclick="toggleGlobalIconMode()" style="font-size:11px;padding:3px 7px;" title="Toggle Icons vs Text Mode Everywhere">[Mode: Icons]</button>
     <input type="text" id="globalSearch" placeholder="Search manual, concepts, FAQs...">
     <label style="font-family:var(--font-mono);font-size:11px;">Panes:</label>
@@ -1148,6 +1162,11 @@ mark { background: var(--fg); color: var(--bg); padding: 0 2px; }
 
 <div class="statusbar">
   <div id="storageStatus">STORAGE: SYNCED (COOKIES + LOCALSTORAGE + INDEXEDDB)</div>
+  <div id="networkPwaStatus" style="display:flex;gap:10px;align-items:center;">
+    <span id="pwaBadge" style="opacity:0.85;">PWA: ACTIVE</span>
+    <span style="opacity:0.4;">|</span>
+    <span id="networkBadge">ONLINE</span>
+  </div>
   <div id="statsStatus">ACTIVE CHAPTERS: 0 | DUE TODAY: 0 | SYLLABUS DONE: 0%</div>
 </div>
 
@@ -5210,6 +5229,7 @@ function getAppIcon(type, textFallback = "") {
       case 'refresh': return '[Reload]';
       case 'theme': return '[Theme]';
       case 'icon-mode': return '[Mode]';
+      case 'install': return '[Install]';
       default: return '';
     }
   }
@@ -5292,6 +5312,8 @@ function getAppIcon(type, textFallback = "") {
       return `<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" style="display:inline-block;vertical-align:middle;margin-right:3px;"><polygon points="5 3 19 12 5 21 5 3"/></svg>START`;
     case 'pause':
       return `<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" style="display:inline-block;vertical-align:middle;margin-right:3px;"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>PAUSE`;
+    case 'install':
+      return `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-1px;margin-right:3px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>`;
     default:
       return '';
   }
@@ -5366,6 +5388,11 @@ function renderTopNav() {
   const themeBtn = document.getElementById("themeBtn");
   if (themeBtn) {
     themeBtn.innerHTML = `${isIcon ? getAppIcon('theme') : ''}Invert Theme`;
+  }
+
+  const installBtn = document.getElementById("pwaInstallBtn");
+  if (installBtn) {
+    installBtn.innerHTML = `${isIcon ? getAppIcon('install') : ''}[Install App]`;
   }
 }
 
@@ -8508,9 +8535,122 @@ document.addEventListener("click", e => {
   }
 });
 
+// --- PROGRESSIVE WEB APP (PWA) & OFFLINE CONTROLLER ---
+let deferredPwaInstallPrompt = null;
+
+function updateNetworkStatus() {
+  const badge = document.getElementById("networkBadge");
+  if (!badge) return;
+  if (navigator.onLine) {
+    badge.textContent = "ONLINE";
+    badge.style.color = "var(--fg)";
+    badge.title = "Connected to network";
+  } else {
+    badge.textContent = "OFFLINE (CACHE ACTIVE)";
+    badge.style.color = "var(--status-w)";
+    badge.title = "Offline mode active: all data, timers, and assets are served locally from device cache";
+  }
+}
+
+function updatePwaStatusBadge(text, color) {
+  const badge = document.getElementById("pwaBadge");
+  if (!badge) return;
+  badge.textContent = text;
+  if (color) badge.style.color = color;
+}
+
+function installPwaApp() {
+  if (!deferredPwaInstallPrompt) return;
+  deferredPwaInstallPrompt.prompt();
+  deferredPwaInstallPrompt.userChoice.then(choiceResult => {
+    if (choiceResult && choiceResult.outcome === "accepted") {
+      const btn = document.getElementById("pwaInstallBtn");
+      if (btn) btn.style.display = "none";
+      updatePwaStatusBadge("PWA: INSTALLED", "var(--status-c)");
+    }
+    deferredPwaInstallPrompt = null;
+  });
+}
+
+function initPwaServiceWorker() {
+  updateNetworkStatus();
+  window.addEventListener("online", updateNetworkStatus);
+  window.addEventListener("offline", updateNetworkStatus);
+
+  const isStandalone = window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone === true;
+  if (isStandalone) {
+    updatePwaStatusBadge("PWA: STANDALONE", "var(--status-c)");
+  }
+
+  window.addEventListener("beforeinstallprompt", e => {
+    e.preventDefault();
+    deferredPwaInstallPrompt = e;
+    const btn = document.getElementById("pwaInstallBtn");
+    if (btn && !isStandalone) {
+      btn.style.display = "inline-flex";
+      btn.style.alignItems = "center";
+      const isIcon = (state.iconMode !== "text" && state.practiceSettings?.iconMode !== "text");
+      btn.innerHTML = `${isIcon ? getAppIcon('install') : ''}[Install App]`;
+    }
+  });
+
+  window.addEventListener("appinstalled", () => {
+    deferredPwaInstallPrompt = null;
+    const btn = document.getElementById("pwaInstallBtn");
+    if (btn) btn.style.display = "none";
+    updatePwaStatusBadge("PWA: INSTALLED", "var(--status-c)");
+  });
+
+  if ("serviceWorker" in navigator) {
+    if (window.location.protocol.startsWith("http")) {
+      navigator.serviceWorker.register("./sw.js", { scope: "./" })
+        .then(reg => {
+          if (reg.installing) {
+            updatePwaStatusBadge("PWA: CACHING...", "var(--status-w)");
+          } else if (reg.active) {
+            if (!isStandalone) updatePwaStatusBadge("PWA: READY", "var(--fg)");
+          }
+
+          reg.addEventListener("updatefound", () => {
+            const newWorker = reg.installing;
+            if (newWorker) {
+              newWorker.addEventListener("statechange", () => {
+                if (newWorker.state === "installed" && navigator.serviceWorker.controller) {
+                  updatePwaStatusBadge("PWA: UPDATED", "var(--status-c)");
+                }
+              });
+            }
+          });
+        })
+        .catch(err => {
+          console.warn("[PWA SW] Registration error:", err.message);
+          updatePwaStatusBadge("PWA: LOCAL ONLY", "var(--fg-muted)");
+        });
+    } else {
+      updatePwaStatusBadge("PWA: LOCAL FILE", "var(--fg-muted)");
+    }
+  } else {
+    updatePwaStatusBadge("PWA: UNSUPPORTED", "var(--fg-muted)");
+  }
+}
+
 loadAllStorage().catch(err => console.error("Storage load error:", err)).then(() => {
+  try {
+    const urlParams = new URLSearchParams(window.location.search);
+    const tabParam = urlParams.get("tab");
+    const validTabs = ["dashboard", "timer", "practice", "manual", "flowcharts", "reference", "tracker", "calendar", "faq", "templates", "storage"];
+    if (tabParam && validTabs.includes(tabParam)) {
+      state.panes = [tabParam];
+      state.paneCount = 1;
+      const paneSelect = document.getElementById("paneCountSelect");
+      if (paneSelect) paneSelect.value = "1";
+    }
+  } catch (e) {
+    console.warn("URL params check error:", e);
+  }
   renderTopNav();
   renderWorkspace();
+  initPwaServiceWorker();
 });
 </script>
 </body>
