@@ -5459,11 +5459,13 @@ function expandAllSessionTree(expand = true) {
       const subj = s.subject || "General";
       const book = s.book || "Unassigned Book";
       const ch = s.chapterName || "Unassigned Chapter";
+      const level = s.level || "General Level";
       const set = s.set || "General Set";
       keys[`subj_${subj}`] = true;
       keys[`book_${subj}_${book}`] = true;
       keys[`ch_${subj}_${book}_${ch}`] = true;
-      keys[`set_${subj}_${book}_${ch}_${set}`] = true;
+      keys[`level_${subj}_${book}_${ch}_${level}`] = true;
+      keys[`set_${subj}_${book}_${ch}_${level}_${set}`] = true;
     });
     state.treeCollapsed = keys;
   }
@@ -5557,20 +5559,22 @@ function getSessionHierarchyTreeHTML() {
     `;
   }
 
-  // Group hierarchically: Subject -> Book -> Chapter -> Set -> Sessions
+  // Group hierarchically: Subject -> Book -> Chapter -> Level -> Set -> Sessions
   const tree = {};
   filtered.forEach(s => {
     const subj = s.subject || "General";
     const book = s.book || "Unassigned Book";
     const ch = s.chapterName || "Unassigned Chapter";
+    const level = s.level || "General Level";
     const set = s.set || "General Set";
 
     if (!tree[subj]) tree[subj] = {};
     if (!tree[subj][book]) tree[subj][book] = {};
     if (!tree[subj][book][ch]) tree[subj][book][ch] = {};
-    if (!tree[subj][book][ch][set]) tree[subj][book][ch][set] = [];
+    if (!tree[subj][book][ch][level]) tree[subj][book][ch][level] = {};
+    if (!tree[subj][book][ch][level][set]) tree[subj][book][ch][level][set] = [];
 
-    tree[subj][book][ch][set].push(s);
+    tree[subj][book][ch][level][set].push(s);
   });
 
   return `
@@ -5608,7 +5612,10 @@ function getSessionHierarchyTreeHTML() {
           const subjKey = `subj_${subj}`;
           const isSubjCollapsed = collapsed[subjKey];
           const subjBooks = tree[subj];
-          const totalSubjSessions = Object.values(subjBooks).reduce((acc, b) => acc + Object.values(b).reduce((acc2, c) => acc2 + Object.values(c).reduce((acc3, st) => acc3 + st.length, 0), 0), 0);
+          const totalSubjSessions = Object.values(subjBooks).reduce((acc, b) =>
+            acc + Object.values(b).reduce((acc2, c) =>
+              acc2 + Object.values(c).reduce((acc3, lvl) =>
+                acc3 + Object.values(lvl).reduce((acc4, st) => acc4 + st.length, 0), 0), 0), 0);
 
           return `
             <div class="tree-branch">
@@ -5624,7 +5631,9 @@ function getSessionHierarchyTreeHTML() {
                     const bookKey = `book_${subj}_${book}`;
                     const isBookCollapsed = collapsed[bookKey];
                     const bookChapters = subjBooks[book];
-                    const totalBookSessions = Object.values(bookChapters).reduce((acc, c) => acc + Object.values(c).reduce((acc2, st) => acc2 + st.length, 0), 0);
+                    const totalBookSessions = Object.values(bookChapters).reduce((acc, c) =>
+                      acc + Object.values(c).reduce((acc2, lvl) =>
+                        acc2 + Object.values(lvl).reduce((acc3, st) => acc3 + st.length, 0), 0), 0);
 
                     return `
                       <div class="tree-branch">
@@ -5639,8 +5648,9 @@ function getSessionHierarchyTreeHTML() {
                             ${Object.keys(bookChapters).map(ch => {
                               const chKey = `ch_${subj}_${book}_${ch}`;
                               const isChCollapsed = collapsed[chKey];
-                              const chSets = bookChapters[ch];
-                              const totalChSessions = Object.values(chSets).reduce((acc, st) => acc + st.length, 0);
+                              const chLevels = bookChapters[ch];
+                              const totalChSessions = Object.values(chLevels).reduce((acc, lvl) =>
+                                acc + Object.values(lvl).reduce((acc2, st) => acc2 + st.length, 0), 0);
 
                               return `
                                 <div class="tree-branch">
@@ -5652,50 +5662,70 @@ function getSessionHierarchyTreeHTML() {
 
                                   ${isChCollapsed ? '' : `
                                     <div class="tree-children">
-                                      ${Object.keys(chSets).map(set => {
-                                        const setKey = `set_${subj}_${book}_${ch}_${set}`;
-                                        const isSetCollapsed = collapsed[setKey];
-                                        const setSessions = chSets[set];
+                                      ${Object.keys(chLevels).map(level => {
+                                        const levelKey = `level_${subj}_${book}_${ch}_${level}`;
+                                        const isLevelCollapsed = collapsed[levelKey];
+                                        const levelSets = chLevels[level];
+                                        const totalLevelSessions = Object.values(levelSets).reduce((acc, st) => acc + st.length, 0);
 
                                         return `
                                           <div class="tree-branch">
-                                            <div class="tree-header" onclick="toggleSessionTreeNode('${setKey}')" style="background:var(--surface-2);font-size:10.5px;">
-                                              <span class="tree-chevron">${isSetCollapsed ? '►' : '▼'}</span>
-                                              <span>SET: ${escapeHtml(set)}</span>
-                                              <span class="tag" style="margin-left:auto;font-size:9px;">${setSessions.length}</span>
+                                            <div class="tree-header" onclick="toggleSessionTreeNode('${levelKey}')" style="background:var(--surface-2);font-size:10.5px;">
+                                              <span class="tree-chevron">${isLevelCollapsed ? '►' : '▼'}</span>
+                                              <span>LEVEL: ${escapeHtml(level)}</span>
+                                              <span class="tag" style="margin-left:auto;font-size:9px;">${totalLevelSessions}</span>
                                             </div>
 
-                                            ${isSetCollapsed ? '' : `
-                                              <div class="tree-children" style="border-left-style:solid;border-color:var(--border-dark);">
-                                                ${setSessions.map(s => {
-                                                  const sh = s.sheets || [];
-                                                  const qCount = sh.reduce((acc, x) => acc + (x.questions ? x.questions.filter(q => (q.selectedOption !== null || q.flag !== null) && !q.isBlanked).length : 0), 0);
-                                                  const correctCount = sh.reduce((acc, x) => acc + (x.questions ? x.questions.filter(q => q.flag === 'C' || q.flag === 'W').length : 0), 0);
-                                                  const acc = qCount > 0 ? Math.round((correctCount / qCount) * 100) : 0;
-                                                  const totalSec = Math.floor((sh.reduce((acc, x) => acc + (x.elapsedSessionMs || 0), 0)) / 1000);
+                                            ${isLevelCollapsed ? '' : `
+                                              <div class="tree-children">
+                                                ${Object.keys(levelSets).map(set => {
+                                                  const setKey = `set_${subj}_${book}_${ch}_${level}_${set}`;
+                                                  const isSetCollapsed = collapsed[setKey];
+                                                  const setSessions = levelSets[set];
 
                                                   return `
-                                                    <div class="tree-session-card">
-                                                      <div style="flex:1;min-width:0;margin-right:8px;">
-                                                        <div style="display:flex;align-items:center;flex-wrap:wrap;gap:4px;">
-                                                          ${renderSessionMilestoneMarkers(s)}
-                                                          <strong style="font-size:11.5px;">${escapeHtml(s.chapterName)}</strong>
-                                                          ${s.exam ? `<span class="tag" style="font-size:9.5px;cursor:pointer;" onclick="onSessionTreeFilter('exam', '${escapeHtml(s.exam)}')" title="Filter by Exam ${escapeHtml(s.exam)}">${escapeHtml(s.exam)}</span>` : ''}
-                                                          ${s.level ? `<span class="tag" style="font-size:9.5px;cursor:pointer;" onclick="onSessionTreeFilter('level', '${escapeHtml(s.level)}')" title="Filter by Level ${escapeHtml(s.level)}">${escapeHtml(s.level)}</span>` : ''}
-                                                          ${s.section ? `<span class="tag" style="font-size:9.5px;cursor:pointer;" onclick="onSessionTreeFilter('section', '${escapeHtml(s.section)}')" title="Filter by Section ${escapeHtml(s.section)}">${escapeHtml(s.section)}</span>` : ''}
-                                                        </div>
-                                                        <div style="font-size:10px;color:var(--fg-muted);margin-top:2px;">
-                                                          <span>${sh.length} sheet${sh.length > 1 ? 's' : ''}</span> &bull;
-                                                          <span>${qCount} solved (${acc}%)</span> &bull;
-                                                          <span>${formatHMS(totalSec * 1000)}</span>
-                                                        </div>
+                                                    <div class="tree-branch">
+                                                      <div class="tree-header" onclick="toggleSessionTreeNode('${setKey}')" style="background:var(--surface-3);font-size:10px;">
+                                                        <span class="tree-chevron">${isSetCollapsed ? '►' : '▼'}</span>
+                                                        <span>SET: ${escapeHtml(set)}</span>
+                                                        <span class="tag" style="margin-left:auto;font-size:8.5px;">${setSessions.length}</span>
                                                       </div>
 
-                                                      <div style="display:flex;gap:4px;flex-shrink:0;">
-                                                        <button class="active" style="padding:2px 8px;font-size:10.5px;" onclick="resumePracticeSession('${s.id}')">[Resume]</button>
-                                                        <button style="padding:2px 6px;font-size:10.5px;" onclick="viewSessionAnalysis('${s.id}')">[Analysis]</button>
-                                                        <button style="padding:2px 5px;font-size:10.5px;color:var(--status-x);border-color:var(--status-x);" onclick="deletePracticeSession('${s.id}')" title="Delete session">[x]</button>
-                                                      </div>
+                                                      ${isSetCollapsed ? '' : `
+                                                        <div class="tree-children" style="border-left-style:solid;border-color:var(--border-dark);">
+                                                          ${setSessions.map(s => {
+                                                            const sh = s.sheets || [];
+                                                            const qCount = sh.reduce((acc, x) => acc + (x.questions ? x.questions.filter(q => (q.selectedOption !== null || q.flag !== null) && !q.isBlanked).length : 0), 0);
+                                                            const correctCount = sh.reduce((acc, x) => acc + (x.questions ? x.questions.filter(q => q.flag === 'C' || q.flag === 'W').length : 0), 0);
+                                                            const acc = qCount > 0 ? Math.round((correctCount / qCount) * 100) : 0;
+                                                            const totalSec = Math.floor((sh.reduce((acc, x) => acc + (x.elapsedSessionMs || 0), 0)) / 1000);
+
+                                                            return `
+                                                              <div class="tree-session-card">
+                                                                <div style="flex:1;min-width:0;margin-right:8px;">
+                                                                  <div style="display:flex;align-items:center;flex-wrap:wrap;gap:4px;">
+                                                                    ${renderSessionMilestoneMarkers(s)}
+                                                                    <strong style="font-size:11.5px;">${escapeHtml(s.chapterName)}</strong>
+                                                                    ${s.exam ? `<span class="tag" style="font-size:9.5px;cursor:pointer;" onclick="onSessionTreeFilter('exam', '${escapeHtml(s.exam)}')" title="Filter by Exam ${escapeHtml(s.exam)}">${escapeHtml(s.exam)}</span>` : ''}
+                                                                    ${s.section ? `<span class="tag" style="font-size:9.5px;cursor:pointer;" onclick="onSessionTreeFilter('section', '${escapeHtml(s.section)}')" title="Filter by Section ${escapeHtml(s.section)}">${escapeHtml(s.section)}</span>` : ''}
+                                                                  </div>
+                                                                  <div style="font-size:10px;color:var(--fg-muted);margin-top:2px;">
+                                                                    <span>${sh.length} sheet${sh.length > 1 ? 's' : ''}</span> &bull;
+                                                                    <span>${qCount} solved (${acc}%)</span> &bull;
+                                                                    <span>${formatHMS(totalSec * 1000)}</span>
+                                                                  </div>
+                                                                </div>
+
+                                                                <div style="display:flex;gap:4px;flex-shrink:0;">
+                                                                  <button class="active" style="padding:2px 8px;font-size:10.5px;" onclick="resumePracticeSession('${s.id}')">[Resume]</button>
+                                                                  <button style="padding:2px 6px;font-size:10.5px;" onclick="viewSessionAnalysis('${s.id}')">[Analysis]</button>
+                                                                  <button style="padding:2px 5px;font-size:10.5px;color:var(--status-x);border-color:var(--status-x);" onclick="deletePracticeSession('${s.id}')" title="Delete session">[x]</button>
+                                                                </div>
+                                                              </div>
+                                                            `;
+                                                          }).join('')}
+                                                        </div>
+                                                      `}
                                                     </div>
                                                   `;
                                                 }).join('')}
@@ -5886,7 +5916,7 @@ function executeCreateCustomSheet(sessionId) {
 
       if (include) {
         questions.push({
-          qNum: questions.length + 1,
+          qNum: q.qNum,
           selectedOption: null,
           correctOption: null,
           deltaTimeSec: 0,
@@ -5897,9 +5927,9 @@ function executeCreateCustomSheet(sessionId) {
           sourceRef: {
             sheetId: currentSheet.id,
             sheetName: currentSheet.name,
-            origQNum: q.qNum,
-            origFlag: q.flag,
-            origDeltaSec: q.deltaTimeSec
+            origQNum: q.sourceRef?.origQNum || q.qNum,
+            origFlag: q.sourceRef?.origFlag || q.flag,
+            origDeltaSec: q.sourceRef?.origDeltaSec || q.deltaTimeSec
           }
         });
       }
@@ -6056,7 +6086,7 @@ function executeGenerateReviewSheet(sessionId) {
   currentSheet.questions.forEach(q => {
     if (q.qNum >= startQ && q.qNum <= endQ && selectedFlags.includes(q.flag)) {
       reviewQuestions.push({
-        qNum: reviewQuestions.length + 1,
+        qNum: q.qNum,
         selectedOption: null,
         correctOption: null,
         deltaTimeSec: 0,
@@ -6067,9 +6097,9 @@ function executeGenerateReviewSheet(sessionId) {
         sourceRef: {
           sheetId: currentSheet.id,
           sheetName: currentSheet.name,
-          origQNum: q.qNum,
-          origFlag: q.flag,
-          origDeltaSec: q.deltaTimeSec
+          origQNum: q.sourceRef?.origQNum || q.qNum,
+          origFlag: q.sourceRef?.origFlag || q.flag,
+          origDeltaSec: q.sourceRef?.origDeltaSec || q.deltaTimeSec
         }
       });
     }
@@ -6077,7 +6107,8 @@ function executeGenerateReviewSheet(sessionId) {
 
   if (targetType === "d3_unseen") {
     const extraCount = parseInt(document.getElementById("revUnseenCount")?.value) || 20;
-    const startNum = reviewQuestions.length + 1;
+    const maxQNum = reviewQuestions.length > 0 ? Math.max(...reviewQuestions.map(x => x.qNum)) : 0;
+    const startNum = maxQNum + 1;
     for (let i = 0; i < extraCount; i++) {
       reviewQuestions.push({
         qNum: startNum + i,
@@ -6558,7 +6589,7 @@ function getPracticeAnalysisHTML(session) {
       <!-- 4. Active Span OMR Sheet (Line 23) -->
       <div class="box" style="margin-top:12px;">
         <div class="box-header">
-          <span>ACTIVE ATTEMPT SPAN (FIRST ENTERED Q${firstIdx + 1 || 1} &rarr; LAST ENTERED Q${lastIdx + 1 || 1})</span>
+          <span>ACTIVE ATTEMPT SPAN (FIRST ENTERED Q${validScopeQuestions[firstIdx] ? validScopeQuestions[firstIdx].qNum : (firstIdx + 1 || 1)} &rarr; LAST ENTERED Q${validScopeQuestions[lastIdx] ? validScopeQuestions[lastIdx].qNum : (lastIdx + 1 || 1)})</span>
           <span class="tag">${filledQuestions.length} QUESTIONS IN RANGE</span>
         </div>
         <div class="omr-container">
