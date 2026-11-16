@@ -1083,6 +1083,65 @@ details.collapsible-box > .collapsible-body {
   font-weight: 700;
   box-shadow: var(--shadow-md);
 }
+.sheet-tab-container {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--surface-2);
+  box-shadow: var(--shadow-sm);
+  transition: all 0.12s ease;
+  overflow: hidden;
+}
+.sheet-tab-container:hover {
+  background: var(--surface-3);
+  border-color: var(--border-dark);
+}
+.sheet-tab-container.active {
+  background: var(--fg);
+  border-color: var(--fg);
+  box-shadow: var(--shadow-md);
+}
+.sheet-tab-container .sheet-tab-btn {
+  border: none;
+  background: transparent;
+  box-shadow: none;
+  padding: 5px 6px 5px 10px;
+  color: inherit;
+  border-radius: 0;
+}
+.sheet-tab-container.active .sheet-tab-btn {
+  color: var(--bg);
+  background: transparent;
+}
+.sheet-tab-close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 3px;
+  margin-right: 6px;
+  border: none;
+  background: transparent;
+  color: inherit;
+  opacity: 0.55;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0;
+  transition: all 0.12s ease;
+}
+.sheet-tab-container.active .sheet-tab-close {
+  color: var(--bg);
+  opacity: 0.75;
+}
+.sheet-tab-close:hover {
+  opacity: 1 !important;
+  background: var(--status-x) !important;
+  color: #fff !important;
+}
 .radar-box {
   display: flex;
   flex-direction: column;
@@ -5155,6 +5214,59 @@ function switchActiveSheet(sessionId, sheetIndex) {
   renderWorkspace();
 }
 
+function deletePracticeSheet(sessionId, sheetIndex) {
+  const session = state.sessions ? state.sessions.find(s => s.id === sessionId) : null;
+  if (!session || !session.sheets || !session.sheets[sheetIndex]) return;
+
+  const targetSheet = session.sheets[sheetIndex];
+  const sheetName = targetSheet.name || `Sheet ${sheetIndex + 1}`;
+
+  // If this is the only sheet in the session, confirm deleting the entire session
+  if (session.sheets.length <= 1) {
+    if (!confirm(`"${sheetName}" is the only sheet in this session.\n\nDeleting this sheet will delete the entire session "${session.chapterName}".\n\nDo you want to delete the entire session?`)) {
+      return;
+    }
+    deletePracticeSession(sessionId);
+    return;
+  }
+
+  // Count answered/flagged questions to present in confirmation dialog
+  const answeredQs = (targetSheet.questions || []).filter(q => (q.selectedOption !== null || q.flag !== null) && !q.isBlanked);
+  const qCount = answeredQs.length;
+  const totalQs = (targetSheet.questions || []).length;
+
+  const confirmMsg = qCount > 0
+    ? `Are you sure you want to delete "${sheetName}"?\n\nThis sheet contains ${totalQs} questions with ${qCount} recorded answers/flags.\n\nThis action cannot be undone.`
+    : `Are you sure you want to delete "${sheetName}" (${totalQs} questions)?\n\nThis action cannot be undone.`;
+
+  if (!confirm(confirmMsg)) return;
+
+  // Pause active timer if running on this session
+  if (activeTimerState.isRunning && activeTimerState.sessionId === sessionId) {
+    pausePracticeSessionTimer(sessionId, sheetIndex);
+  }
+
+  // Remove sheet from array
+  session.sheets.splice(sheetIndex, 1);
+
+  // Re-adjust activeSheetIndex safely
+  if (session.activeSheetIndex >= session.sheets.length) {
+    session.activeSheetIndex = Math.max(0, session.sheets.length - 1);
+  } else if (session.activeSheetIndex === sheetIndex) {
+    session.activeSheetIndex = Math.min(sheetIndex, session.sheets.length - 1);
+  } else if (session.activeSheetIndex > sheetIndex) {
+    session.activeSheetIndex--;
+  }
+
+  // Re-adjust analysisSheetIdx if needed
+  if (state.analysisSheetIdx !== undefined && state.analysisSheetIdx >= session.sheets.length) {
+    state.analysisSheetIdx = Math.max(0, session.sheets.length - 1);
+  }
+
+  saveAllStorage();
+  renderWorkspace();
+}
+
 function exitPracticeSession() {
   if (activeTimerState.sessionId) {
     pausePracticeSessionTimer(activeTimerState.sessionId, activeTimerState.sheetIndex || 0);
@@ -6485,9 +6597,12 @@ function getPracticeAnalysisHTML(session) {
       <!-- Sheet Tabs for Analysis Navigation -->
       <div class="sheet-tabs-bar">
         ${session.sheets.map((sh, idx) => `
-          <button class="sheet-tab-btn ${idx === sheetIdx ? 'active' : ''}" onclick="setAnalysisScope('${scope}', ${idx})">
-            ${sh.name}
-          </button>
+          <div class="sheet-tab-container ${idx === sheetIdx ? 'active' : ''}">
+            <button class="sheet-tab-btn ${idx === sheetIdx ? 'active' : ''}" onclick="setAnalysisScope('${scope}', ${idx})">
+              ${escapeHtml(sh.name)}
+            </button>
+            <button class="sheet-tab-close" onclick="deletePracticeSheet('${session.id}', ${idx})" title="Delete Sheet: ${escapeHtml(sh.name)}">&times;</button>
+          </div>
         `).join('')}
       </div>
 
@@ -7385,6 +7500,7 @@ function getPracticeSessionHTML() {
         <button onclick="setPracticeSessionSubView('analysis')">${getAppIcon('chart')}[Session Analysis]</button>
         <button onclick="openCustomSheetModal('${activeSession.id}')">${getAppIcon('add')}[+ Add Custom Sheet]</button>
         <button onclick="openReviewGeneratorModal('${activeSession.id}')">${getAppIcon('refresh')}[Generate Review Sheet]</button>
+        <button style="border-color:var(--status-x);color:var(--status-x);" onclick="deletePracticeSheet('${activeSession.id}', ${currentSheetIndex})" title="Delete currently active sheet (${escapeHtml(currentSheet.name)})">${getAppIcon('del')}[Delete Sheet]</button>
         <button style="border-color:var(--status-c);color:var(--status-c);" onclick="syncSessionToChapterGPS('${activeSession.id}')">${getAppIcon('gps')}[Chapter GPS]</button>
         <button style="border-color:var(--status-x);color:var(--status-x);" onclick="exitPracticeSession()">${getAppIcon('close')}[Close Session]</button>
       </div>
@@ -7436,15 +7552,21 @@ function getPracticeSessionHTML() {
     <!-- SHEET TABS BAR -->
     <div class="sheet-tabs-bar">
       ${activeSession.sheets.map((sh, idx) => `
-        <button class="sheet-tab-btn ${idx === currentSheetIndex ? 'active' : ''}" onclick="switchActiveSheet('${activeSession.id}', ${idx})">
-          ${sh.name}
-        </button>
+        <div class="sheet-tab-container ${idx === currentSheetIndex ? 'active' : ''}">
+          <button class="sheet-tab-btn ${idx === currentSheetIndex ? 'active' : ''}" onclick="switchActiveSheet('${activeSession.id}', ${idx})">
+            ${escapeHtml(sh.name)}
+          </button>
+          <button class="sheet-tab-close" onclick="deletePracticeSheet('${activeSession.id}', ${idx})" title="Delete Sheet: ${escapeHtml(sh.name)}">&times;</button>
+        </div>
       `).join('')}
       <button class="sheet-tab-btn" style="border-style:dashed;" onclick="openCustomSheetModal('${activeSession.id}')">
         ${getAppIcon('add')} [+ Custom Sheet]
       </button>
       <button class="sheet-tab-btn" style="border-style:dashed;" onclick="openReviewGeneratorModal('${activeSession.id}')">
         ${getAppIcon('refresh')} [+ Spaced Review Sheet]
+      </button>
+      <button class="sheet-tab-btn" style="border-color:var(--status-x);color:var(--status-x);margin-left:auto;" onclick="deletePracticeSheet('${activeSession.id}', ${currentSheetIndex})" title="Delete currently active sheet (${escapeHtml(currentSheet.name)})">
+        ${getAppIcon('del')} [Delete Sheet]
       </button>
     </div>
 
@@ -7472,6 +7594,7 @@ function getPracticeSessionHTML() {
             <button style="padding:2px 6px;font-size:10px;" onclick="removeLastQuestionFromSheet('${activeSession.id}', ${currentSheetIndex})">${getAppIcon('del')} -1 End</button>
             <button style="padding:2px 6px;font-size:10px;" onclick="removeUnansweredFromSheet('${activeSession.id}', ${currentSheetIndex})">${getAppIcon('del')} Remove Unanswered</button>
             <button style="padding:2px 6px;font-size:10px;" onclick="removeRangeFromSheet('${activeSession.id}', ${currentSheetIndex})">${getAppIcon('del')} Remove Range...</button>
+            <button style="padding:2px 6px;font-size:10px;color:var(--status-x);border-color:var(--status-x);" onclick="deletePracticeSheet('${activeSession.id}', ${currentSheetIndex})" title="Delete entire sheet (${escapeHtml(currentSheet.name)})">${getAppIcon('del')} Delete Sheet...</button>
           </div>
         </div>
       </div>
